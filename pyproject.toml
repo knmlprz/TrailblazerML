@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "trailblazerml"
+version = "0.1.0"
+description = "RoverGO"
+authors = ["Kleczyk <danielkleczynski@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+opencv-python = "^4.9.0"
+open3d = "^0.18.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
