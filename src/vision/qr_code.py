@@ -2,6 +2,30 @@ import cv2
 import numpy as np
 from cv2 import aruco
 
+ARUCO_DICT = {
+    "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
+    "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
+    "DICT_4X4_250": cv2.aruco.DICT_4X4_250,
+    "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
+    "DICT_5X5_50": cv2.aruco.DICT_5X5_50,
+    "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
+    "DICT_5X5_250": cv2.aruco.DICT_5X5_250,
+    "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
+    "DICT_6X6_50": cv2.aruco.DICT_6X6_50,
+    "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
+    "DICT_6X6_250": cv2.aruco.DICT_6X6_250,
+    "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
+    "DICT_7X7_50": cv2.aruco.DICT_7X7_50,
+    "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
+    "DICT_7X7_250": cv2.aruco.DICT_7X7_250,
+    "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
+    "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
+    "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
+    "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
+    "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
+    "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11,
+}
+
 
 class ReadARUCOCode:
     """
@@ -15,11 +39,17 @@ class ReadARUCOCode:
         self.marker_dict = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
         self.param_markers = aruco.DetectorParameters()
 
-    def findArucoInDict(self):
+    def findArucoInDict(self, frame: np.ndarray):
         """
         Placeholder for a method to find ARUCO markers in the dictionary.
         """
-        pass
+        for arucoName, arucoDict in ARUCO_DICT.items():
+            marker_dict = aruco.getPredefinedDictionary(arucoDict)
+            marker_corners, marker_ids, _ = aruco.detectMarkers(
+                frame, marker_dict, parameters=self.param_markers
+            )
+            if len(marker_corners) > 0:
+                print(f"detected markers for {arucoName}")
 
     def read(self, frame: np.ndarray, show_visualization: bool) -> (bool, dict):
         """
@@ -52,7 +82,6 @@ class ReadARUCOCode:
         :param corners: (tuple, optional) The corners of detected markers.
         :param ids: (np.ndarray, optional) The IDs of detected markers.
         """
-        print("corners: ", type(corners), "ids: ", type(ids))
         if corners is not None:
             frame_markers = aruco.drawDetectedMarkers(frame, corners, ids)
             cv2.imshow("frame", frame_markers)
