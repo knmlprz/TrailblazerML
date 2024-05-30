@@ -4,8 +4,15 @@ import numpy as np
 import open3d as o3d
 
 
-class Param_reding_3D:
+class Simulation3D:
     def __init__(self, base_path, visualize=False):
+        """
+        Class to simulate reading data from the camera in loop frame by frame .
+        Args:
+        base_path (str): The base path where the data is stored.
+        visualize (bool): Whether to visualize the point cloud.
+        Returns:
+        """
         self.images, self.sparse_depths, self.poses = load_data(base_path)
         self.intrinsics_path = base_path + "/K.txt"
         self.visualize = visualize
@@ -20,7 +27,23 @@ class Param_reding_3D:
             self.axis.transform(self.pose)
             self.vis.add_geometry(self.axis)
 
-    def symulation_reading_one_time(self, rgb, depth, pose):
+    def __del__(self):
+        if self.visualize:
+            self.vis.run()
+            self.vis.destroy_window()
+
+    def simulation_reading_one_time(self, rgb, depth, pose):
+        """
+        Function to simulate reading data from the camera.
+        Args:
+        rgb (np.array): The RGB image.
+        depth (np.array): The depth map.
+        pose (np.array): The pose matrix.
+        Returns:
+        rgb (np.array): The RGB image.
+        pcd (open3d.geometry.PointCloud): The point cloud.
+        point (np.array): The point cortinate of the camera.
+        """
         rgb = read_image(rgb)
         depth = read_depth(depth)
         pose = read_pose(pose)
@@ -56,7 +79,10 @@ class Param_reding_3D:
             self.vis.add_geometry(pcd)
             self.vis.poll_events()
             self.vis.update_renderer()
-        return rgb, pcd, pose[:3, 3]
+        piont = pose[:3, 3]
+        return rgb, pcd, piont
+
+
 def load_data(base_path):
     """
     Load images, sparse depths and poses from the given base path.
@@ -119,11 +145,11 @@ def read_pose(pose_path):
 
 def reading_data_form_QAK():
     # funcion form qak ro read rgb depth and pose
-    pass
-    return image, sparse_depth, pose
+    return  # image, sparse_depth, pose
 
 
-def symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualize=False, points=None, line_set=None, axis=None):
+def simulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualize=False, points=None, line_set=None,
+                                axis=None):
     """
     Function to simulate reading data from the camera.
     Args:
@@ -165,6 +191,8 @@ def symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualiz
             line_set.lines = o3d.utility.Vector2iVector(lines)
             colors = [[1, 0, 0] for _ in range(len(lines))]  # czerwony kolor dla linii trajektorii
             line_set.colors = o3d.utility.Vector3dVector(colors)
+
+        # TODO: add axis to the visualization
         # transformed_axis = axis.transform(pose)
         # vis.remove_geometry(axis)
         # axis = transformed_axis
@@ -178,7 +206,7 @@ def symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualiz
     return rgb, pcd, pose[:3, 3]
 
 
-def init_symulation3D(base_path, visualize=False, poses=None):
+def init_simulation3D(base_path, visualize=False, poses=None):
     images, sparse_depths, poses = load_data(base_path)
     intrinsics_path = base_path + "/K.txt"
     if visualize:
@@ -195,7 +223,7 @@ def init_symulation3D(base_path, visualize=False, poses=None):
     return images, sparse_depths, poses, intrinsics_path, vis, points, line_set, axis
 
 
-def symulation_loop_reading_data(base_path, visualize=False):
+def simulation_loop_reading_data(base_path, visualize=False):
     """
     Function to simulate reading data from the camera in loop frame by frame .
     Args:
@@ -204,24 +232,19 @@ def symulation_loop_reading_data(base_path, visualize=False):
     Returns:
     none
     """
-    images, sparse_depths, poses, intrinsics_path, vis, points, line_set, axis = init_symulation3D(base_path,
+    images, sparse_depths, poses, intrinsics_path, vis, points, line_set, axis = init_simulation3D(base_path,
                                                                                                    visualize=visualize)
 
     for image_path, depth_path, pose_path in zip(images, sparse_depths, poses):
         rgb = read_image(image_path)
         depth = read_depth(depth_path)
         pose = read_pose(pose_path)
-        rgb, pcd, point = symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualize,points, line_set, axis)
+        rgb, pcd, point = simulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualize, points,
+                                                      line_set, axis)
         ### HERE WE CAN ADD SOME FUNCTIONALITY
         # TODO: ALL THE REST
         ###
 
-
-
-
     if visualize:
         vis.run()
         vis.destroy_window()
-
-
-
