@@ -4,6 +4,59 @@ import numpy as np
 import open3d as o3d
 
 
+class Param_reding_3D:
+    def __init__(self, base_path, visualize=False):
+        self.images, self.sparse_depths, self.poses = load_data(base_path)
+        self.intrinsics_path = base_path + "/K.txt"
+        self.visualize = visualize
+        if visualize:
+            self.vis = o3d.visualization.Visualizer()
+            self.vis.create_window()
+            self.points = []
+            self.line_set = o3d.geometry.LineSet()
+            self.vis.add_geometry(self.line_set)
+            self.axis = o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.1)
+            self.pose = read_pose(self.poses[0])
+            self.axis.transform(self.pose)
+            self.vis.add_geometry(self.axis)
+
+    def symulation_reading_one_time(self, rgb, depth, pose):
+        rgb = read_image(rgb)
+        depth = read_depth(depth)
+        pose = read_pose(pose)
+
+        color_raw = o3d.geometry.Image(rgb)
+        depth_raw = o3d.geometry.Image(depth)
+        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw, depth_scale=1.0,
+                                                                        depth_trunc=3.0, convert_rgb_to_intensity=False)
+
+        K = np.loadtxt(self.intrinsics_path)
+        intrinsic = o3d.camera.PinholeCameraIntrinsic(rgb.shape[1], rgb.shape[0], K[0, 0], K[1, 1], K[0, 2], K[1, 2])
+        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
+        pcd.transform(pose)  # Apply the 4x4 transformation matrix
+
+        self.vis.add_geometry(pcd)
+        self.vis.poll_events()
+        self.vis.update_renderer()
+        point = pose[:3, 3]
+        self.points.append(point)
+        if self.visualize:
+            self.points.append(point)
+            self.line_set.points = o3d.utility.Vector3dVector(self.points)
+            if len(self.points) > 1:
+                lines = [[j, j + 1] for j in range(len(self.points) - 1)]
+                self.line_set.lines = o3d.utility.Vector2iVector(lines)
+                colors = [[1, 0, 0] for _ in range(len(lines))]  # czerwony kolor dla linii trajektorii
+                self.line_set.colors = o3d.utility.Vector3dVector(colors)
+            # transformed_axis = axis.transform(pose)
+            # vis.remove_geometry(axis)
+            # axis = transformed_axis
+            # vis.add_geometry(axis)
+            self.vis.update_geometry(self.line_set)
+            self.vis.add_geometry(pcd)
+            self.vis.poll_events()
+            self.vis.update_renderer()
+        return rgb, pcd, pose[:3, 3]
 def load_data(base_path):
     """
     Load images, sparse depths and poses from the given base path.
@@ -80,6 +133,9 @@ def symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualiz
     vis (open3d.visualization.Visualizer): The visualizer object.
     intrinsics_path (str): The path to the intrinsics file.
     visualize (bool): Whether to visualize the point cloud.
+    points (list): List of points to store the trajectory.
+    line_set (open3d.geometry.LineSet): The line set object.
+    axis (open3d.geometry.TriangleMesh): The axis object.
     Returns:
     rgb (np.array): The RGB image.
     pcd (open3d.geometry.PointCloud): The point cloud.
@@ -109,14 +165,14 @@ def symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualiz
             line_set.lines = o3d.utility.Vector2iVector(lines)
             colors = [[1, 0, 0] for _ in range(len(lines))]  # czerwony kolor dla linii trajektorii
             line_set.colors = o3d.utility.Vector3dVector(colors)
-            # transformed_axis = axis.transform(pose)
-            # vis.remove_geometry(axis)
-            # axis = transformed_axis
-            # vis.add_geometry(axis)
-            vis.update_geometry(line_set)
-            vis.add_geometry(pcd)
-            vis.poll_events()
-            vis.update_renderer()
+        # transformed_axis = axis.transform(pose)
+        # vis.remove_geometry(axis)
+        # axis = transformed_axis
+        # vis.add_geometry(axis)
+        vis.update_geometry(line_set)
+        vis.add_geometry(pcd)
+        vis.poll_events()
+        vis.update_renderer()
 
     # vis.clear_geometries()  # This line is commented out to keep previous point clouds
     return rgb, pcd, pose[:3, 3]
@@ -155,7 +211,6 @@ def symulation_loop_reading_data(base_path, visualize=False):
         rgb = read_image(image_path)
         depth = read_depth(depth_path)
         pose = read_pose(pose_path)
-        # reading function
         rgb, pcd, point = symulation_reading_one_time(rgb, depth, pose, vis, intrinsics_path, visualize,points, line_set, axis)
         ### HERE WE CAN ADD SOME FUNCTIONALITY
         # TODO: ALL THE REST
@@ -169,6 +224,4 @@ def symulation_loop_reading_data(base_path, visualize=False):
         vis.destroy_window()
 
 
-if __name__ == "__main__":
-    base_path = "../../../data1500//void_1500-47/stairs0"
-    symulation_loop_reading_data(base_path, visualize=True)
+
