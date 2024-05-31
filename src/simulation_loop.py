@@ -2,7 +2,7 @@ import vision.QAK.reading_data as rd
 
 if __name__ == "__main__":
     base_path = "../data1500/void_1500-47/stairs0"
-    visualize = True
+    visualize = False
     S3D = rd.Simulation3D(base_path=base_path, visualize=visualize)
 
     # simulation loop
