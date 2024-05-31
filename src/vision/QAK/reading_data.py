@@ -58,12 +58,12 @@ class Simulation3D:
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
         pcd.transform(pose)  # Apply the 4x4 transformation matrix
 
-        self.vis.add_geometry(pcd)
-        self.vis.poll_events()
-        self.vis.update_renderer()
-        point = pose[:3, 3]
-        self.points.append(point)
         if self.visualize:
+            self.vis.add_geometry(pcd)
+            self.vis.poll_events()
+            self.vis.update_renderer()
+            point = pose[:3, 3]
+            self.points.append(point)
             self.points.append(point)
             self.line_set.points = o3d.utility.Vector3dVector(self.points)
             if len(self.points) > 1:
