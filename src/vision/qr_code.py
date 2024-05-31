@@ -58,7 +58,6 @@ class ReadARUCOCode:
             if len(marker_corners) > 0:
                 print(f"detected markers for {arucoName}")
 
-    # TODO sprawdz poprawność return
     def read(self, frame: np.ndarray, show_visualization: bool) -> (bool, dict):
         """
         Detects ARUCO markers in the provided frame.
@@ -74,22 +73,25 @@ class ReadARUCOCode:
         )
         if show_visualization:
             self.visualize(frame, None, None)
-        # TODO if marker_id is None
-        # wcześniej zrobić return
+
         # TODO dataclass na return
-        if marker_ids is not None:
-            for corners in marker_corners:
-                center = self.calculate_center(corners)
-                center.append(self.calculate_distance(corners, 0.05, 600))
-                position.append(center)
-            if show_visualization:
-                self.visualize(frame, marker_corners, marker_ids, position)
-                return True, {"id": marker_ids, "position": position}
-            return True, {"id": marker_ids, "position": position}
-        return False, None
+        if marker_ids is None:
+            return False, None
+        for corners in marker_corners:
+            center = self.calculate_center(corners)
+            center.append(self.calculate_distance(corners, 0.05, 600))
+            position.append(center)
+        if show_visualization:
+            self.visualize(frame, marker_corners, marker_ids, position)
+        return True, {"id": marker_ids, "position": position}
 
     @staticmethod
-    def visualize(frame: np.ndarray, corners: tuple = None, ids: np.ndarray = None, positions: list = None):
+    def visualize(
+        frame: np.ndarray,
+        corners: tuple = None,
+        ids: np.ndarray = None,
+        positions: list = None,
+    ):
         """
         Visualizes provided frame.
 
@@ -97,27 +99,46 @@ class ReadARUCOCode:
         :param corners: (tuple, optional) The corners of detected markers.
         :param ids: (np.ndarray, optional) The IDs of detected markers.
         """
-        # TODO dodaj typowanie
         if corners is not None:
             frame = aruco.drawDetectedMarkers(frame, corners)
             for id, position in zip(ids, positions):
                 center_x, center_y, z = position
-                cv2.putText(frame, f"({id} {center_x:.2f}, {center_y:.2f}, {z:.2f})", (int(center_x), int(center_y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                            (0, 255, 0), 2)
+                cv2.putText(
+                    frame,
+                    f"({id} {center_x:.2f}, {center_y:.2f}, {z:.2f})",
+                    (int(center_x), int(center_y)),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (0, 255, 0),
+                    2,
+                )
 
         cv2.imshow("frame", frame)
 
     @staticmethod
-    def calculate_distance(marker_corners, marker_length, focal_length):
-        # TODO popraw nazewnictwo
-        # dodanie typów
-        pixel_width = np.linalg.norm(marker_corners[0][0] - marker_corners[0][1])
-        distance = (marker_length * focal_length) / pixel_width
+    def calculate_distance(
+        marker_corners: tuple, marker_length: float, focal_length: int
+    ) -> float:
+        """
+        Calculate the distance from the camera to the marker.
+
+        :param marker_corners: (tuple) The coordinates of the marker corners.
+        :param marker_length: (float) The actual length of the marker (in real-world units, e.g., meters).
+        :param focal_length: (int) The focal length of the camera (in pixels).
+        :return: (float) The calculated distance from the camera to the marker.
+        """
+        marker_pixel_width = np.linalg.norm(marker_corners[0][0] - marker_corners[0][1])
+        distance = (marker_length * focal_length) / marker_pixel_width
         return distance
 
     @staticmethod
-    def calculate_center(marker_corners):
+    def calculate_center(marker_corners: tuple) -> (float, float):
+        """
+        Calculate the center point of the marker.
+
+        :param marker_corners: (tuple) The coordinates of the marker corners.
+        :return: (list) A list containing the x and y coordinates of the center point of the marker.
+        """
         center_x = np.mean(marker_corners[0][:, 0])
         center_y = np.mean(marker_corners[0][:, 1])
         return [center_x, center_y]
-    
