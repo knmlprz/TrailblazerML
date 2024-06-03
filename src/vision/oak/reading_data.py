@@ -5,7 +5,7 @@ import open3d as o3d
 
 
 class Simulation3D:
-    def __init__(self, base_path, visualize=False):
+    def __init__(self, base_path: str, visualize: bool = False):
         """
         Class to simulate reading data from the camera in a loop, frame by frame.
         Args:
@@ -24,8 +24,6 @@ class Simulation3D:
                 self.line_set = o3d.geometry.LineSet()
                 self.vis.add_geometry(self.line_set)
                 self.axis = o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.1)
-                initial_pose = read_pose(self.poses[0]) if self.poses else np.eye(4)
-                self.axis.transform(initial_pose)
                 self.vis.add_geometry(self.axis)
         except Exception as e:
             print(f"Failed to initialize Simulation3D: {e}")
@@ -35,20 +33,22 @@ class Simulation3D:
             self.vis.run()
             self.vis.destroy_window()
 
-    def simulation_reading_one_time(self, rgb, depth, pose):
+    def simulation_reading_one_time(self, path_image: str, path_depth: str, path_pose: str) -> (
+            np.ndarray, o3d.geometry.PointCloud, np.ndarray):
+
         """
         Function to simulate reading data from the camera.
         Args:
-            rgb (np.array): The RGB image.
-            depth (np.array): The depth map.
-            pose (np.array): The pose matrix.
+            path_image (str): Path to the RGB image file.
+            path_depth (str): Path to the sparse depth file.
+            path_pose (str): Path to the pose file.
         Returns:
             tuple: A tuple containing the RGB image, point cloud, and camera position.
         """
         try:
-            rgb = read_image(rgb)
-            depth = read_depth(depth)
-            pose = read_pose(pose)
+            rgb = read_image(path_image)
+            depth = read_depth(path_depth)
+            pose = read_pose(path_pose)
 
             color_raw = o3d.geometry.Image(rgb)
             depth_raw = o3d.geometry.Image(depth)
@@ -56,7 +56,8 @@ class Simulation3D:
                 color_raw, depth_raw, depth_scale=1.0, depth_trunc=3.0, convert_rgb_to_intensity=False)
 
             K = np.loadtxt(self.intrinsics_path)
-            intrinsic = o3d.camera.PinholeCameraIntrinsic(rgb.shape[1], rgb.shape[0], K[0, 0], K[1, 1], K[0, 2], K[1, 2])
+            intrinsic = o3d.camera.PinholeCameraIntrinsic(rgb.shape[1], rgb.shape[0], K[0, 0], K[1, 1], K[0, 2],
+                                                          K[1, 2])
             pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
             pcd.transform(pose)
 
@@ -82,7 +83,8 @@ class Simulation3D:
             print(f"Failed during simulation: {e}")
             return None, None, None
 
-def load_data(base_path):
+
+def load_data(base_path: str) -> (list, list, list):
     """
     Load images, sparse depths, and poses from the given base path.
     Args:
@@ -108,18 +110,32 @@ def load_data(base_path):
     return data["images"], data["sparse_depths"], data["poses"]
 
 
-
-def read_image(image_path):
+def read_image(image_path: str) -> np.ndarray:
+    """
+    Read an image from the given path.
+    Args:
+        image_path (str): The path to the image file.
+    Returns:
+        np.ndarray: The image as a numpy array.
+    """
     return cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
 
 
-def read_depth(depth_path, scale=1000.0):
+def read_depth(depth_path=str, scale: float = 1000.0) -> np.ndarray:
+    """
+    Read a depth image from the given path and scale it to meters.
+    Args:
+        depth_path (str): The path to the depth image file.
+        scale (float): The scale factor to convert the depth values.
+    Returns:
+        np.ndarray: The depth image as a numpy array in meters.
+    """
     depth = cv2.imread(depth_path, cv2.IMREAD_UNCHANGED)
     depth = depth.astype(np.float32)
     return depth / scale  # Convert depth to meters ? (assuming depth is in mm)
 
 
-def read_pose(pose_path):
+def read_pose(pose_path: str) -> np.ndarray:
     """Reads a single pose matrix from a text file.
     Args:
     pose_path (str): Path to the text file containing the pose matrix.
