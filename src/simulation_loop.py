@@ -1,4 +1,4 @@
-import vision.QAK.reading_data as rd
+import vision.oak.reading_data as rd
 
 if __name__ == "__main__":
     base_path = "../data1500/void_1500-47/stairs0"

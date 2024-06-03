@@ -132,10 +132,10 @@ def read_pose(pose_path):
     return pose
 
 
-def reading_data_form_qak():
+def reading_data_form_oak():
     """
     Function intended to read data for simulation purposes.
-    Intended to return image, sparse_depth, and pose data from the QAK system.
+    Intended to return image, sparse_depth, and pose data from the oak system.
 
     Raises:
         NotImplementedError: Indicates that the function has not been implemented yet.
