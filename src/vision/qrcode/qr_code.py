@@ -74,7 +74,6 @@ class ReadARUCOCode:
         if show_visualization:
             self.visualize(frame, None, None)
 
-        # TODO dataclass na return
         if marker_ids is None:
             return False, None
         for corners in marker_corners:
