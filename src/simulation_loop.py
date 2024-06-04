@@ -10,8 +10,8 @@ if __name__ == "__main__":
     res = 200
     map_2d = np.full((res, res), np.nan)
     value_range = (-1, 1)
-    # visualization_type - 0 to używając open3d, każda inna liczba to zwyczajny matplot
-    mapper = m2d.PointCloudMapper(res, value_range, visualize=True, visualization_type=0)
+    # visualization_type - 0 means using open3d, any other number means using regular matplotlib
+    mapper = m2d.PointCloudMapper(res, value_range, visualize=True, visualization_type=1)
 
     # simulation loop
     for image_path, depth_path, pose_path in zip(S3D.images, S3D.sparse_depths, S3D.poses):
