@@ -31,3 +31,22 @@ Describe how to run the project, e.g.:
 ```bash
 poetry run python src/main.py
 ```
+
+# Downloading Data
+
+Download data from [here](https://drive.google.com/open?id=1bTM5eh9wQ4U8p2ANOGbhZqTvDOddFnlI) ~19G to main directory in
+repository
+
+after unzipping the directory, and name it `data1500`
+
+```bash
+unzip void_1500.zip -d data1500
+```
+
+use the following command to unzip the one dataset
+
+```bash
+unzip data1500/void_1500-47.zip
+```
+
+Run pythonfile `simulation_loop.py` to start simulation  

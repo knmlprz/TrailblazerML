@@ -1,4 +1,7 @@
 data/
+data1500/**
+*.png
 *.zip
 *.tar.gz
 .idea/
+__pycache__/
