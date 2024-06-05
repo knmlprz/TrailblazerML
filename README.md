@@ -34,12 +34,12 @@ poetry run python src/main.py
 
 # Downloading Data
 
-Download data from [here](https://drive.google.com/open?id=1bTM5eh9wQ4U8p2ANOGbhZqTvDOddFnlI) ~19G in main directory in
+Download data from [here](https://drive.google.com/open?id=1bTM5eh9wQ4U8p2ANOGbhZqTvDOddFnlI) ~19G to main directory in
 repository
-or use the following command in main directory in repository:
+
+after unzipping the directory, and name it `data1500`
 
 ```bash
-wget -O void_1500.zip https://drive.google.com/uc?id=1bTM5eh9wQ4U8p2ANOGbhZqTvDOddFnlI
 unzip void_1500.zip -d data1500
 ```
 
