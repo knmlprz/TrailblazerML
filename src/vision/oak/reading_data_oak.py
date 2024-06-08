@@ -16,7 +16,7 @@ def quaternion_to_rotation_matrix(q):
         [1 - 2 * y ** 2 - 2 * z ** 2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
         [2 * x * y + 2 * z * w, 1 - 2 * x ** 2 - 2 * z ** 2, 2 * y * z - 2 * x * w],
         [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x ** 2 - 2 * y ** 2]
-    ])git
+    ])
 
 def imu_to_pose(accel_data, rotationVector, delta_t):
     """ Przetwarzanie danych z IMU na macierz przesunięć 4x4. """
@@ -98,12 +98,12 @@ class CameraOAK:
     def __init__(self, config):
         self.handler = CameraHendler(config)
         self.device = dai.Device(self.handler.pipeline)
+        self.base_time = None
 
     def get_data(self):
-        imuQueue = self.device.getOutputQueue(name="imu", maxSize=10, blocking=False)
+        imuQueue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
         pcQueue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
         pose = None
-        base_time = None
         pcd = o3d.geometry.PointCloud()
 
         imuData = imuQueue.get()
@@ -114,13 +114,11 @@ class CameraOAK:
             rotationVector = imuPacket.rotationVector
             current_time = imuPacket.acceleroMeter.getTimestampDevice()
 
+            if self.base_time is None:
+                self.base_time = current_time
 
-            if base_time is None:
-                base_time = current_time
-
-            delta_t = (current_time - base_time).total_seconds()
-            base_time = current_time
-            print("accc" , acceleroValues.x, acceleroValues.y, acceleroValues.z)
+            delta_t = (current_time - self.base_time).total_seconds()
+            self.base_time = current_time
             pose = imu_to_pose([acceleroValues.x, acceleroValues.y, acceleroValues.z],
                                [rotationVector.i, rotationVector.j, rotationVector.k, rotationVector.real], delta_t)
         inMessage = pcQueue.get()

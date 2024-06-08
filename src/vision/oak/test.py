@@ -22,6 +22,7 @@ def create_pose_matrix(q, position):
 
 def imu_to_pose(accel_data, rotationVector, delta_t):
     """ Przetwarzanie danych z IMU na macierz przesunięć 4x4. """
+    print(delta_t)
     position = np.array(accel_data) * 0.5 * (delta_t ** 2)  # Proste całkowanie przyspieszenia
     rotation = quaternion_to_rotation_matrix(rotationVector)
     pose_matrix = np.eye(4)
