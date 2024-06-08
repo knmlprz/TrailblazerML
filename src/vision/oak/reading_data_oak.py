@@ -39,7 +39,14 @@ if __name__ == "__main__":
     line_set = o3d.geometry.LineSet()
     vis.add_geometry(line_set)
     while True:
-        pcd, pose = camera.get_data()
+        rgb, pcd, pose = camera.get_data()
+
+        # plot = o3d.geometry.Image(rgb)
+        # vis.add_geometry(plot)
+        # vis.poll_events()
+        # vis.update_renderer()
+
+
         points.append(pose[:3, 3])
         pcd.transform(pose)
         vis.add_geometry(pcd)

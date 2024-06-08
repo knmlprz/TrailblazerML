@@ -39,9 +39,9 @@ class CameraOAK:
         points = inPointCloud.getPoints().astype(np.float64)
         pcd.points = o3d.utility.Vector3dVector(points)
 
-        # inColor = inMessage["rgb"]
-        # cvColorFrame = inColor.getCvFrame()
-        # # cvRGBFrame = cv2.cvtColor(cvColorFrame, cv2.COLOR_BGR2RGB)
-        # cv2.imshow("color", cvColorFrame)
+        inColor = inMessage["rgb"]
+        cvColorFrame = inColor.getCvFrame()
+        # cvRGBFrame = cv2.cvtColor(cvColorFrame, cv2.COLOR_BGR2RGB)
 
-        return pcd, pose
+
+        return cvColorFrame, pcd, pose
