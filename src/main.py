@@ -8,7 +8,7 @@ if __name__ == "__main__":
     with open('vision/oak/config_oak.json', 'r') as json_file:
         config = json.load(json_file)
     oak = CameraOAK(config)
-    rgb, pcd, pose = oak.get_data()g
+    rgb, pcd, pose = oak.get_data()
     # end of example
 
     # Wczytaj przykładową chmurę punktów
