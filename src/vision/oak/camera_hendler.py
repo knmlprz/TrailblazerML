@@ -4,7 +4,7 @@ import depthai as dai
 class CameraHendler:
     """ CameraHendler class for handling the camera configuration."""
 
-    def __init__(self, config):
+    def __init__(self, config: dict) -> None:
         """ Initialize the CameraHendler class.
         Args:
             config (dict): The configuration dictionary.
@@ -16,7 +16,7 @@ class CameraHendler:
         self.setup_pointcloud()
         self.setup_imu()
 
-    def setup_cameras(self):
+    def setup_cameras(self) -> None:
         """ Setup the cameras."""
         # Setup RGB Camera
         rgb_config = self.config['rgb_camera']
@@ -37,7 +37,7 @@ class CameraHendler:
         self.monoLeft.setFps(mono_config['fps'])
         self.monoRight.setFps(mono_config['fps'])
 
-    def setup_depth(self):
+    def setup_depth(self) -> None:
         """ Setup the depth cameras configuration."""
         depth_config = self.config['depth']
         self.depth = self.pipeline.create(dai.node.StereoDepth)
@@ -50,7 +50,7 @@ class CameraHendler:
         self.monoLeft.out.link(self.depth.left)
         self.monoRight.out.link(self.depth.right)
 
-    def setup_pointcloud(self):
+    def setup_pointcloud(self) -> None:
         """ Setup the pointcloud configuration."""
         self.pointcloud = self.pipeline.create(dai.node.PointCloud)
         self.depth.depth.link(self.pointcloud.inputDepth)
@@ -61,7 +61,7 @@ class CameraHendler:
         self.sync.out.link(self.xOut.input)
         self.xOut.setStreamName("out")
 
-    def setup_imu(self):
+    def setup_imu(self) -> None:
         """ Setup the IMU configuration."""
         imu_config = self.config['imu']
         self.imu = self.pipeline.create(dai.node.IMU)

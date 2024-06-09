@@ -705,7 +705,7 @@ testing = ["pytest (>=6,<8.1.0 || >=8.2.0)", "pytest-checkdocs (>=2.4)", "pytest
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "0dabbb8494786c6f557eac740a87368c975f917ed444a3d43c157319d5c111bf"
+content-hash = "b28d41889de04ba2239252c95ec5f18c06adb6bfcd8cba39754d7c52b60ddee7"
 
 [metadata.files]
 addict = []

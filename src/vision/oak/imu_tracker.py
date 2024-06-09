@@ -8,7 +8,7 @@ class ImuTracker:
         self.orientation = np.eye(3)
         self.initialized = False
 
-    def quaternion_to_rotation_matrix(self, q):
+    def quaternion_to_rotation_matrix(self, q: list) -> np.array:
         """ Convert a quaternion into a rotation matrix.
         Args:
             q (list): The quaternion to convert.
@@ -23,10 +23,10 @@ class ImuTracker:
             [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x ** 2 - 2 * y ** 2]
         ])
 
-    def update(self, accel_data, rotation_vector, delta_t):
+    def update(self, accel_data: list, rotation_vector: list, delta_t) -> np.array:
         """ Update the IMU pose estimation.
         Args:
-            accel_data (list): The acceleration data.
+            accel_data (list): The acceleration data of .
             rotation_vector (list): The rotation vector.
             delta_t (float): The time delta. from the last update.
         Returns:

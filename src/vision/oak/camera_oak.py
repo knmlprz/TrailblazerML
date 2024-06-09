@@ -8,7 +8,7 @@ from vision.oak.camera_hendler import CameraHendler
 class CameraOAK:
     """class for init camera and get data from it."""
 
-    def __init__(self, config):
+    def __init__(self, config: dict, visualize: bool = False):
         """ Initialize the CameraOAK class.
         Args:
             config (dict): The configuration dictionary.
@@ -17,8 +17,19 @@ class CameraOAK:
         self.device = dai.Device(self.handler.pipeline)
         self.base_time = None
         self.imu_tracker = ImuTracker()
+        self.visualize = visualize
+        if visualize:
+            self.vis = o3d.visualization.Visualizer()
+            self.vis.create_window()
+            self.line_points = []
+            self.line_set = o3d.geometry.LineSet()
+            self.vis.add_geometry(self.line_set)
 
-    def get_data(self):
+    def __del__(self):
+        if self.visualize:
+            self.vis.destroy_window()
+
+    def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
         """ Get data from the camera.
         Returns:
             tuple: (cvColorFrame, pcd, pose) - tuple containing the RGB image, point cloud, and camera position.
@@ -51,6 +62,20 @@ class CameraOAK:
 
         inColor = inMessage["rgb"]
         cvColorFrame = inColor.getCvFrame()
-        # cvRGBFrame = cv2.cvtColor(cvColorFrame, cv2.COLOR_BGR2RGB)
+        if self.visualize:
+            self.line_points.append(pose[:3, 3])
+            pcd.transform(pose)
+            self.vis.add_geometry(pcd)
+            self.vis.poll_events()
+            self.vis.update_renderer()
+            self.line_set.points = o3d.utility.Vector3dVector(self.line_points)
+            if len(points) > 1:
+                lines = [[j, j + 1] for j in range(len(self.line_points) - 1)]
+                self.line_set.lines = o3d.utility.Vector2iVector(lines)
+                colors = [[1, 0, 0] for _ in range(len(lines))]
+                self.line_set.colors = o3d.utility.Vector3dVector(colors)
+            self.vis.update_geometry(self.line_set)
+            self.vis.poll_events()
+            self.vis.update_renderer()
 
         return cvColorFrame, pcd, pose
