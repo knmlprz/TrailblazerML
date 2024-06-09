@@ -4,14 +4,16 @@ import time
 import numpy as np
 import open3d as o3d
 
+
 def quaternion_to_rotation_matrix(q):
     """ Konwersja kwaternionu do macierzy rotacji """
     w, x, y, z = q
     return np.array([
-        [1 - 2*y**2 - 2*z**2,     2*x*y - 2*z*w,         2*x*z + 2*y*w],
-        [2*x*y + 2*z*w,           1 - 2*x**2 - 2*z**2,   2*y*z - 2*x*w],
-        [2*x*z - 2*y*w,           2*y*z + 2*x*w,         1 - 2*x**2 - 2*y**2]
+        [1 - 2 * y ** 2 - 2 * z ** 2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
+        [2 * x * y + 2 * z * w, 1 - 2 * x ** 2 - 2 * z ** 2, 2 * y * z - 2 * x * w],
+        [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x ** 2 - 2 * y ** 2]
     ])
+
 
 def create_pose_matrix(q, position):
     """ Tworzenie macierzy pose z kwaternionu i pozycji """
@@ -19,6 +21,7 @@ def create_pose_matrix(q, position):
     pose_matrix[:3, :3] = quaternion_to_rotation_matrix(q)
     pose_matrix[:3, 3] = position
     return pose_matrix
+
 
 def imu_to_pose(accel_data, rotationVector, delta_t):
     """ Przetwarzanie danych z IMU na macierz przesunięć 4x4. """
@@ -30,8 +33,11 @@ def imu_to_pose(accel_data, rotationVector, delta_t):
     pose_matrix[:3, :3] = rotation
     return pose_matrix
 
+
 #
 FPS = 5
+
+
 class FPSCounter:
     def __init__(self):
         self.frameCount = 0
@@ -47,6 +53,7 @@ class FPSCounter:
             self.startTime = time.time()
         return self.fps
 
+
 pipeline = dai.Pipeline()
 camRgb = pipeline.create(dai.node.ColorCamera)
 monoLeft = pipeline.create(dai.node.MonoCamera)
@@ -57,10 +64,9 @@ sync = pipeline.create(dai.node.Sync)
 xOut = pipeline.create(dai.node.XLinkOut)
 xOut.input.setBlocking(False)
 
-
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
 camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
-camRgb.setIspScale(1,3)
+camRgb.setIspScale(1, 3)
 camRgb.setFps(FPS)
 
 monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_400_P)
@@ -84,7 +90,6 @@ camRgb.isp.link(sync.inputs["rgb"])
 pointcloud.outputPointCloud.link(sync.inputs["pcl"])
 sync.out.link(xOut.input)
 xOut.setStreamName("out")
-
 
 # Ustawienie pipeline
 imu = pipeline.create(dai.node.IMU)
@@ -139,16 +144,13 @@ with dai.Device(pipeline) as device:
         inPointCloud = inMessage["pcl"]
         points = inPointCloud.getPoints().astype(np.float64)
         pcd.points = o3d.utility.Vector3dVector(points)
-        #TODO: colors: incress read when incress y axis (hight)
+        # TODO: colors: incress read when incress y axis (hight)
         # colors = (points[:, 1].reshape(-1, 1) / 255.0).astype(np.float64)
         # pcd.colors = o3d.utility.Vector3dVector(colors)
         # pcd.transform(pose)
         # vis.add_geometry(pcd)
         # vis.poll_events()
         # vis.update_renderer()
-
-
-
 
         line_set.points = o3d.utility.Vector3dVector(points_of_line)
         if len(points_of_line) > 1:

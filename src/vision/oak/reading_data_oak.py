@@ -1,37 +1,12 @@
 import open3d as o3d
 from camera_oak import CameraOAK
-
-
-
+import json
 
 if __name__ == "__main__":
-    config = {
-        'rgb_camera': {
-            'resolution': 'THE_1080_P',
-            'socket': 'CAM_A',
-            'isp_scale': (1, 3),
-            'fps': 5
-        },
-        'mono_cameras': {
-            'resolution': 'THE_400_P',
-            'fps': 5
-        },
-        'depth': {
-            'preset': 'HIGH_DENSITY',
-            'median_filter': 'KERNEL_7x7',
-            'left_right_check': True,
-            'extended_disparity': False,
-            'subpixel': True,
-            'align_to': 'CAM_A'
-        },
-        'imu': {
-            'ACCELEROMETER_RAW': 500,
-            'GYROSCOPE_RAW': 400,
-            'ROTATION_VECTOR': 400,
-            'batch_threshold': 1,
-            'max_batch_reports': 10
-        }
-    }
+    # Write the dictionary to a JSON file
+    with open('config_oak.json', 'r') as json_file:
+        config = json.load(json_file)
+
     camera = CameraOAK(config)
     vis = o3d.visualization.Visualizer()
     vis.create_window()
@@ -45,7 +20,6 @@ if __name__ == "__main__":
         # vis.add_geometry(plot)
         # vis.poll_events()
         # vis.update_renderer()
-
 
         points.append(pose[:3, 3])
         pcd.transform(pose)
@@ -65,4 +39,3 @@ if __name__ == "__main__":
             break
     vis.run()
     vis.destroy_window()
-

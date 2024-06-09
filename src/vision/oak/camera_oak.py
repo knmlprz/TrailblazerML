@@ -1,18 +1,28 @@
 import depthai as dai
 import open3d as o3d
 import numpy as np
-from imu_tracker import ImuTracker
-from camera_hendler import CameraHendler
+from vision.oak.imu_tracker import ImuTracker
+from vision.oak.camera_hendler import CameraHendler
 
 
 class CameraOAK:
+    """class for init camera and get data from it."""
+
     def __init__(self, config):
+        """ Initialize the CameraOAK class.
+        Args:
+            config (dict): The configuration dictionary.
+        """
         self.handler = CameraHendler(config)
         self.device = dai.Device(self.handler.pipeline)
         self.base_time = None
         self.imu_tracker = ImuTracker()
 
     def get_data(self):
+        """ Get data from the camera.
+        Returns:
+            tuple: (cvColorFrame, pcd, pose) - tuple containing the RGB image, point cloud, and camera position.
+        """
         imuQueue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
         pcQueue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
         pose = None
@@ -42,6 +52,5 @@ class CameraOAK:
         inColor = inMessage["rgb"]
         cvColorFrame = inColor.getCvFrame()
         # cvRGBFrame = cv2.cvtColor(cvColorFrame, cv2.COLOR_BGR2RGB)
-
 
         return cvColorFrame, pcd, pose

@@ -1,8 +1,9 @@
 import numpy as np
-import vision.QAK.reading_data as rd
+import vision.oak.reading_data as rd
 import map2d.translator as m2d
 
 if __name__ == "__main__":
+
     base_path = "./data1500/void_1500-47/stairs0"
     visualize = False
     S3D = rd.Simulation3D(base_path=base_path, visualize=visualize)
@@ -19,4 +20,4 @@ if __name__ == "__main__":
         ### HERE WE CAN ADD SOME FUNCTIONALITY
         # TODO: ALL THE REST
         ###
-        map_2d = mapper.point_cloud_to_2d_map(pcd,point)
+        map_2d = mapper.point_cloud_to_2d_map(pcd, point)
