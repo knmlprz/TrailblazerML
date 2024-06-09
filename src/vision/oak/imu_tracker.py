@@ -23,7 +23,7 @@ class ImuTracker:
             [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x ** 2 - 2 * y ** 2]
         ])
 
-    def update(self, accel_data: list, rotation_vector: list, delta_t) -> np.array:
+    def update(self, accel_data: list, rotation_vector: list, delta_t: float) -> np.array:
         """ Update the IMU pose estimation.
         Args:
             accel_data (list): The acceleration data of .

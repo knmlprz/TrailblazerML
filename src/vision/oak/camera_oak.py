@@ -18,17 +18,19 @@ class CameraOAK:
         self.base_time = None
         self.imu_tracker = ImuTracker()
         self.visualize = visualize
-        if visualize:
-            self.vis = o3d.visualization.Visualizer()
-            self.vis.create_window()
-            self.line_points = []
-            self.line_set = o3d.geometry.LineSet()
-            self.vis.add_geometry(self.line_set)
+        self.init_visualizer()
 
     def __del__(self):
         if self.visualize:
             self.vis.destroy_window()
 
+    def init_visualizer(self) -> None:
+        if self.visualize:
+            self.vis = o3d.visualization.Visualizer()
+            self.vis.create_window()
+            self.line_points = []
+            self.line_set = o3d.geometry.LineSet()
+            self.vis.add_geometry(self.line_set)
     def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
         """ Get data from the camera.
         Returns:
@@ -38,8 +40,7 @@ class CameraOAK:
         pcQueue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
         pose = None
         pcd = o3d.geometry.PointCloud()
-
-        imuData = imuQueue.get()
+        imuData = imuQueue.tryGet()
         imuPackets = imuData.packets
         # Get IMU data
         for imuPacket in imuPackets:
@@ -55,11 +56,10 @@ class CameraOAK:
             pose = self.imu_tracker.update([acceleroValues.x, acceleroValues.y, acceleroValues.z],
                                            [rotationVector.i, rotationVector.j, rotationVector.k, rotationVector.real],
                                            delta_t)
-        inMessage = pcQueue.get()
+        inMessage = pcQueue.tryGet()
         inPointCloud = inMessage["pcl"]
         points = inPointCloud.getPoints().astype(np.float64)
         pcd.points = o3d.utility.Vector3dVector(points)
-
         inColor = inMessage["rgb"]
         cvColorFrame = inColor.getCvFrame()
         if self.visualize:
