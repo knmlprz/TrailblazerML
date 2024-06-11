@@ -31,51 +31,66 @@ class CameraOAK:
             self.line_points = []
             self.line_set = o3d.geometry.LineSet()
             self.vis.add_geometry(self.line_set)
-    def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
-        """ Get data from the camera.
+
+    def get_data(self):
+        """Get data from the camera.
+
         Returns:
-            tuple: (cvColorFrame, pcd, pose) - tuple containing the RGB image, point cloud, and camera position.
+            tuple: (cvColorFrame, pcd, pose) containing the RGB image, point cloud, and camera pose.
         """
-        imuQueue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
-        pcQueue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
+        imu_queue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
+        pc_queue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
         pose = None
         pcd = o3d.geometry.PointCloud()
-        imuData = imuQueue.tryGet()
-        imuPackets = imuData.packets
-        # Get IMU data
-        for imuPacket in imuPackets:
-            acceleroValues = imuPacket.acceleroMeter
-            rotationVector = imuPacket.rotationVector
-            current_time = imuPacket.acceleroMeter.getTimestampDevice()
+        imu_data = imu_queue.tryGet()
+        pc_message = pc_queue.tryGet()
 
-            if self.base_time is None:
+        if imu_data:
+            imu_packets = imu_data.packets
+            for imu_packet in imu_packets:
+                accelero_values = imu_packet.acceleroMeter
+                rotation_vector = imu_packet.rotationVector
+                current_time = imu_packet.acceleroMeter.getTimestampDevice()
+
+                if self.base_time is None:
+                    self.base_time = current_time
+
+                delta_t = (current_time - self.base_time).total_seconds()
                 self.base_time = current_time
+                pose = self.imu_tracker.update(
+                    [accelero_values.x, accelero_values.y, accelero_values.z],
+                    [rotation_vector.i, rotation_vector.j, rotation_vector.k, rotation_vector.real],
+                    delta_t
+                )
 
-            delta_t = (current_time - self.base_time).total_seconds()
-            self.base_time = current_time
-            pose = self.imu_tracker.update([acceleroValues.x, acceleroValues.y, acceleroValues.z],
-                                           [rotationVector.i, rotationVector.j, rotationVector.k, rotationVector.real],
-                                           delta_t)
-        inMessage = pcQueue.tryGet()
-        inPointCloud = inMessage["pcl"]
-        points = inPointCloud.getPoints().astype(np.float64)
-        pcd.points = o3d.utility.Vector3dVector(points)
-        inColor = inMessage["rgb"]
-        cvColorFrame = inColor.getCvFrame()
-        if self.visualize:
-            self.line_points.append(pose[:3, 3])
-            pcd.transform(pose)
-            self.vis.add_geometry(pcd)
-            self.vis.poll_events()
-            self.vis.update_renderer()
-            self.line_set.points = o3d.utility.Vector3dVector(self.line_points)
-            if len(points) > 1:
-                lines = [[j, j + 1] for j in range(len(self.line_points) - 1)]
-                self.line_set.lines = o3d.utility.Vector2iVector(lines)
-                colors = [[1, 0, 0] for _ in range(len(lines))]
-                self.line_set.colors = o3d.utility.Vector3dVector(colors)
-            self.vis.update_geometry(self.line_set)
-            self.vis.poll_events()
-            self.vis.update_renderer()
+        if pc_message:
+            in_point_cloud = pc_message["pcl"]
+            points = in_point_cloud.getPoints().astype(np.float64)
+            pcd.points = o3d.utility.Vector3dVector(points)
+            in_color = pc_message["rgb"]
+            cv_color_frame = in_color.getCvFrame()
 
-        return cvColorFrame, pcd, pose
+            if self.visualize:
+                if pose is not None:
+                    self.line_points.append(pose[:3, 3])
+                    pcd.transform(pose)
+                self.vis.add_geometry(pcd)
+                self.vis.poll_events()
+                self.vis.update_renderer()
+                self.update_trajectory()
+
+            return cv_color_frame, pcd, pose
+
+        return None, None, None
+
+    def update_trajectory(self):
+        self.line_set.points = o3d.utility.Vector3dVector(self.line_points)
+        if len(self.line_points) > 1:
+            lines = [[j, j + 1] for j in range(len(self.line_points) - 1)]
+            self.line_set.lines = o3d.utility.Vector2iVector(lines)
+            colors = [[1, 0, 0] for _ in range(len(lines))]
+            self.line_set.colors = o3d.utility.Vector3dVector(colors)
+        self.vis.update_geometry(self.line_set)
+        self.vis.poll_events()
+        self.vis.update_renderer()
+
