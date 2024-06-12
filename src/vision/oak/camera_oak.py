@@ -58,11 +58,15 @@ class CameraOAK:
 
                 delta_t = (current_time - self.base_time).total_seconds()
                 self.base_time = current_time
+                # print([accelero_values.x, accelero_values.y, accelero_values.z],
+                #     [rotation_vector.i, rotation_vector.j, rotation_vector.k, rotation_vector.real],
+                #     delta_t)
                 pose = self.imu_tracker.update(
                     [accelero_values.x, accelero_values.y, accelero_values.z],
                     [rotation_vector.i, rotation_vector.j, rotation_vector.k, rotation_vector.real],
                     delta_t
                 )
+                print(pose)
 
         if pc_message:
             in_point_cloud = pc_message["pcl"]

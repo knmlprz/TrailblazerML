@@ -10,8 +10,13 @@ if __name__ == "__main__":
         config = json.load(json_file)
     oak = CameraOAK(config, visualize=True)
     Startloop = True
+    i=0
     while Startloop:
         rgb, pcd, pose = oak.get_data()
+        #brake after 100
+        i += 1
+        if i > 50:
+            break
         # # Wczytaj przykładową chmurę punktów
         # pcd = m2d.generate_random_point_cloud(num_points=1000, value_range=(-1, 1))
         #
