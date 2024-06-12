@@ -68,9 +68,9 @@ class CameraHendler:
         self.xlinkOut = self.pipeline.create(dai.node.XLinkOut)
         self.xlinkOut.setStreamName("imu")
 
-        self.imu.enableIMUSensor(dai.IMUSensor.ACCELEROMETER, imu_config['ACCELEROMETER_RAW'])
+        self.imu.enableIMUSensor(dai.IMUSensor.LINEAR_ACCELERATION, imu_config['LINEAR_ACCELERATION'])
         self.imu.enableIMUSensor(dai.IMUSensor.GYROSCOPE_RAW, imu_config['GYROSCOPE_RAW'])
-        self.imu.enableIMUSensor(dai.IMUSensor.ARVR_STABILIZED_ROTATION_VECTOR, imu_config['ROTATION_VECTOR'])
+        self.imu.enableIMUSensor(dai.IMUSensor.ROTATION_VECTOR, imu_config['ROTATION_VECTOR'])
 
         self.imu.setBatchReportThreshold(imu_config['batch_threshold'])
         self.imu.setMaxBatchReports(imu_config['max_batch_reports'])

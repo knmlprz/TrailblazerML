@@ -549,6 +549,23 @@ packaging = "*"
 tenacity = ">=6.2.0"
 
 [[package]]
+name = "pykalman"
+version = "0.9.7"
+description = "An implementation of the Kalman Filter, Kalman Smoother, and EM algorithm in Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+numpy = "*"
+scipy = "*"
+
+[package.extras]
+all = ["pytest", "sphinx", "numpydoc", "twine"]
+docs = ["sphinx", "numpydoc"]
+tests = ["pytest"]
+
+[[package]]
 name = "pyparsing"
 version = "3.1.2"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
@@ -798,7 +815,7 @@ testing = ["pytest (>=6,<8.1.0 || >=8.2.0)", "pytest-checkdocs (>=2.4)", "pytest
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "9d19dd48b9c9bfd347220969b71d20a21bbbd813fbc82f9def184157b941cc84"
+content-hash = "1e0caa38a5b2b36a9cd6c38560612587dc8c99ee97479cada65dc4dcac5ab343"
 
 [metadata.files]
 addict = []
@@ -842,6 +859,7 @@ pandas = []
 pillow = []
 platformdirs = []
 plotly = []
+pykalman = []
 pyparsing = []
 python-dateutil = []
 pytz = []
