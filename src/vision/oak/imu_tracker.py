@@ -8,28 +8,20 @@ class ImuTracker:
         self.velocity = np.zeros(3)
         self.orientation = np.eye(3)
         self.initialized = False
+        self.global_transform = np.eye(4)  # Globalna macierz transformacji
 
-        n_dim_state = 9  # Rozmiar stanu
+        n_dim_state = 9
         self.kf = KalmanFilter(n_dim_state=n_dim_state, n_dim_obs=3)
 
-        # Parametry filtru
         self.kf.transition_matrices = np.eye(n_dim_state)
         self.kf.observation_matrices = np.eye(3, n_dim_state)
         self.kf.transition_covariance = np.eye(n_dim_state) * 0.01
         self.kf.observation_covariance = np.eye(3) * 0.1
 
-        # Stan początkowy
         self.current_state_mean = np.zeros(n_dim_state)
         self.current_state_covariance = np.eye(n_dim_state) * 1.0
 
-    def quaternion_to_rotation_matrix(self, q: list) -> np.array:
-        """ Convert a quaternion into a rotation matrix.
-        Args:
-            q (list): The quaternion to convert.
-        Returns:
-            np.array: The rotation matrix 3x3.
-
-        """
+    def quaternion_to_rotation_matrix(self, q):
         w, x, y, z = q
         return np.array([
             [1 - 2 * y ** 2 - 2 * z ** 2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
@@ -44,9 +36,8 @@ class ImuTracker:
             self.current_state_mean[:3] = self.position
             self.current_state_mean[3:6] = self.velocity
             self.current_state_mean[6:9] = accel_data
-            return np.eye(4)
+            return self.global_transform  # Początkowa macierz jednostkowa
 
-        # Aktualizacja filtru Kalmana
         self.current_state_mean, self.current_state_covariance = self.kf.filter_update(
             self.current_state_mean,
             self.current_state_covariance,
@@ -55,13 +46,15 @@ class ImuTracker:
 
         self.position = self.current_state_mean[:3]
         self.velocity = self.current_state_mean[3:6]
+        new_orientation = np.dot(self.quaternion_to_rotation_matrix(rotation_vector), self.orientation)
 
-        # Aktualizacja orientacji
-        self.orientation = np.dot(self.quaternion_to_rotation_matrix(rotation_vector), self.orientation)
+        # Budowa lokalnej macierzy transformacji
+        local_transform = np.eye(4)
+        local_transform[:3, :3] = new_orientation
+        local_transform[:3, 3] = self.position - self.global_transform[:3, 3]  # Oblicz przesunięcie względem poprzedniej pozycji
 
-        # Budowa macierzy transformacji
-        pose_matrix = np.eye(4)
-        pose_matrix[:3, :3] = self.orientation
-        pose_matrix[:3, 3] = self.position
+        # Aktualizacja globalnej transformacji
+        self.global_transform = np.dot(self.global_transform, local_transform)
+        self.orientation = new_orientation
 
-        return pose_matrix
+        return self.global_transform
