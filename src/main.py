@@ -17,6 +17,6 @@ if __name__ == "__main__":
         #
         # # Pozycja z akcelerometru (przykładowe wartości)
         # accel_position = (2, 3, 1)
-        #
+        #c
         # # Rzutowanie chmury punktów na mapę 2D z wizualizacją
         # print(m2d.point_cloud_to_2d_map(pcd, accel_position=accel_position, visualization=False))
