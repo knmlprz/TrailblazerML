@@ -1,5 +1,5 @@
 import numpy as np
-import vision.QAK.reading_data as rd
+import vision.oak.reading_data as rd
 import map2d.translator as m2d
 
 if __name__ == "__main__":
