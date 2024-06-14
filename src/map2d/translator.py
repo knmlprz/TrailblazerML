@@ -24,16 +24,17 @@ class PointCloudMapper:
     
     def normalize_values(self,points):
         """
-        Normalizes the z-values of the given points to be within the range [-1, 1].
+        Normalizes the y-values of the given points to be within the range [-1, 1].
         Args:
             points (np.array): Points extracted from the point cloud.
         Returns:
             np.array: The array of normalized points.
         """
-        z_min = np.min(points[:, 2])
-        z_max = np.max(points[:, 2])
-        points[:, 2] = 2 * (points[:, 2] - z_min) / (z_max - z_min) - 1
-        return points
+        normalized_points = points.copy()
+        y_min = np.min(points[:, 1])
+        y_max = np.max(points[:, 1])
+        normalized_points[:, 1] = 2 * (normalized_points[:, 1] - y_min) / (y_max - y_min) - 1
+        return normalized_points
 
     def point_cloud_to_2d_map(self, point_cloud, accel_position=(0, 0, 0)):
         """
@@ -52,21 +53,21 @@ class PointCloudMapper:
 
         translated_points = self.normalize_values(translated_points)
 
-        # Determine the range of x and y axes
-        min_x, min_y = np.min(translated_points[:, :2], axis=0)
-        max_x, max_y = np.max(translated_points[:, :2], axis=0)
+        # Determine the range of x and z axes (since we swapped y with z)
+        min_x, min_z = np.min(translated_points[:, [0, 2]], axis=0)
+        max_x, max_z = np.max(translated_points[:, [0, 2]], axis=0)
 
         # Determine the size of the 2D map
         x_range = np.linspace(min_x, max_x, self.res)
-        y_range = np.linspace(min_y, max_y, self.res)
+        z_range = np.linspace(min_z, max_z, self.res)
 
         # Assign values to the 2D map
         for x, y, z in translated_points:
             xi = np.searchsorted(x_range, x) - 1
-            yi = np.searchsorted(y_range, y) - 1
+            zi = np.searchsorted(z_range, z) - 1
 
-            if 0 <= xi < self.res and 0 <= yi < self.res:
-                self.map_2d[yi, xi] = z
+            if 0 <= xi < self.res and 0 <= zi < self.res:
+                self.map_2d[zi, xi] = y
 
         # Visualization (optional)
         if self.visualize:
@@ -76,7 +77,7 @@ class PointCloudMapper:
                 self.visualize_2d_map_plot()
 
         return self.map_2d
-
+    
     def visualize_2d_map_plot(self):
         """
         Visualizes a 2D map using Matplotlib.
@@ -90,8 +91,8 @@ class PointCloudMapper:
         plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
         plt.title('2D Map')
         plt.xlabel('X axis')
-        plt.ylabel('Y axis')
-        plt.colorbar(label='Z value')
+        plt.ylabel('Z axis')
+        plt.colorbar(label='Y value')
         
         # Pause to update the plot
         plt.pause(0.01)  
