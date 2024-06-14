@@ -25,6 +25,7 @@ class CameraOAK:
             self.vis.destroy_window()
 
     def init_visualizer(self) -> None:
+        """ Initialize the visualizer if needed."""
         if self.visualize:
             self.vis = o3d.visualization.Visualizer()
             self.vis.create_window()
@@ -84,6 +85,7 @@ class CameraOAK:
         return None, None, None
 
     def update_trajectory(self):
+        """ Update the line set for the trajectory visualization."""
         self.line_set.points = o3d.utility.Vector3dVector(self.line_points)
         if len(self.line_points) > 1:
             lines = [[j, j + 1] for j in range(len(self.line_points) - 1)]

@@ -1,10 +1,11 @@
 import depthai as dai
+from config_oak import ConfigOak
 
 
 class CameraHendler:
     """ CameraHendler class for handling the camera configuration."""
 
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config: ConfigOak) -> None:
         """ Initialize the CameraHendler class.
         Args:
             config (dict): The configuration dictionary.

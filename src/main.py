@@ -1,13 +1,13 @@
 import map2d.translator as m2d
 from vision.oak.camera_oak import CameraOAK
-import json
+
+from vision.oak.config_oak import load_config
 from click import getchar
 
 if __name__ == "__main__":
 
     # Example of how to use the classes and functions
-    with open('vision/oak/config_oak.json', 'r') as json_file:
-        config = json.load(json_file)
+    config = load_config('vision/oak/config_oak.json')
     oak = CameraOAK(config, visualize=True)
     Startloop = True
     while Startloop:
@@ -17,6 +17,6 @@ if __name__ == "__main__":
         #
         # # Pozycja z akcelerometru (przykładowe wartości)
         # accel_position = (2, 3, 1)
-        #
+        #c
         # # Rzutowanie chmury punktów na mapę 2D z wizualizacją
         # print(m2d.point_cloud_to_2d_map(pcd, accel_position=accel_position, visualization=False))
