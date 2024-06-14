@@ -21,3 +21,4 @@ if __name__ == "__main__":
         # TODO: ALL THE REST
         ###
         map_2d = mapper.point_cloud_to_2d_map(pcd, point)
+        print(map_2d)

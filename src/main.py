@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     # Example of how to use the classes and functions
     config = load_config('vision/oak/config_oak.json')
-    oak = CameraOAK(config, visualize=True)
+    oak = CameraOAK(config, visualize=False)
     Startloop = True
     while Startloop:
         rgb, pcd, pose = oak.get_data()
