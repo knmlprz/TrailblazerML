@@ -19,4 +19,5 @@ if __name__ == "__main__":
         ### HERE WE CAN ADD SOME FUNCTIONALITY
         # TODO: ALL THE REST
         ###
-        map_2d = mapper.point_cloud_to_2d_map(pcd,[0,0,0])
+        map_2d = mapper.point_cloud_to_2d_map(pcd,point)
+        # print(map_2d)
