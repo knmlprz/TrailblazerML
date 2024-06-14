@@ -22,7 +22,7 @@ class PointCloudMapper:
         if self.visualize:
             self.vis.destroy_window()
     
-    def normalize_values(self,points):
+    def normalize_values(self, points):
         """
         Normalizes the y-values of the given points to be within the range [-1, 1].
         Args:
@@ -77,7 +77,7 @@ class PointCloudMapper:
                 self.visualize_2d_map_plot()
 
         return self.map_2d
-    
+
     def visualize_2d_map_plot(self):
         """
         Visualizes a 2D map using Matplotlib.
@@ -86,17 +86,22 @@ class PointCloudMapper:
         Returns:
             None
         """
+        plt.ion()
         plt.clf()
         
-        plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
+        x = np.linspace(0, self.map_2d.shape[1], self.map_2d.shape[1])
+        y = np.linspace(0, self.map_2d.shape[0], self.map_2d.shape[0])
+        X, Y = np.meshgrid(x, y)
+        
+        plt.pcolormesh(X, Y, self.map_2d.T, cmap='viridis', shading='auto')
         plt.title('2D Map')
         plt.xlabel('X axis')
         plt.ylabel('Z axis')
         plt.colorbar(label='Y value')
         
         # Pause to update the plot
-        plt.pause(0.01)  
-
+        plt.pause(0.01)
+        
     def visualize_2d_map(self, accel_position):
         """
         Visualizes a 2D map using Open3D.
