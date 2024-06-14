@@ -5,7 +5,7 @@ import open3d as o3d
 
 
 class Simulation3D:
-    def __init__(self, base_path: str, 5):
+    def __init__(self, base_path: str, visualize: bool = False):
         """
         Class to simulate reading data from the camera in a loop, frame by frame.
         Args:
