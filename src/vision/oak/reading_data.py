@@ -146,14 +146,3 @@ def read_pose(pose_path: str) -> np.ndarray:
     if pose.shape == (3, 4):  # Convert 3x4 matrix to 4x4 by adding a row for homogeneous coordinates
         pose = np.vstack((pose, np.array([0, 0, 0, 1], dtype=np.float64)))
     return pose
-
-
-def reading_data_form_oak():
-    """
-    Function intended to read data for simulation purposes.
-    Intended to return image, sparse_depth, and pose data from the oak system.
-
-    Raises:
-        NotImplementedError: Indicates that the function has not been implemented yet.
-    """
-    raise NotImplementedError("This function has not been implemented yet.")
