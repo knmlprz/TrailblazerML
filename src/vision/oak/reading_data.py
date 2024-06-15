@@ -59,6 +59,7 @@ class Simulation3D:
             intrinsic = o3d.camera.PinholeCameraIntrinsic(rgb.shape[1], rgb.shape[0], K[0, 0], K[1, 1], K[0, 2],
                                                           K[1, 2])
             pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
+            pcd = pcd.voxel_down_sample(voxel_size=0.05)
             pcd.transform(pose)
 
             point = pose[:3, 3]
