@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import open3d as o3d
+from .transform_data import assignment_to_sectors
 
 
 class Simulation3D:
@@ -61,6 +62,7 @@ class Simulation3D:
             pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
             pcd = pcd.voxel_down_sample(voxel_size=0.05)
             pcd.transform(pose)
+            pcd = assignment_to_sectors(pcd)
 
             point = pose[:3, 3]
             if self.visualize:
