@@ -1,5 +1,5 @@
 import depthai as dai
-from config_oak import ConfigOak
+from .config_oak import ConfigOak
 
 
 class CameraHendler:
@@ -42,6 +42,8 @@ class CameraHendler:
         """ Setup the depth cameras configuration."""
         depth_config = self.config['depth']
         self.depth = self.pipeline.create(dai.node.StereoDepth)
+        print(depth_config['median_filter'])
+        print(type(depth_config['median_filter']))
         self.depth.setDefaultProfilePreset(getattr(dai.node.StereoDepth.PresetMode, depth_config['preset']))
         self.depth.initialConfig.setMedianFilter(getattr(dai.MedianFilter, depth_config['median_filter']))
         self.depth.setLeftRightCheck(depth_config['left_right_check'])
@@ -65,23 +67,20 @@ class CameraHendler:
         # Konfiguracja filtra speckle
         initialConfig.postProcessing.speckleFilter.enable = True
         initialConfig.postProcessing.speckleFilter.speckleRange = 50
-        initialConfig.postProcessing.speckleFilter.speckleWindowSize = 200
-
-        # Konfiguracja filtra medianowego
-        initialConfig.postProcessing.medianFilter.enable = True
-        initialConfig.postProcessing.medianFilter.kernelSize = dai.MedianFilter.KERNEL_7x7
 
         # Konfiguracja filtra czasowego
-        initialConfig.postProcessing.temporalFilter.enable = True
-        initialConfig.postProcessing.temporalFilter.alpha = 0.4
+        # initialConfig.postProcessing.temporalFilter.enable = True
+        # # Assuming there's a method to set PersistencyMode
+        # initialConfig.postProcessing.temporalFilter.PersistencyMode = dai.RawStereoDepthConfig.PostProcessing.TemporalFilter.PersistencyMode.VALID_8_OUT_OF_8
+        # initialConfig.postProcessing.temporalFilter.alpha = 0.4
 
         # Konfiguracja filtra bilateralnego
-        initialConfig.postProcessing.bilateralFilter.enable = True
-        initialConfig.postProcessing.bilateralFilter.sigma = 0.75
+        # initialConfig.postProcessing.bilateralFilter.enable = True
+        # initialConfig.postProcessing.bilateralFilter.sigma = 0.75
 
-        # Konfiguracja filtra decymacyjnego
-        initialConfig.postProcessing.decimationFilter.enable = True
-        initialConfig.postProcessing.decimationFilter.decimationFactor = 2
+        # # Konfiguracja filtra decymacyjnego
+        # initialConfig.postProcessing.decimationFilter.enable = True
+        # initialConfig.postProcessing.decimationFilter.decimationFactor = 2
 
         self.depth.initialConfig.set(initialConfig)
 
@@ -93,6 +92,17 @@ class CameraHendler:
         xout_depth = self.pipeline.create(dai.node.XLinkOut)
         xout_depth.setStreamName("depth")
         self.depth.depth.link(xout_depth.input)
+
+    def setup_pointcloud(self) -> None:
+        """ Setup the pointcloud configuration."""
+        self.pointcloud = self.pipeline.create(dai.node.PointCloud)
+        self.depth.depth.link(self.pointcloud.inputDepth)
+        self.sync = self.pipeline.create(dai.node.Sync)
+        self.camRgb.isp.link(self.sync.inputs["rgb"])
+        self.pointcloud.outputPointCloud.link(self.sync.inputs["pcl"])
+        self.xOut = self.pipeline.create(dai.node.XLinkOut)
+        self.sync.out.link(self.xOut.input)
+        self.xOut.setStreamName("out")
 
     def setup_imu(self) -> None:
         """ Setup the IMU configuration."""
