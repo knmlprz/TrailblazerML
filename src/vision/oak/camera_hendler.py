@@ -48,19 +48,51 @@ class CameraHendler:
         self.depth.setExtendedDisparity(depth_config['extended_disparity'])
         self.depth.setSubpixel(depth_config['subpixel'])
         self.depth.setDepthAlign(getattr(dai.CameraBoardSocket, depth_config['align_to']))
+
+        # Konfiguracja post-processingu
+        initialConfig = self.depth.initialConfig.get()
+
+        # Konfiguracja filtra progowego na zakres 0 do 10000 mm (10 m)
+        initialConfig.postProcessing.thresholdFilter.minRange = 0
+        initialConfig.postProcessing.thresholdFilter.maxRange = 10000
+
+        # Konfiguracja filtra przestrzennego
+        initialConfig.postProcessing.spatialFilter.enable = True
+        initialConfig.postProcessing.spatialFilter.holeFillingRadius = 2
+        initialConfig.postProcessing.spatialFilter.alpha = 0.5
+        initialConfig.postProcessing.spatialFilter.delta = 20
+
+        # Konfiguracja filtra speckle
+        initialConfig.postProcessing.speckleFilter.enable = True
+        initialConfig.postProcessing.speckleFilter.speckleRange = 50
+        initialConfig.postProcessing.speckleFilter.speckleWindowSize = 200
+
+        # Konfiguracja filtra medianowego
+        initialConfig.postProcessing.medianFilter.enable = True
+        initialConfig.postProcessing.medianFilter.kernelSize = dai.MedianFilter.KERNEL_7x7
+
+        # Konfiguracja filtra czasowego
+        initialConfig.postProcessing.temporalFilter.enable = True
+        initialConfig.postProcessing.temporalFilter.alpha = 0.4
+
+        # Konfiguracja filtra bilateralnego
+        initialConfig.postProcessing.bilateralFilter.enable = True
+        initialConfig.postProcessing.bilateralFilter.sigma = 0.75
+
+        # Konfiguracja filtra decymacyjnego
+        initialConfig.postProcessing.decimationFilter.enable = True
+        initialConfig.postProcessing.decimationFilter.decimationFactor = 2
+
+        self.depth.initialConfig.set(initialConfig)
+
+        # Połączenie wyjść mono kamer z wejściami głębi
         self.monoLeft.out.link(self.depth.left)
         self.monoRight.out.link(self.depth.right)
 
-    def setup_pointcloud(self) -> None:
-        """ Setup the pointcloud configuration."""
-        self.pointcloud = self.pipeline.create(dai.node.PointCloud)
-        self.depth.depth.link(self.pointcloud.inputDepth)
-        self.sync = self.pipeline.create(dai.node.Sync)
-        self.camRgb.isp.link(self.sync.inputs["rgb"])
-        self.pointcloud.outputPointCloud.link(self.sync.inputs["pcl"])
-        self.xOut = self.pipeline.create(dai.node.XLinkOut)
-        self.sync.out.link(self.xOut.input)
-        self.xOut.setStreamName("out")
+        # Dodanie wyjścia dla strumienia głębi
+        xout_depth = self.pipeline.create(dai.node.XLinkOut)
+        xout_depth.setStreamName("depth")
+        self.depth.depth.link(xout_depth.input)
 
     def setup_imu(self) -> None:
         """ Setup the IMU configuration."""
