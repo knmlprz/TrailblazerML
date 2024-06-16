@@ -21,6 +21,7 @@ class CameraOAK:
         self.imu_tracker = ImuTracker()
         self.visualize = visualize
         self.init_visualizer()
+        self.i = 0
 
     def __del__(self):
         if self.visualize:
@@ -55,6 +56,7 @@ class CameraOAK:
         pc_message = pc_queue.tryGet()
         depth_message = depth_queue.tryGet()
 
+
         if imu_data:
             imu_packets = imu_data.packets
             for imu_packet in imu_packets:
@@ -79,12 +81,17 @@ class CameraOAK:
             pcd.points = o3d.utility.Vector3dVector(points)
             in_color = pc_message["rgb"]
             cv_color_frame = in_color.getCvFrame()
+            if pose is not None:
+                self.line_points.append(pose[:3, 3])
+                #pcd.transform(pose)
 
             if self.visualize:
-                if pose is not None:
-                    self.line_points.append(pose[:3, 3])
-                    pcd.transform(pose)
-                self.vis.add_geometry(pcd)
+                cvRGBFrame = cv2.cvtColor(cv_color_frame, cv2.COLOR_BGR2RGB)
+                colors = (cvRGBFrame.reshape(-1, 3) / 255.0).astype(np.float64)
+                pcd.colors = o3d.utility.Vector3dVector(colors)
+                self.i += 1
+                if self.i > 10:
+                    self.vis.add_geometry(pcd)
                 self.vis.poll_events()
                 self.vis.update_renderer()
                 self.update_trajectory()
