@@ -1,5 +1,5 @@
 import depthai as dai
-from config_oak import ConfigOak
+from .config_oak import ConfigOak
 
 
 class CameraHendler:
@@ -38,18 +38,62 @@ class CameraHendler:
         self.monoLeft.setFps(mono_config['fps'])
         self.monoRight.setFps(mono_config['fps'])
 
-    def setup_depth(self) -> None:
-        """ Setup the depth cameras configuration."""
+    def setup_depth(self):
+        """Setup the depth cameras configuration."""
         depth_config = self.config['depth']
         self.depth = self.pipeline.create(dai.node.StereoDepth)
+
+        # Apply depth settings
         self.depth.setDefaultProfilePreset(getattr(dai.node.StereoDepth.PresetMode, depth_config['preset']))
         self.depth.initialConfig.setMedianFilter(getattr(dai.MedianFilter, depth_config['median_filter']))
         self.depth.setLeftRightCheck(depth_config['left_right_check'])
         self.depth.setExtendedDisparity(depth_config['extended_disparity'])
         self.depth.setSubpixel(depth_config['subpixel'])
         self.depth.setDepthAlign(getattr(dai.CameraBoardSocket, depth_config['align_to']))
+
+        # Get the current configuration to modify
+        initialConfig = self.depth.initialConfig.get()
+
+        # Apply post processing settings
+        # Threshold filter
+        threshold_filter = depth_config['threshold_filter']
+        initialConfig.postProcessing.thresholdFilter.minRange = threshold_filter['min_range']
+        initialConfig.postProcessing.thresholdFilter.maxRange = threshold_filter['max_range']
+
+        # Spatial filter
+        spatial_filter = depth_config['spatial_filter']
+        initialConfig.postProcessing.spatialFilter.enable = spatial_filter['enable']
+        initialConfig.postProcessing.spatialFilter.holeFillingRadius = spatial_filter['hole_filling_radius']
+        initialConfig.postProcessing.spatialFilter.alpha = spatial_filter['alpha']
+        initialConfig.postProcessing.spatialFilter.delta = spatial_filter['delta']
+
+        # Speckle filter
+        speckle_filter = depth_config['speckle_filter']
+        initialConfig.postProcessing.speckleFilter.enable = speckle_filter['enable']
+        initialConfig.postProcessing.speckleFilter.speckleRange = speckle_filter['speckle_range']
+
+        self.depth.initialConfig.set(initialConfig)
+
         self.monoLeft.out.link(self.depth.left)
         self.monoRight.out.link(self.depth.right)
+
+        xout_depth = self.pipeline.create(dai.node.XLinkOut)
+        xout_depth.setStreamName("depth")
+        self.depth.depth.link(xout_depth.input)
+
+        # TODO temporalFilter
+        # initialConfig.postProcessing.temporalFilter.enable = True
+        # # Assuming there's a method to set PersistencyMode
+        # initialConfig.postProcessing.temporalFilter.PersistencyMode = dai.RawStereoDepthConfig.PostProcessing.TemporalFilter.PersistencyMode.VALID_8_OUT_OF_8
+        # initialConfig.postProcessing.temporalFilter.alpha = 0.4
+
+        # TODO bilateralFilter
+        # initialConfig.postProcessing.bilateralFilter.enable = True
+        # initialConfig.postProcessing.bilateralFilter.sigma = 0.75
+
+        # TODO decimationFilter
+        # initialConfig.postProcessing.decimationFilter.enable = True
+        # initialConfig.postProcessing.decimationFilter.decimationFactor = 2
 
     def setup_pointcloud(self) -> None:
         """ Setup the pointcloud configuration."""

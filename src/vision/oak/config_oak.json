@@ -2,10 +2,7 @@
     "rgb_camera": {
         "resolution": "THE_1080_P",
         "socket": "CAM_A",
-        "isp_scale": [
-            1,
-            3
-        ],
+        "isp_scale": [1, 3],
         "fps": 5
     },
     "mono_cameras": {
@@ -18,7 +15,21 @@
         "left_right_check": true,
         "extended_disparity": false,
         "subpixel": true,
-        "align_to": "CAM_A"
+        "align_to": "CAM_A",
+        "threshold_filter": {
+            "min_range": 0,
+            "max_range": 10000
+        },
+        "spatial_filter": {
+            "enable": true,
+            "hole_filling_radius": 20,
+            "alpha": 0.5,
+            "delta": 20
+        },
+        "speckle_filter": {
+            "enable": true,
+            "speckle_range": 50
+        }
     },
     "imu": {
         "ACCELEROMETER_RAW": 500,

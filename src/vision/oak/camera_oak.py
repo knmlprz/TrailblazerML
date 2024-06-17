@@ -3,6 +3,7 @@ import open3d as o3d
 import numpy as np
 from vision.oak.imu_tracker import ImuTracker
 from vision.oak.camera_hendler import CameraHendler
+import cv2
 
 
 class CameraOAK:
@@ -15,14 +16,20 @@ class CameraOAK:
         """
         self.handler = CameraHendler(config)
         self.device = dai.Device(self.handler.pipeline)
+        self.set_laser_IrFloodLight()
         self.base_time = None
         self.imu_tracker = ImuTracker()
         self.visualize = visualize
         self.init_visualizer()
+        self.i = 0
 
     def __del__(self):
         if self.visualize:
             self.vis.destroy_window()
+
+    def set_laser_IrFloodLight(self):
+        self.device.setIrLaserDotProjectorIntensity(0.9)
+        self.device.setIrFloodLightIntensity(0.9)
 
     def init_visualizer(self) -> None:
         """ Initialize the visualizer if needed."""
@@ -41,10 +48,14 @@ class CameraOAK:
         """
         imu_queue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
         pc_queue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
+        depth_queue = self.device.getOutputQueue(name="depth", maxSize=4, blocking=False)
+
         pose = None
         pcd = o3d.geometry.PointCloud()
         imu_data = imu_queue.tryGet()
         pc_message = pc_queue.tryGet()
+        depth_message = depth_queue.tryGet()
+
 
         if imu_data:
             imu_packets = imu_data.packets
@@ -70,17 +81,29 @@ class CameraOAK:
             pcd.points = o3d.utility.Vector3dVector(points)
             in_color = pc_message["rgb"]
             cv_color_frame = in_color.getCvFrame()
+            if pose is not None:
+                self.line_points.append(pose[:3, 3])
+                #pcd.transform(pose)
 
             if self.visualize:
-                if pose is not None:
-                    self.line_points.append(pose[:3, 3])
-                    pcd.transform(pose)
-                self.vis.add_geometry(pcd)
+                cvRGBFrame = cv2.cvtColor(cv_color_frame, cv2.COLOR_BGR2RGB)
+                colors = (cvRGBFrame.reshape(-1, 3) / 255.0).astype(np.float64)
+                pcd.colors = o3d.utility.Vector3dVector(colors)
+                self.i += 1
+                if self.i > 10:
+                    self.vis.add_geometry(pcd)
                 self.vis.poll_events()
                 self.vis.update_renderer()
                 self.update_trajectory()
 
             return cv_color_frame, pcd, pose
+
+        if depth_message:
+            depth_frame = depth_message.getFrame()
+            depth_frame_color = cv2.normalize(depth_frame, None, 0, 255, cv2.NORM_MINMAX)
+            depth_frame_color = cv2.applyColorMap(depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET)
+            cv2.imshow("Depth", depth_frame_color)
+            cv2.waitKey(1)
 
         return None, None, None
 
@@ -95,4 +118,3 @@ class CameraOAK:
         self.vis.update_geometry(self.line_set)
         self.vis.poll_events()
         self.vis.update_renderer()
-
