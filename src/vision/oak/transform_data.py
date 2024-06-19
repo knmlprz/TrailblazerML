@@ -30,31 +30,39 @@ def make_sectors(array_size: int, sector_size: float) -> np.ndarray:
     return combined_matrix
 
 
-def assignment_to_sectors(pcd):
+def assignment_to_sectors(pcd: o3d.geometry.PointCloud):
+    """
+
+    :param pcd:
+    :return:
+    """
     sector_size = 0.01
-    sectors = np.load('/home/filip/PycharmProjects/TrailblazerML/src/vision/oak/data.npy')
+    sectors = np.load('./vision/oak/data.npy')
     points = np.asarray(pcd.points)
 
-    x_indices = (points[:, 0] // sector_size).astype(int)
-    z_indices = (points[:, 2] // sector_size).astype(int)
+    # indeksy x, z dla każdego punktu
+    x_indices = (points[:, 2] // sector_size).astype(int)
+    z_indices = (points[:, 0] // sector_size).astype(int)
 
+    # Filtracja punktów dzięki masce
     valid_mask = (x_indices >= 0) & (x_indices < sectors.shape[0]) & (z_indices >= 0) & (z_indices < sectors.shape[1])
 
     x_indices = x_indices[valid_mask]
     z_indices = z_indices[valid_mask]
     valid_points = points[valid_mask]
 
+    # środek sektora
     sector_center_x = (sectors[x_indices, z_indices, 0, 0] + sectors[x_indices, z_indices, 0, 1]) / 2
     sector_center_z = (sectors[x_indices, z_indices, 1, 0] + sectors[x_indices, z_indices, 1, 1]) / 2
 
+    # nowe punkty
     new_points = np.zeros_like(valid_points)
     new_points[:, 0] = sector_center_x
     new_points[:, 1] = valid_points[:, 1]
     new_points[:, 2] = sector_center_z
 
+    # Zamiana na pcd
     new_pcd = o3d.geometry.PointCloud()
     new_pcd.points = o3d.utility.Vector3dVector(new_points)
 
     return new_pcd
-
-
