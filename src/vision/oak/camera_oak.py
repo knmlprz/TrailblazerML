@@ -4,6 +4,7 @@ import numpy as np
 from vision.oak.imu_tracker import ImuTracker
 from vision.oak.camera_hendler import CameraHendler
 import cv2
+from .transform_data import assignment_to_sectors
 
 
 class CameraOAK:
@@ -47,14 +48,16 @@ class CameraOAK:
             tuple: (cvColorFrame, pcd, pose) containing the RGB image, point cloud, and camera pose.
         """
         imu_queue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
-        pc_queue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
+        pc_queue = self.device.getOutputQueue(name="out", maxSize=1000, blocking=False)
         depth_queue = self.device.getOutputQueue(name="depth", maxSize=4, blocking=False)
 
         pose = None
+
         pcd = o3d.geometry.PointCloud()
         imu_data = imu_queue.tryGet()
         pc_message = pc_queue.tryGet()
         depth_message = depth_queue.tryGet()
+
 
 
         if imu_data:
@@ -85,6 +88,14 @@ class CameraOAK:
                 self.line_points.append(pose[:3, 3])
                 #pcd.transform(pose)
 
+            print("1",pcd)
+
+
+            if not pcd.is_empty():
+                pcd = pcd.voxel_down_sample(voxel_size=100)
+                #pcd.transform(pose)
+                pcd = assignment_to_sectors(pcd)
+            print("2",pcd)
             if self.visualize:
                 cvRGBFrame = cv2.cvtColor(cv_color_frame, cv2.COLOR_BGR2RGB)
                 colors = (cvRGBFrame.reshape(-1, 3) / 255.0).astype(np.float64)
@@ -92,6 +103,10 @@ class CameraOAK:
                 self.i += 1
                 if self.i > 10:
                     self.vis.add_geometry(pcd)
+                if self.i > 50:
+                    self.vis.run()
+                    while True:
+                        pass
                 self.vis.poll_events()
                 self.vis.update_renderer()
                 self.update_trajectory()

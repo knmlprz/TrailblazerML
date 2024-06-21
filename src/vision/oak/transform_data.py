@@ -4,6 +4,7 @@ import os
 import pandas as pd
 from numpy import save
 import numpy as np
+from numpy import save
 
 
 def make_sectors(array_size: int, sector_size: float) -> np.ndarray:
@@ -26,7 +27,6 @@ def make_sectors(array_size: int, sector_size: float) -> np.ndarray:
     combined_matrix[..., 0, 1] = xv + sector_size
     combined_matrix[..., 1, 0] = yv - sector_size
     combined_matrix[..., 1, 1] = yv
-
     return combined_matrix
 
 
@@ -36,7 +36,7 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud):
     :param pcd:
     :return:
     """
-    sector_size = 0.01
+    sector_size = 100
     sectors = np.load('./vision/oak/data.npy')
     points = np.asarray(pcd.points)
 
@@ -66,3 +66,6 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud):
     new_pcd.points = o3d.utility.Vector3dVector(new_points)
 
     return new_pcd
+
+matrix = make_sectors(array_size=5000, sector_size=100)
+save('data.npy', matrix)
