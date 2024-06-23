@@ -75,13 +75,13 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
 
     # Determine the size of the resulting matrix
     max_index = np.max(sectors)
-    wyniki = np.full((max_index + 1, max_index + 1), np.nan)
+    results = np.full((max_index + 1, max_index + 1), np.nan)
 
     # Assign center of mass values to the result matrix
     for (x_idx, z_idx), center_mass in centers_of_masses.items():
-        wyniki[x_idx, z_idx] = center_mass
+        results[x_idx, z_idx] = center_mass
 
-    return wyniki
+    return results
 
 
 # Tworzenie pliku sektorów
