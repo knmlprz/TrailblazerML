@@ -63,9 +63,10 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
 
     # Calculate center of mass for each sector
     centers_of_masses = {}
+    y_axis = 1
     for sector in unique_sectors:
         sector_mask = (x_indices == sector[0]) & (z_indices == sector[1])
-        sector_points = valid_points[sector_mask, 1]  # Use y values for the center of mass calculation
+        sector_points = valid_points[sector_mask, y_axis]  # Use y values for the center of mass calculation
         masses = np.ones_like(sector_points)
         center_of_mass = np.sum(sector_points * masses) / np.sum(masses)
         centers_of_masses[(sector[0], sector[1])] = center_of_mass
