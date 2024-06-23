@@ -1,10 +1,5 @@
 import open3d as o3d
-import cv2
-import os
-import pandas as pd
-from numpy import save
 import numpy as np
-from numpy import save
 
 
 def make_sectors(array_size: int, sector_size: float) -> None:
