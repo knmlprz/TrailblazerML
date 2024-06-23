@@ -44,7 +44,7 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
     Returns: (np.ndarray) A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
                 The array size is determined by the maximum sector indices found in the point cloud.
     """
-    sectors = np.load('./vision/oak/data.npy')
+    sectors = np.load('./src/vision/oak/data.npy')
     points = np.asarray(pcd.points)
 
     # Calculate x and z indices for each point
@@ -71,7 +71,6 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
 
     # Extract keys and values from the centers_of_masses dictionary
     sectors = np.array(list(centers_of_masses.keys()))
-    center_mass_values = np.array(list(centers_of_masses.values()))
 
     # Determine the size of the resulting matrix
     max_index = np.max(sectors)
