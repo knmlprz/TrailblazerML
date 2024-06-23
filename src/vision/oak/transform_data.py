@@ -4,13 +4,13 @@ import os
 import json
 
 
-def load_config(config_path: str = './src/utils/sectors_conf.json') -> dict:
-    with open(config_path, 'r') as f:
+def load_config(config_path: str = "./src/utils/sectors_conf.json") -> dict:
+    with open(config_path, "r") as f:
         config = json.load(f)
     return config
 
 
-def make_sectors(path: str = './') -> None:
+def make_sectors(path: str = "./") -> None:
     """
     Generates a matrix representing sectors based on given array size and sector size.
 
@@ -23,8 +23,8 @@ def make_sectors(path: str = './') -> None:
     :return: None
     """
     config = load_config()
-    sector_size = config['sector_size']
-    array_size = config['array_size']
+    sector_size = config["sector_size"]
+    array_size = config["array_size"]
     x = np.arange(array_size) * sector_size
     y = np.arange(array_size) * sector_size + sector_size
     xv, yv = np.meshgrid(x, y)
@@ -34,11 +34,13 @@ def make_sectors(path: str = './') -> None:
     combined_matrix[..., 0, 1] = xv + sector_size
     combined_matrix[..., 1, 0] = yv - sector_size
     combined_matrix[..., 1, 1] = yv
-    path = os.path.join(path, 'sectors.npy')
+    path = os.path.join(path, "sectors.npy")
     np.save(path, combined_matrix)
 
 
-def assignment_to_sectors(pcd: o3d.geometry.PointCloud, path: str = './src/vision/oak/sectors.npy'):
+def assignment_to_sectors(
+    pcd: o3d.geometry.PointCloud, path: str = "./src/vision/oak/sectors.npy"
+):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
@@ -54,7 +56,7 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, path: str = './src/visio
                 The array size is determined by the maximum sector indices found in the point cloud.
     """
     config = load_config()
-    sector_size = config['sector_size']
+    sector_size = config["sector_size"]
 
     try:
         sectors = np.load(path)
@@ -70,7 +72,12 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, path: str = './src/visio
     z_indices = (points[:, 0] // sector_size).astype(int)
 
     # Filter points to only include those within valid sector ranges
-    valid_mask = (x_indices >= 0) & (x_indices < sectors.shape[0]) & (z_indices >= 0) & (z_indices < sectors.shape[1])
+    valid_mask = (
+        (x_indices >= 0)
+        & (x_indices < sectors.shape[0])
+        & (z_indices >= 0)
+        & (z_indices < sectors.shape[1])
+    )
     x_indices = x_indices[valid_mask]
     z_indices = z_indices[valid_mask]
     valid_points = points[valid_mask]
@@ -83,7 +90,9 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, path: str = './src/visio
     y_axis = 1
     for sector in unique_sectors:
         sector_mask = (x_indices == sector[0]) & (z_indices == sector[1])
-        sector_points = valid_points[sector_mask, y_axis]  # Use y values for the center of mass calculation
+        sector_points = valid_points[
+            sector_mask, y_axis
+        ]  # Use y values for the center of mass calculation
         masses = np.ones_like(sector_points)
         center_of_mass = np.sum(sector_points * masses) / np.sum(masses)
         centers_of_masses[(sector[0], sector[1])] = center_of_mass
@@ -100,5 +109,3 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, path: str = './src/visio
         results[x_idx, z_idx] = center_mass
 
     return results
-
-
