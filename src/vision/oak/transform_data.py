@@ -7,7 +7,7 @@ import numpy as np
 from numpy import save
 
 
-def make_sectors(array_size: int, sector_size: float) -> np.ndarray:
+def make_sectors(array_size: int, sector_size: float) -> None:
     """
     Generates a matrix representing sectors based on given array size and sector size.
 
@@ -27,7 +27,8 @@ def make_sectors(array_size: int, sector_size: float) -> np.ndarray:
     combined_matrix[..., 0, 1] = xv + sector_size
     combined_matrix[..., 1, 0] = yv - sector_size
     combined_matrix[..., 1, 1] = yv
-    return combined_matrix
+
+    np.save('data.npy', combined_matrix)
 
 
 def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.01):
@@ -81,3 +82,7 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
         wyniki[x_idx, z_idx] = center_mass
 
     return wyniki
+
+
+# Tworzenie pliku sektorów
+make_sectors(5000, 100)
