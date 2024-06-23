@@ -1,17 +1,21 @@
 import open3d as o3d
 import numpy as np
+import os
 
 
-def make_sectors(array_size: int, sector_size: float) -> None:
+def make_sectors(array_size: int, sector_size: float, path: str = './') -> None:
     """
     Generates a matrix representing sectors based on given array size and sector size.
 
-    [ x, x + sector_size
-     y - sector_size, y ]
+    The generated matrix has the structure:
+    [ [x, x + sector_size], [y - sector_size, y] ]
+
+    The file is saved to the specified path in the .npy format.
 
     :param array_size: Size of each input array.
     :param sector_size: Size of each sector in the matrix.
-    :return: numpy array representing the sectors.
+    :param path: File path where the output matrix should be saved.
+    :return: None
     """
     x = np.arange(array_size) * sector_size
     y = np.arange(array_size) * sector_size + sector_size
@@ -22,11 +26,11 @@ def make_sectors(array_size: int, sector_size: float) -> None:
     combined_matrix[..., 0, 1] = xv + sector_size
     combined_matrix[..., 1, 0] = yv - sector_size
     combined_matrix[..., 1, 1] = yv
+    path = os.path.join(path, 'sectors.npy')
+    np.save(path, combined_matrix)
 
-    np.save('data.npy', combined_matrix)
 
-
-def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.01):
+def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.01, path: str = './src/vision/oak/sectors.npy'):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
@@ -36,11 +40,12 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
 
     Parameters:
     pcd (o3d.geometry.PointCloud): The input point cloud containing 3D points.
+    path (str): File path where the sectors numpy array is loaded from. Default is './src/vision/oak/sectors.npy'.
 
-    Returns: (np.ndarray) A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
+    Returns (np.ndarray): A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
                 The array size is determined by the maximum sector indices found in the point cloud.
     """
-    sectors = np.load('./src/vision/oak/data.npy')
+    sectors = np.load(path)
     points = np.asarray(pcd.points)
 
     # Calculate x and z indices for each point
