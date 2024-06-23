@@ -62,7 +62,7 @@ class Simulation3D:
             pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
             pcd = pcd.voxel_down_sample(voxel_size=0.05)
             pcd.transform(pose)
-            pcd = assignment_to_sectors(pcd)
+            matrix = assignment_to_sectors(pcd)
 
             point = pose[:3, 3]
             if self.visualize:

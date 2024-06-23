@@ -30,42 +30,55 @@ def make_sectors(array_size: int, sector_size: float) -> np.ndarray:
     return combined_matrix
 
 
-def assignment_to_sectors(pcd: o3d.geometry.PointCloud):
+def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.01):
     """
+    Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
-    :param pcd:
-    :return:
+    The function takes a 3D point cloud, divides the space into sectors of a fixed size, and computes the
+    center of mass for the points in each sector. The result is a 2D matrix where each cell represents
+    a sector and contains the center of mass value for that sector.
+
+    Parameters:
+    pcd (o3d.geometry.PointCloud): The input point cloud containing 3D points.
+
+    Returns: (np.ndarray) A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
+                The array size is determined by the maximum sector indices found in the point cloud.
     """
-    sector_size = 100
     sectors = np.load('./vision/oak/data.npy')
     points = np.asarray(pcd.points)
 
-    # indeksy x, z dla każdego punktu
+    # Calculate x and z indices for each point
     x_indices = (points[:, 2] // sector_size).astype(int)
     z_indices = (points[:, 0] // sector_size).astype(int)
 
-    # Filtracja punktów dzięki masce
+    # Filter points to only include those within valid sector ranges
     valid_mask = (x_indices >= 0) & (x_indices < sectors.shape[0]) & (z_indices >= 0) & (z_indices < sectors.shape[1])
-
     x_indices = x_indices[valid_mask]
     z_indices = z_indices[valid_mask]
     valid_points = points[valid_mask]
 
-    # środek sektora
-    sector_center_x = (sectors[x_indices, z_indices, 0, 0] + sectors[x_indices, z_indices, 0, 1]) / 2
-    sector_center_z = (sectors[x_indices, z_indices, 1, 0] + sectors[x_indices, z_indices, 1, 1]) / 2
+    # Find unique sectors
+    unique_sectors = np.unique(np.vstack((x_indices, z_indices)).T, axis=0)
 
-    # nowe punkty
-    new_points = np.zeros_like(valid_points)
-    new_points[:, 0] = sector_center_x
-    new_points[:, 1] = valid_points[:, 1]
-    new_points[:, 2] = sector_center_z
+    # Calculate center of mass for each sector
+    centers_of_masses = {}
+    for sector in unique_sectors:
+        sector_mask = (x_indices == sector[0]) & (z_indices == sector[1])
+        sector_points = valid_points[sector_mask, 1]  # Use y values for the center of mass calculation
+        masses = np.ones_like(sector_points)
+        center_of_mass = np.sum(sector_points * masses) / np.sum(masses)
+        centers_of_masses[(sector[0], sector[1])] = center_of_mass
 
-    # Zamiana na pcd
-    new_pcd = o3d.geometry.PointCloud()
-    new_pcd.points = o3d.utility.Vector3dVector(new_points)
+    # Extract keys and values from the centers_of_masses dictionary
+    sectors = np.array(list(centers_of_masses.keys()))
+    center_mass_values = np.array(list(centers_of_masses.values()))
 
-    return new_pcd
+    # Determine the size of the resulting matrix
+    max_index = np.max(sectors)
+    wyniki = np.full((max_index + 1, max_index + 1), np.nan)
 
-matrix = make_sectors(array_size=5000, sector_size=100)
-save('data.npy', matrix)
+    # Assign center of mass values to the result matrix
+    for (x_idx, z_idx), center_mass in centers_of_masses.items():
+        wyniki[x_idx, z_idx] = center_mass
+
+    return wyniki
