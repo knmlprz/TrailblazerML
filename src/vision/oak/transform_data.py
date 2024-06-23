@@ -1,22 +1,30 @@
 import open3d as o3d
 import numpy as np
 import os
+import json
 
 
-def make_sectors(array_size: int, sector_size: float, path: str = './') -> None:
+def load_config(config_path: str = './src/utils/sectors_conf.json') -> dict:
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    return config
+
+
+def make_sectors(path: str = './') -> None:
     """
     Generates a matrix representing sectors based on given array size and sector size.
 
     The generated matrix has the structure:
-    [ [x, x + sector_size], [y - sector_size, y] ]
+    [ [x, x + sector_size, y - sector_size, y], ... ]
 
     The file is saved to the specified path in the .npy format.
 
-    :param array_size: Size of each input array.
-    :param sector_size: Size of each sector in the matrix.
     :param path: File path where the output matrix should be saved.
     :return: None
     """
+    config = load_config()
+    sector_size = config['sector_size']
+    array_size = config['array_size']
     x = np.arange(array_size) * sector_size
     y = np.arange(array_size) * sector_size + sector_size
     xv, yv = np.meshgrid(x, y)
@@ -30,7 +38,7 @@ def make_sectors(array_size: int, sector_size: float, path: str = './') -> None:
     np.save(path, combined_matrix)
 
 
-def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.01, path: str = './src/vision/oak/sectors.npy'):
+def assignment_to_sectors(pcd: o3d.geometry.PointCloud, path: str = './src/vision/oak/sectors.npy'):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
@@ -45,7 +53,16 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
     Returns (np.ndarray): A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
                 The array size is determined by the maximum sector indices found in the point cloud.
     """
-    sectors = np.load(path)
+    config = load_config()
+    sector_size = config['sector_size']
+
+    try:
+        sectors = np.load(path)
+    except FileNotFoundError:
+        print(f"sectors.npy not found at {path}. Generating new file.")
+        make_sectors(path=os.path.dirname(path))
+        sectors = np.load(path)
+
     points = np.asarray(pcd.points)
 
     # Calculate x and z indices for each point
@@ -85,5 +102,3 @@ def assignment_to_sectors(pcd: o3d.geometry.PointCloud, sector_size: float = 0.0
     return results
 
 
-# Tworzenie pliku sektorów
-make_sectors(5000, 100)
