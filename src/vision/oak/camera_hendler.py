@@ -64,13 +64,14 @@ class CameraHendler:
     def setup_imu(self) -> None:
         """ Setup the IMU configuration."""
         imu_config = self.config['imu']
+        selected_data_type = imu_config['selected_data_type']
         self.imu = self.pipeline.create(dai.node.IMU)
         self.xlinkOut = self.pipeline.create(dai.node.XLinkOut)
         self.xlinkOut.setStreamName("imu")
 
-        self.imu.enableIMUSensor(dai.IMUSensor.LINEAR_ACCELERATION, imu_config['LINEAR_ACCELERATION'])
-        self.imu.enableIMUSensor(dai.IMUSensor.GYROSCOPE_RAW, imu_config['GYROSCOPE_RAW'])
-        self.imu.enableIMUSensor(dai.IMUSensor.ROTATION_VECTOR, imu_config['ROTATION_VECTOR'])
+        for sensor_name, frequency in selected_data_type.items():
+            sensor_enum = getattr(dai.IMUSensor, sensor_name)  # Konwertuj nazwę sensora na odpowiedni enum
+            self.imu.enableIMUSensor(sensor_enum, frequency)
 
         self.imu.setBatchReportThreshold(imu_config['batch_threshold'])
         self.imu.setMaxBatchReports(imu_config['max_batch_reports'])
