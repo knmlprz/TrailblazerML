@@ -9,7 +9,7 @@ class ImuTracker:
         self.initialized = False
 
     def quaternion_to_rotation_matrix(self, q: list) -> np.array:
-        """ Convert a quaternion into a rotation matrix.
+        """Convert a quaternion into a rotation matrix.
         Args:
             q (list): The quaternion to convert.
         Returns:
@@ -17,14 +17,18 @@ class ImuTracker:
 
         """
         w, x, y, z = q
-        return np.array([
-            [1 - 2 * y ** 2 - 2 * z ** 2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
-            [2 * x * y + 2 * z * w, 1 - 2 * x ** 2 - 2 * z ** 2, 2 * y * z - 2 * x * w],
-            [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x ** 2 - 2 * y ** 2]
-        ])
+        return np.array(
+            [
+                [1 - 2 * y**2 - 2 * z**2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
+                [2 * x * y + 2 * z * w, 1 - 2 * x**2 - 2 * z**2, 2 * y * z - 2 * x * w],
+                [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x**2 - 2 * y**2],
+            ]
+        )
 
-    def update(self, accel_data: list, rotation_vector: list, delta_t: float) -> np.array:
-        """ Update the IMU pose estimation.
+    def update(
+        self, accel_data: list, rotation_vector: list, delta_t: float
+    ) -> np.array:
+        """Update the IMU pose estimation.
         Args:
             accel_data (list): The acceleration data of .
             rotation_vector (list): The rotation vector.
@@ -42,9 +46,11 @@ class ImuTracker:
             return np.eye(4)  # Return the identity matrix as the initial pose
 
         # Update velocity and position
-        accel_world = np.dot(self.orientation, accel_data)  # Convert acceleration to world coordinates
+        accel_world = np.dot(
+            self.orientation, accel_data
+        )  # Convert acceleration to world coordinates
         self.velocity += accel_world * delta_t
-        self.position += self.velocity * delta_t + 0.5 * accel_world * delta_t ** 2
+        self.position += self.velocity * delta_t + 0.5 * accel_world * delta_t**2
 
         # Update orientation
         self.orientation = np.dot(rotation_matrix, self.orientation)

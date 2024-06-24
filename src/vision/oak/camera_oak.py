@@ -4,13 +4,14 @@ import numpy as np
 from vision.oak.imu_tracker import ImuTracker
 from vision.oak.camera_hendler import CameraHendler
 import cv2
+from .transform_data import assignment_to_sectors
 
 
 class CameraOAK:
     """class for init camera and get data from it."""
 
     def __init__(self, config: dict, visualize: bool = False):
-        """ Initialize the CameraOAK class.
+        """Initialize the CameraOAK class.
         Args:
             config (dict): The configuration dictionary.
         """
@@ -32,7 +33,7 @@ class CameraOAK:
         self.device.setIrFloodLightIntensity(0.9)
 
     def init_visualizer(self) -> None:
-        """ Initialize the visualizer if needed."""
+        """Initialize the visualizer if needed."""
         if self.visualize:
             self.vis = o3d.visualization.Visualizer()
             self.vis.create_window()
@@ -47,15 +48,17 @@ class CameraOAK:
             tuple: (cvColorFrame, pcd, pose) containing the RGB image, point cloud, and camera pose.
         """
         imu_queue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
-        pc_queue = self.device.getOutputQueue(name="out", maxSize=4, blocking=False)
-        depth_queue = self.device.getOutputQueue(name="depth", maxSize=4, blocking=False)
+        pc_queue = self.device.getOutputQueue(name="out", maxSize=1000, blocking=False)
+        depth_queue = self.device.getOutputQueue(
+            name="depth", maxSize=4, blocking=False
+        )
 
         pose = None
+
         pcd = o3d.geometry.PointCloud()
         imu_data = imu_queue.tryGet()
         pc_message = pc_queue.tryGet()
         depth_message = depth_queue.tryGet()
-
 
         if imu_data:
             imu_packets = imu_data.packets
@@ -71,8 +74,13 @@ class CameraOAK:
                 self.base_time = current_time
                 pose = self.imu_tracker.update(
                     [accelero_values.x, accelero_values.y, accelero_values.z],
-                    [rotation_vector.i, rotation_vector.j, rotation_vector.k, rotation_vector.real],
-                    delta_t
+                    [
+                        rotation_vector.i,
+                        rotation_vector.j,
+                        rotation_vector.k,
+                        rotation_vector.real,
+                    ],
+                    delta_t,
                 )
 
         if pc_message:
@@ -83,7 +91,12 @@ class CameraOAK:
             cv_color_frame = in_color.getCvFrame()
             if pose is not None:
                 self.line_points.append(pose[:3, 3])
-                #pcd.transform(pose)
+                # pcd.transform(pose)
+
+            if not pcd.is_empty():
+                pcd = pcd.voxel_down_sample(voxel_size=100)
+                # pcd.transform(pose)
+                matrix = assignment_to_sectors(pcd)
 
             if self.visualize:
                 cvRGBFrame = cv2.cvtColor(cv_color_frame, cv2.COLOR_BGR2RGB)
@@ -92,6 +105,10 @@ class CameraOAK:
                 self.i += 1
                 if self.i > 10:
                     self.vis.add_geometry(pcd)
+                if self.i > 50:
+                    self.vis.run()
+                    while True:
+                        pass
                 self.vis.poll_events()
                 self.vis.update_renderer()
                 self.update_trajectory()
@@ -100,15 +117,19 @@ class CameraOAK:
 
         if depth_message:
             depth_frame = depth_message.getFrame()
-            depth_frame_color = cv2.normalize(depth_frame, None, 0, 255, cv2.NORM_MINMAX)
-            depth_frame_color = cv2.applyColorMap(depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET)
+            depth_frame_color = cv2.normalize(
+                depth_frame, None, 0, 255, cv2.NORM_MINMAX
+            )
+            depth_frame_color = cv2.applyColorMap(
+                depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET
+            )
             cv2.imshow("Depth", depth_frame_color)
             cv2.waitKey(1)
 
         return None, None, None
 
     def update_trajectory(self):
-        """ Update the line set for the trajectory visualization."""
+        """Update the line set for the trajectory visualization."""
         self.line_set.points = o3d.utility.Vector3dVector(self.line_points)
         if len(self.line_points) > 1:
             lines = [[j, j + 1] for j in range(len(self.line_points) - 1)]
