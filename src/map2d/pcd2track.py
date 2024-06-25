@@ -16,18 +16,24 @@ class TrackMaker:
     0 - can't drive
     1 - can drive
     """
-    def __init__(self):
-        self.visualize = False # todo: implement visualization
+    def __init__(self, pcd: np.array, threshold: float = 1, has_visualization: bool = False):
+        self.original_map = pcd
+        self.has_visualization = has_visualization # todo: implement visualization
+        self.visualization = None
+        self.threshold = threshold
+        self.gradient_x = None
+        self.gradient_y = None
         self.gradient_magnitude = None
 
-        if self.visualize:
-            self.vis = "todo: implement visualization"
+        if self.has_visualization:
+            self.visualization = "todo: implement visualization"
     
     def __del__(self):
-        if self.visualize:
-            self.vis.destroy_window()
+        if True:
+            # self.visualization.destroy_window()
+            pass
 
-    def calculate_gradient_magnitude(self, pcd: np.array):
+    def calculate_gradient_magnitude(self):
         """
         Calculate gradient magnitude of the point cloud.
         Args:
@@ -35,10 +41,10 @@ class TrackMaker:
         Returns:
             None
         """
-        Gx, Gy = np.gradient(pcd)
-        self.gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+        self.gradient_x, self.gradient_y = np.gradient(self.original_map)
+        self.gradient_magnitude = np.sqrt(self.gradient_x ** 2 + self.gradient_y ** 2)
     
-    def gradient_threshold(self, threshold: float = 1):
+    def gradient_threshold(self):
         """
         Thresholding the gradient.
         Args:
@@ -46,10 +52,14 @@ class TrackMaker:
         Returns:
             np.array: Thresholded gradient.
         """
-        print(self.gradient_magnitude < threshold)
-        return self.gradient_magnitude < threshold
+        return (self.gradient_magnitude < self.threshold).astype(int)
     
-    def point_cloud_to_track(self, pcd: np.array):
+    def preserve_nan_values(self, array: np.array):
+        array = array.astype(float)
+        array[np.isnan(self.original_map)] = np.nan
+        return array
+    
+    def point_cloud_to_track(self):
         """
         Convert point cloud to track data.
         Args:
@@ -57,5 +67,6 @@ class TrackMaker:
         Returns:
             np.array: Track data.
         """
-        self.calculate_gradient_magnitude(pcd)
-        return self.gradient_threshold()
+        self.calculate_gradient_magnitude()
+        track = self.gradient_threshold()
+        return self.preserve_nan_values(track)
