@@ -22,6 +22,7 @@ class ImuTracker:
         self.current_state_covariance = np.eye(n_dim_state) * 1.0
 
     def quaternion_to_rotation_matrix(self, q):
+        #TODO visualisation
         w, x, y, z = q
         return np.array([
             [1 - 2 * y ** 2 - 2 * z ** 2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],

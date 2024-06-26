@@ -8,7 +8,7 @@ if __name__ == "__main__":
     # Example of how to use the classes and functions
     with open('vision/oak/config_oak.json', 'r') as json_file:
         config = json.load(json_file)
-    oak = CameraOAK(config, visualize=True)
+    oak = CameraOAK(config, visualize=False)
     Startloop = True
     i=0
     while Startloop:

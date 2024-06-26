@@ -1,8 +1,9 @@
 import depthai as dai
 import open3d as o3d
 import numpy as np
-from vision.oak.imu_tracker import ImuTracker
-from vision.oak.camera_hendler import CameraHendler
+# from vision.oak.imu_tracker import ImuTracker
+# from vision.oak.camera_hendler import CameraHendler
+# from vision.oak.test import ImuTracker
 
 
 class CameraOAK:
@@ -16,7 +17,8 @@ class CameraOAK:
         self.handler = CameraHendler(config)
         self.device = dai.Device(self.handler.pipeline)
         self.base_time = None
-        self.imu_tracker = ImuTracker()
+        self.imu_tracker = ImuTracker(visualize=True)  # TODOvisualize=self.visualize
+
         self.visualize = visualize
         self.init_visualizer()
 
@@ -50,6 +52,7 @@ class CameraOAK:
             imu_packets = imu_data.packets
             for imu_packet in imu_packets:
                 accelero_values = imu_packet.acceleroMeter
+                gyro_values = imu_packet.gyroscope
                 rotation_vector = imu_packet.rotationVector
                 current_time = imu_packet.acceleroMeter.getTimestampDevice()
 
@@ -61,12 +64,14 @@ class CameraOAK:
                 # print([accelero_values.x, accelero_values.y, accelero_values.z],
                 #     [rotation_vector.i, rotation_vector.j, rotation_vector.k, rotation_vector.real],
                 #     delta_t)
+
                 pose = self.imu_tracker.update(
                     [accelero_values.x, accelero_values.y, accelero_values.z],
+                    [gyro_values.x, gyro_values.y, gyro_values.z],
                     [rotation_vector.i, rotation_vector.j, rotation_vector.k, rotation_vector.real],
                     delta_t
                 )
-                print(pose)
+                # print(pose)
 
         if pc_message:
             in_point_cloud = pc_message["pcl"]
@@ -99,4 +104,41 @@ class CameraOAK:
         self.vis.update_geometry(self.line_set)
         self.vis.poll_events()
         self.vis.update_renderer()
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def generate_obstacle_map(size, num_obstacles, max_obstacle_size):
+    grid = np.ones((size, size), dtype=int)  # Initialize grid with open space (1)
+
+    for _ in range(num_obstacles):
+        # Randomly place a rectangular obstacle
+        obstacle_width = np.random.randint(10, max_obstacle_size)
+        obstacle_height = np.random.randint(10, max_obstacle_size)
+        x_start = np.random.randint(0, size - obstacle_width)
+        y_start = np.random.randint(0, size - obstacle_height)
+
+        grid[x_start:x_start + obstacle_width, y_start:y_start + obstacle_height] = 0
+
+    return grid
+
+
+def visualize_grid(grid):
+    plt.figure(figsize=(10, 10))
+    plt.imshow(grid, cmap='gray', interpolation='none')
+    plt.title("Obstacle Map")
+    plt.colorbar()
+    plt.show()
+
+
+# Parameters
+size = 5000
+num_obstacles = 200  # Number of obstacles
+max_obstacle_size = 200  # Maximum size of any obstacle
+
+# Generate and visualize the map
+obstacle_map = generate_obstacle_map(size, num_obstacles, max_obstacle_size)
+visualize_grid(obstacle_map)
 

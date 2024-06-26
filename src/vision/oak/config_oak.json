@@ -24,7 +24,7 @@
     "selected_data_type": {
       "ACCELEROMETER_RAW": 500,
       "GYROSCOPE_RAW": 400,
-      "ROTATION_VECTOR": 400
+      "ARVR_STABILIZED_ROTATION_VECTOR": 400
     },
     "batch_threshold": 1,
     "max_batch_reports": 10
