@@ -30,5 +30,7 @@ if __name__ == "__main__":
         ### HERE WE CAN ADD SOME FUNCTIONALITY
         # TODO: ALL THE REST
         ###
-        # track = track_maker.point_cloud_to_track(pcd.points)
+        
+        # points = np.asarray(pcd.points)
+        # track = track_maker.point_cloud_to_track(points)
         map_2d = mapper.point_cloud_to_2d_map(pcd, point)
