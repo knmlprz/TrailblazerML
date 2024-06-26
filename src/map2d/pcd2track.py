@@ -3,10 +3,6 @@ import open3d as o3d
 
 class TrackMaker:
     """
-    todo:
-        - detect empty pcd sector?
-        - how to connect pcd's?
-
     Class to convert point cloud data to track data.
     From 2d batch of points we are calculating 2 matrices:
     - horizontal gradient
@@ -14,11 +10,17 @@ class TrackMaker:
     Then setting magnitude of gradient as a square root of sum of squares of both gradients.
     Based on that magnitude we are setting threshold to get track data,
     where łazik can drive on.
+    In the places where we don't have data we are setting NaN.
     0 - can't drive
     1 - can drive
+    NaN - no data
+
+    Usage:
+    track_maker = TrackMaker(threshold=0.2, has_visualization=True)
+    track = track_maker.point_cloud_to_track(pcd.points)
     """
 
-    def __init__(self, threshold: float = 1, has_visualization: bool = False):
+    def __init__(self, threshold: float = 0.1, has_visualization: bool = False):
         self.original_map = None
         self.has_visualization = has_visualization
         self.visualization = None
@@ -41,33 +43,41 @@ class TrackMaker:
         """
         Calculate gradient magnitude of the point cloud.
         Args:
-            pcd (np.array): Point cloud data.
+            None
         Returns:
             None
         """
         self.gradient_x, self.gradient_y = np.gradient(self.original_map)
         self.gradient_magnitude = np.sqrt(self.gradient_x ** 2 + self.gradient_y ** 2)
     
-    def gradient_threshold(self):
+    def gradient_threshold(self) -> np.array[int]:
         """
         Thresholding the gradient.
         Args:
-            threshold (float): Threshold value.
+            None
         Returns:
-            np.array: Thresholded gradient.
+            np.array: Thresholded gradient. Array of ints: 0s and 1s.
         """
         return (self.gradient_magnitude < self.threshold).astype(int)
     
-    def preserve_nan_values(self, array: np.array):
+    def preserve_nan_values(self, array: np.array) -> np.array[float]:
+        """
+        Preserve NaN values in the array. Getting NaN values from the original map.
+        Args:
+            np.array: Array to preserve NaN values.
+        Returns:
+            np.array: Array with preserved NaN values.
+        """
         array = array.astype(float)
         array[np.isnan(self.original_map)] = np.nan
         return array
     
     def point_cloud_to_track(self, pcd: np.array):
         """
-        Convert point cloud to track data.
+        Convert point cloud to track data. Function that gathers all logic into one.
+        Use it to get track data from point cloud. 
         Args:
-            None
+            np.array: Point cloud data.
         Returns:
             np.array: Track data.
         """
@@ -85,7 +95,7 @@ class TrackMaker:
         """
         Visualize the track data.
         Args:
-            None
+            np.array: Track 2d array.
         Returns:
             None
         """
