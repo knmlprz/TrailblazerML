@@ -17,7 +17,8 @@ class TrackMaker:
 
     Usage:
     track_maker = TrackMaker(threshold=0.2, has_visualization=True)
-    track = track_maker.point_cloud_to_track(pcd.points)
+    points = np.asarray(pcd.points)
+    track = track_maker.point_cloud_to_track(points)
     """
 
     def __init__(self, threshold: float = 0.1, has_visualization: bool = False):
