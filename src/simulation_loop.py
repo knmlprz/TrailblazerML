@@ -33,4 +33,4 @@ if __name__ == "__main__":
         
         # points = np.asarray(pcd.points)
         # track = track_maker.point_cloud_to_track(points)
-        map_2d = mapper.point_cloud_to_2d_map(pcd,point)
+        map_2d = mapper.point_cloud_to_2d_map(pcd, point)
