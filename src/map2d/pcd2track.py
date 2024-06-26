@@ -48,25 +48,25 @@ class TrackMaker:
             None
         """
         self.gradient_x, self.gradient_y = np.gradient(self.original_map)
-        self.gradient_magnitude = np.sqrt(self.gradient_x ** 2 + self.gradient_y ** 2)
+        self.gradient_magnitude = np.hypot(self.gradient_x, self.gradient_y)
     
-    def gradient_threshold(self) -> np.array[int]:
+    def gradient_threshold(self) -> np.array:
         """
         Thresholding the gradient.
         Args:
             None
         Returns:
-            np.array: Thresholded gradient. Array of ints: 0s and 1s.
+            np.array: Thresholded gradient. Array of 0s and 1s.
         """
         return (self.gradient_magnitude < self.threshold).astype(int)
     
-    def preserve_nan_values(self, array: np.array) -> np.array[float]:
+    def preserve_nan_values(self, array: np.array) -> np.array:
         """
         Preserve NaN values in the array. Getting NaN values from the original map.
         Args:
             np.array: Array to preserve NaN values.
         Returns:
-            np.array: Array with preserved NaN values.
+            np.array: Array with preserved NaN values (float).
         """
         array = array.astype(float)
         array[np.isnan(self.original_map)] = np.nan
