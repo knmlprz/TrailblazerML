@@ -1,4 +1,5 @@
 import numpy as np
+import open3d as o3d
 
 class TrackMaker:
     """
@@ -16,9 +17,10 @@ class TrackMaker:
     0 - can't drive
     1 - can drive
     """
-    def __init__(self, pcd: np.array, threshold: float = 1, has_visualization: bool = False):
-        self.original_map = pcd
-        self.has_visualization = has_visualization # todo: implement visualization
+
+    def __init__(self, threshold: float = 1, has_visualization: bool = False):
+        self.original_map = None
+        self.has_visualization = has_visualization
         self.visualization = None
         self.threshold = threshold
         self.gradient_x = None
@@ -26,12 +28,14 @@ class TrackMaker:
         self.gradient_magnitude = None
 
         if self.has_visualization:
-            self.visualization = "todo: implement visualization"
+            self.visualization = o3d.visualization.Visualizer()
+            self.visualization.create_window()
+            line_set = o3d.geometry.LineSet()
+            self.visualization.add_geometry(line_set)
     
     def __del__(self):
-        if True:
-            # self.visualization.destroy_window()
-            pass
+        if self.visualization:
+            self.visualization.destroy_window()
 
     def calculate_gradient_magnitude(self):
         """
@@ -59,7 +63,7 @@ class TrackMaker:
         array[np.isnan(self.original_map)] = np.nan
         return array
     
-    def point_cloud_to_track(self):
+    def point_cloud_to_track(self, pcd: np.array):
         """
         Convert point cloud to track data.
         Args:
@@ -67,6 +71,51 @@ class TrackMaker:
         Returns:
             np.array: Track data.
         """
+        self.original_map = pcd
         self.calculate_gradient_magnitude()
         track = self.gradient_threshold()
-        return self.preserve_nan_values(track)
+        track_with_NaNs = self.preserve_nan_values(track)
+
+        if self.has_visualization:
+            self.visualize_track(track_with_NaNs)
+
+        return track_with_NaNs
+    
+    def visualize_track(self, track: np.array):
+        """
+        Visualize the track data.
+        Args:
+            None
+        Returns:
+            None
+        """
+        if not self.has_visualization:
+            return
+        
+        rows, cols = track.shape
+
+        points = []
+        colors = []
+
+        for i in range(rows):
+            for j in range(cols):
+                if np.isnan(track[i, j]):
+                    color = [0, 0, 1]  # Blue for NaNs
+                elif track[i, j]:
+                    color = [0, 1, 0]  # Green for drivable areas
+                else:
+                    color = [1, 0, 0]  # Red for non-drivable areas
+
+                points.append([j, -i, track[i, j] if not np.isnan(track[i, j]) else 0])
+                colors.append(color)
+
+        points = np.array(points)
+        colors = np.array(colors)
+
+        point_cloud = o3d.geometry.PointCloud()
+        point_cloud.points = o3d.utility.Vector3dVector(points)
+        point_cloud.colors = o3d.utility.Vector3dVector(colors)
+
+        self.visualization.clear_geometries()
+        self.visualization.add_geometry(point_cloud)
+        self.visualization.poll_events()
