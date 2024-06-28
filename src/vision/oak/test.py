@@ -83,7 +83,7 @@ class ImuTracker:
 
     def update(self, accel_data, gyro_data, rotation_vector, delta_t):
         pose = self.quaternion_rotation_matrix(rotation_vector)
-        print(pose)
+        # print(pose)
         self.mesh.rotate(pose)
         self.vis.update_geometry(self.mesh)
         self.vis.poll_events()
