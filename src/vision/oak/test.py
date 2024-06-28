@@ -120,7 +120,7 @@ class ImuTracker:
         # orientation = self.current_state_mean[6:10]
         #
         # return position, velocity, orientation
-
+        return pose
     def quaternion_rotation_matrix(self, Q):
         """
         Covert a quaternion into a full three-dimensional rotation matrix.
@@ -134,10 +134,10 @@ class ImuTracker:
                  frame to a point in the global reference frame.
         """
         # Extract the values from Q
-        q0 = Q[2] # 0 1 2 3
-        q1 = Q[2] # 1 2 3 0
-        q2 = Q[1] # 2 3 0 1
-        q3 = Q[0] # 3 0 1 2
+        q0 = Q[0] # 0 1 2 3
+        q1 = Q[1] # 1 2 3 0
+        q2 = Q[2] # 2 3 0 1
+        q3 = Q[3] # 3 0 1 2
 
         # First row of the rotation matrix
         r00 = 2 * (q0 * q0 + q1 * q1) - 1

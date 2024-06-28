@@ -4,7 +4,7 @@ import os
 import json
 
 
-def load_config(config_path: str = "./src/utils/sectors_conf.json") -> dict:
+def load_config(config_path: str = "../src/utils/sectors_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config

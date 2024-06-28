@@ -5,7 +5,7 @@ from vision.oak.imu_tracker import ImuTracker
 from vision.oak.camera_hendler import CameraHendler
 import cv2
 from .transform_data import assignment_to_sectors
-
+from vision.oak.test import ImuTracker
 
 class CameraOAK:
     """class for init camera and get data from it."""
@@ -29,8 +29,8 @@ class CameraOAK:
             self.vis.destroy_window()
 
     def set_laser_IrFloodLight(self):
-        self.device.setIrLaserDotProjectorIntensity(0.9)
-        self.device.setIrFloodLightIntensity(0.9)
+        self.device.setIrLaserDotProjectorIntensity(0.5)
+        self.device.setIrFloodLightIntensity(0.5)
 
     def init_visualizer(self) -> None:
         """Initialize the visualizer if needed."""
@@ -73,6 +73,7 @@ class CameraOAK:
 
                 delta_t = (current_time - self.base_time).total_seconds()
                 self.base_time = current_time
+                pose = np.eye(4)
                 pose = self.imu_tracker.update(
                     [accelero_values.x, accelero_values.y, accelero_values.z],
                     [gyro_values.x, gyro_values.y, gyro_values.z],
@@ -92,13 +93,14 @@ class CameraOAK:
             in_color = pc_message["rgb"]
             cv_color_frame = in_color.getCvFrame()
             if pose is not None:
-                self.line_points.append(pose[:3, 3])
+                pass
+                # self.line_points.append(pose[:3, 3])
                 # pcd.transform(pose)
 
             if not pcd.is_empty():
                 pcd = pcd.voxel_down_sample(voxel_size=100)
-                # pcd.transform(pose)
-                matrix = assignment_to_sectors(pcd)
+                pcd.rotate(pose)
+
 
             if self.visualize:
                 cvRGBFrame = cv2.cvtColor(cv_color_frame, cv2.COLOR_BGR2RGB)
