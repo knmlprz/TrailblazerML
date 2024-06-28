@@ -41,6 +41,9 @@ class CameraOAK:
             self.line_set = o3d.geometry.LineSet()
             self.vis.add_geometry(self.line_set)
 
+            self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
+            self.vis.add_geometry(self.origin_arrow)
+
     def get_data(self):
         """Get data from the camera.
 
@@ -85,21 +88,39 @@ class CameraOAK:
                     ],
                     delta_t
                 )
+                zero_column = np.zeros((3, 1))
+                pose = np.hstack((pose, zero_column))
+                zero_row = np.array([[0, 0, 0, 1]])
+                pose = np.vstack((pose, zero_row))
 
         if pc_message:
+            print(pose)
+            print(pose.shape)
+
             in_point_cloud = pc_message["pcl"]
             points = in_point_cloud.getPoints().astype(np.float64)
             pcd.points = o3d.utility.Vector3dVector(points)
+
+            # Dodanie punktu (0, 0, 0) do chmury punktów
+            points_with_origin = np.vstack((points, np.array([0, 0, 0])))
+            pcd.points = o3d.utility.Vector3dVector(points_with_origin)
+
+
             in_color = pc_message["rgb"]
             cv_color_frame = in_color.getCvFrame()
+
             if pose is not None:
                 pass
                 # self.line_points.append(pose[:3, 3])
-                # pcd.transform(pose)
-
-            if not pcd.is_empty():
+                self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
+                self.origin_arrow.transform(pose)
+                self.vis.add_geometry(self.origin_arrow)
                 pcd = pcd.voxel_down_sample(voxel_size=100)
-                pcd.rotate(pose)
+                pcd.transform(pose)
+
+            # if not pcd.is_empty():
+            #     pcd = pcd.voxel_down_sample(voxel_size=100)
+            #     pcd.rotate(pose)
 
 
             if self.visualize:

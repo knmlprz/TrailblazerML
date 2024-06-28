@@ -124,6 +124,7 @@ class CameraHendler:
     def setup_pointcloud(self) -> None:
         """ Setup the pointcloud configuration."""
         self.pointcloud = self.pipeline.create(dai.node.PointCloud)
+        self.pointcloud.initialConfig.setSparse(True)
         self.depth.depth.link(self.pointcloud.inputDepth)
         self.sync = self.pipeline.create(dai.node.Sync)
         self.camRgb.isp.link(self.sync.inputs["rgb"])

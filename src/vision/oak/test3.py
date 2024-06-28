@@ -141,7 +141,7 @@ class CameraOAK:
                 cv_color_frame.shape[1], cv_color_frame.shape[0], K[0, 0], K[1, 1], K[0, 2], K[1, 2]
             )
             pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
-
+            pcd.rotate(pose)
             self.i += 1
             print(self.i)
             if self.visualize:
