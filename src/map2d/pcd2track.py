@@ -63,13 +63,21 @@ class TrackMaker:
     def preserve_nan_values(self, array: np.array) -> np.array:
         """
         Preserve NaN values in the array. Getting NaN values from the original map.
+        Set the neighboring values to 1.
         Args:
             np.array: Array to preserve NaN values.
         Returns:
             np.array: Array with preserved NaN values (float).
         """
         array = array.astype(float)
-        array[np.isnan(self.original_map)] = np.nan
+        nan_indices = np.argwhere(np.isnan(self.original_map))
+
+        for idx in nan_indices:
+            array[idx[0], idx[1]] = np.nan
+            for i in range(max(0, idx[0] - 1), min(array.shape[0], idx[0] + 2)):
+                for j in range(max(0, idx[1] - 1), min(array.shape[1], idx[1] + 2)):
+                    if not np.isnan(self.original_map[i, j]):
+                        array[i, j] = 1
         return array
     
     def point_cloud_to_track(self, pcd: np.array):
