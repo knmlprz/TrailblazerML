@@ -47,7 +47,7 @@ class CameraOAK:
         Returns:
             tuple: (cvColorFrame, pcd, pose) containing the RGB image, point cloud, and camera pose.
         """
-        imu_queue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
+        imu_queue = self.device.getOutputQueue(name="imu", maxSize=5000, blocking=False)
         pc_queue = self.device.getOutputQueue(name="out", maxSize=1000, blocking=False)
         depth_queue = self.device.getOutputQueue(
             name="depth", maxSize=4, blocking=False
@@ -96,7 +96,7 @@ class CameraOAK:
             if not pcd.is_empty():
                 pcd = pcd.voxel_down_sample(voxel_size=100)
                 # pcd.transform(pose)
-                matrix = assignment_to_sectors(pcd)
+                #matrix = assignment_to_sectors(pcd)
 
             if self.visualize:
                 cvRGBFrame = cv2.cvtColor(cv_color_frame, cv2.COLOR_BGR2RGB)
@@ -105,10 +105,10 @@ class CameraOAK:
                 self.i += 1
                 if self.i > 10:
                     self.vis.add_geometry(pcd)
-                if self.i > 50:
-                    self.vis.run()
-                    while True:
-                        pass
+                # if self.i > 50:
+                #     self.vis.run()
+                #     while True:
+                #         pass
                 self.vis.poll_events()
                 self.vis.update_renderer()
                 self.update_trajectory()

@@ -12,7 +12,7 @@
     "depth": {
         "preset": "HIGH_DENSITY",
         "median_filter": "KERNEL_7x7",
-        "left_right_check": false,
+        "left_right_check": true,
         "extended_disparity": false,
         "subpixel": true,
         "align_to": "CAM_A",
