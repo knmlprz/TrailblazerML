@@ -39,7 +39,6 @@ class CameraOAK:
     def init_visualizer(self) -> None:
         """Initialize the visualizer if needed."""
         if self.visualize:
-
             self.vis = o3d.visualization.VisualizerWithKeyCallback()
             self.vis.create_window()
             self.vis.register_key_callback(32, self.toggle_geometry_addition)  # Space bar to toggle
@@ -154,7 +153,8 @@ class CameraOAK:
             # Assume self.cv_color_frame is the current RGB frame updated from the point cloud message
 
             # Resize depth to match RGB image dimensions
-            depth_frame_color_resized = cv2.resize(depth_frame_color, (self.cv_color_frame.shape[1], self.cv_color_frame.shape[0]))
+            depth_frame_color_resized = cv2.resize(depth_frame_color,
+                                                   (self.cv_color_frame.shape[1], self.cv_color_frame.shape[0]))
 
             # Combine images horizontally
             combined_image = cv2.hconcat([self.cv_color_frame, depth_frame_color_resized])
