@@ -99,16 +99,17 @@ class CameraOAK:
     def visualize_data(self):
         """Visualize the point cloud data with control over geometry addition."""
         if self.visualize:
-            self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
-            self.origin_arrow.transform(self.pose)
-            self.vis.add_geometry(self.origin_arrow)
-
-
             self.i += 1
-            if self.i > 10 and self.add_geometry:
+            if self.visualize and self.i > 10 and self.add_geometry:
+                if self.pcd.is_empty():  # Sprawdź, czy chmura punktów jest pusta
+                    return  # Jeśli jest pusta, zakończ działanie funkcji
+
                 cvRGBFrame = cv2.cvtColor(self.cv_color_frame, cv2.COLOR_BGR2RGB)
                 points = np.asarray(self.pcd.points)
                 y_values = points[:, 1]
+
+                if len(y_values) == 0:
+                    return
                 y_min, y_max = np.min(y_values), np.max(y_values)
                 y_normalized = (y_values - y_min) / (y_max - y_min)
                 cmap = plt.get_cmap("viridis")
@@ -118,8 +119,11 @@ class CameraOAK:
 
             self.vis.poll_events()
             self.vis.update_renderer()
-            self.update_trajectory()
             if self.add_geometry:
+                self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
+                self.origin_arrow.transform(self.pose)
+                self.vis.add_geometry(self.origin_arrow)
+                self.update_trajectory()
                 self.pcd.clear()
 
     def handle_depth_data(self, depth_message):
@@ -168,14 +172,14 @@ class CameraOAK:
             print(self.pose[:3, 3])
             self.pose = self.imu_tracker.update(
                 [accelero_values.x, accelero_values.y, accelero_values.z],
-                [gyro_values.x, gyro_values.y, gyro_values.z],
+                #[gyro_values.x, gyro_values.y, gyro_values.z],
                 [
                     rotation_vector.i,
                     rotation_vector.j,
                     rotation_vector.k,
-                    rotation_vector.real,
+                    rotation_vector.real
                 ],
                 delta_t,
-                self.pose[:3, 3]
+                #self.pose[:3, 3]
             )
 
