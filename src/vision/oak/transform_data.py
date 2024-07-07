@@ -4,7 +4,7 @@ import os
 import json
 
 
-def load_config(config_path: str = "./src/utils/sectors_conf.json") -> dict:
+def load_config(config_path: str = "./utils/sectors_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
@@ -39,8 +39,8 @@ def make_sectors(path: str = "./") -> None:
 
 
 def assignment_to_sectors(
-    pcd: o3d.geometry.PointCloud, path: str = "./src/vision/oak/sectors.npy"
-) -> (np.ndarray, np.ndarray):
+        pcd: o3d.geometry.PointCloud, path: str = "./vision/oak/sectors.npy"
+)-> (np.ndarray, np.ndarray):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
