@@ -17,8 +17,8 @@
         "subpixel": true,
         "align_to": "CAM_A",
         "threshold_filter": {
-            "min_range": 0,
-            "max_range": 10000
+            "min_range": 20,
+            "max_range": 6000
         },
         "spatial_filter": {
             "enable": true,
