@@ -40,20 +40,23 @@ def make_sectors(path: str = "./") -> None:
 
 def assignment_to_sectors(
         pcd: o3d.geometry.PointCloud, path: str = "./vision/oak/sectors.npy"
-):
+)-> (np.ndarray, np.ndarray):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
     The function takes a 3D point cloud, divides the space into sectors of a fixed size, and computes the
-    center of mass for the points in each sector. The result is a 2D matrix where each cell represents
-    a sector and contains the center of mass value for that sector.
+    center of mass for the points in each sector. The result is a cropped 2D matrix where each cell represents
+    a sector and contains the center of mass value for that sector, and the minimum non-NaN index.
 
     Parameters:
     pcd (o3d.geometry.PointCloud): The input point cloud containing 3D points.
     path (str): File path where the sectors numpy array is loaded from. Default is './src/vision/oak/sectors.npy'.
 
-    Returns (np.ndarray): A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
-                The array size is determined by the maximum sector indices found in the point cloud.
+    Returns:
+    tuple: A tuple containing:
+        - cropped_results (np.ndarray): A 2D numpy array where each cell contains the center of mass value for the corresponding sector.
+                                         The array is cropped to include only the non-NaN values.
+        - min_non_nan_index (np.ndarray): A 1D numpy array containing the minimum non-NaN index for both dimensions of the results matrix.
     """
     config = load_config()
     sector_size = config["sector_size"]
@@ -108,4 +111,12 @@ def assignment_to_sectors(
     for (x_idx, z_idx), center_mass in centers_of_masses.items():
         results[x_idx, z_idx] = center_mass
 
-    return results
+    non_nan_indices = np.argwhere(~np.isnan(results))
+    min_non_nan_index = np.min(non_nan_indices, axis=0)
+    max_non_nan_index = np.max(non_nan_indices, axis=0)
+    cropped_results = results[
+        min_non_nan_index[0] : max_non_nan_index[0] + 1,
+        min_non_nan_index[1] : max_non_nan_index[1] + 1,
+    ]
+
+    return cropped_results, min_non_nan_index
