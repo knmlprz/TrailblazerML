@@ -38,8 +38,11 @@ class CameraOAK:
     def init_visualizer(self) -> None:
         """Initialize the visualizer if needed."""
         if self.visualize:
-            self.vis = o3d.visualization.Visualizer()
+
+            self.vis = o3d.visualization.VisualizerWithKeyCallback()
             self.vis.create_window()
+            self.vis.register_key_callback(32, self.toggle_geometry_addition)  # Space bar to toggle
+            self.add_geometry = True  # Flag to control geometry addition
             self.line_points = []
             self.line_set = o3d.geometry.LineSet()
             self.vis.add_geometry(self.line_set)
@@ -110,29 +113,44 @@ class CameraOAK:
             self.pcd = self.pcd.voxel_down_sample(voxel_size=100)
 
     def visualize_data(self):
+        """Visualize the point cloud data with control over geometry addition."""
         if self.visualize:
+            print(self.add_geometry)
             cvRGBFrame = cv2.cvtColor(self.cv_color_frame, cv2.COLOR_BGR2RGB)
             colors = (cvRGBFrame.reshape(-1, 3) / 255.0).astype(np.float64)
             self.pcd.colors = o3d.utility.Vector3dVector(colors)
             self.i += 1
-            if self.i > 10:
+            if self.i > 10 and self.add_geometry:
                 self.vis.add_geometry(self.pcd)
-            if self.i > 30:
-                self.vis.run()
-                while True:
-                    pass
+
             self.vis.poll_events()
             self.vis.update_renderer()
             self.update_trajectory()
-            self.pcd.clear()
+            if self.add_geometry:
+                self.pcd.clear()
 
     def handle_depth_data(self, depth_message):
-        """Process depth data."""
-        depth_frame = depth_message.getFrame()
-        depth_frame_color = cv2.normalize(depth_frame, None, 0, 255, cv2.NORM_MINMAX)
-        depth_frame_color = cv2.applyColorMap(depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET)
-        cv2.imshow("Depth", depth_frame_color)
-        cv2.waitKey(1)
+        """Process depth data and combine it with RGB data for visualization."""
+        if self.visualize:
+            depth_frame = depth_message.getFrame()
+            depth_frame_color = cv2.normalize(depth_frame, None, 0, 255, cv2.NORM_MINMAX)
+            depth_frame_color = cv2.applyColorMap(depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET)
+
+            # Assume self.cv_color_frame is the current RGB frame updated from the point cloud message
+
+            # Resize depth to match RGB image dimensions
+            depth_frame_color_resized = cv2.resize(depth_frame_color, (self.cv_color_frame.shape[1], self.cv_color_frame.shape[0]))
+
+            # Combine images horizontally
+            combined_image = cv2.hconcat([self.cv_color_frame, depth_frame_color_resized])
+
+            cv2.imshow("Combined Depth and RGB", combined_image)
+            cv2.waitKey(1)
+
+    def toggle_geometry_addition(self, vis):
+        """Toggle the addition of geometry on key press."""
+        self.add_geometry = not self.add_geometry
+        print(f"Geometry addition toggled to {'ON' if self.add_geometry else 'OFF'}.")
 
     def update_trajectory(self):
         """Update the line set for the trajectory visualization."""
