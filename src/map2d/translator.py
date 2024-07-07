@@ -22,25 +22,60 @@ class PointCloudMapper:
         if self.visualize:
             self.vis.destroy_window()
     
-    def normalize_values(self,points):
+    def normalize_values(self, points):
         """
-        Normalizes the z-values of the given points to be within the range [-1, 1].
+        Normalizes the y-values of the given points to be within the range [-1, 1].
         Args:
             points (np.array): Points extracted from the point cloud.
         Returns:
             np.array: The array of normalized points.
         """
-        z_min = np.min(points[:, 2])
-        z_max = np.max(points[:, 2])
-        points[:, 2] = 2 * (points[:, 2] - z_min) / (z_max - z_min) - 1
+        y_min = np.min(points[:, 1])
+        y_max = np.max(points[:, 1])
+        points[:, 1] = 2 * (points[:, 1] - y_min) / (y_max - y_min) - 1
         return points
 
+    def cropped_map_to_2d_map(self, points, position=(0, 0)):
+        """
+        Converts a point map to global 2D map.
+        Args:
+            points (np.array): The point map.
+            position (tuple): Position (x, z).
+        Returns:
+            np.array: The resulting 2D map.
+        """
+        # Map shape
+        p_height, p_width = points.shape
+
+        # Cut map
+        if position[0] + p_width > self.res:
+            p_width = self.res - position[0]
+        if position[1] + p_height > self.res:
+            p_height = self.res - position[1]
+
+        overlay_map = points[:p_height, :p_width]
+
+        # Assign values to the 2D map
+        for i in range(p_height):
+            for j in range(p_width):
+                self.map_2d[position[1] + i, position[0] + j] = overlay_map[i, j]
+
+        # Visualization (optional)
+        if self.visualize:
+            if self.visualization_type == 0:
+                self.visualize_2d_map((0,0,0))
+            else:
+                self.visualize_2d_map_plot()
+
+
+        return self.map_2d
+    
     def point_cloud_to_2d_map(self, point_cloud, accel_position=(0, 0, 0)):
         """
         Converts a point cloud to a 2D map.
         Args:
             point_cloud (open3d.geometry.PointCloud): The point cloud.
-            accel_position (tuple): Acceleration position.
+            accel_position (tuple): Acceleration position (y, z, x).
         Returns:
             np.array: The resulting 2D map.
         """
@@ -52,21 +87,21 @@ class PointCloudMapper:
 
         translated_points = self.normalize_values(translated_points)
 
-        # Determine the range of x and y axes
-        min_x, min_y = np.min(translated_points[:, :2], axis=0)
-        max_x, max_y = np.max(translated_points[:, :2], axis=0)
+        # Determine the range of x and z axes
+        min_x, min_z = np.min(translated_points[:, [0, 2]], axis=0)
+        max_x, max_z = np.max(translated_points[:, [0, 2]], axis=0)
 
         # Determine the size of the 2D map
         x_range = np.linspace(min_x, max_x, self.res)
-        y_range = np.linspace(min_y, max_y, self.res)
+        z_range = np.linspace(min_z, max_z, self.res)
 
         # Assign values to the 2D map
-        for x, y, z in translated_points:
+        for x, z, y in translated_points:
             xi = np.searchsorted(x_range, x) - 1
-            yi = np.searchsorted(y_range, y) - 1
+            zi = np.searchsorted(z_range, z) - 1
 
-            if 0 <= xi < self.res and 0 <= yi < self.res:
-                self.map_2d[yi, xi] = z
+            if 0 <= xi < self.res and 0 <= zi < self.res:
+                self.map_2d[zi, xi] = y
 
         # Visualization (optional)
         if self.visualize:
@@ -90,8 +125,8 @@ class PointCloudMapper:
         plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
         plt.title('2D Map')
         plt.xlabel('X axis')
-        plt.ylabel('Y axis')
-        plt.colorbar(label='Z value')
+        plt.ylabel('Z axis')
+        plt.colorbar(label='Y value')
         
         # Pause to update the plot
         plt.pause(0.01)  
@@ -110,11 +145,11 @@ class PointCloudMapper:
 
         non_nan_indices = np.where(~np.isnan(self.map_2d))
         for i, j in zip(non_nan_indices[0], non_nan_indices[1]):
-            z = self.map_2d[i, j]
-            x = i / height
-            y = j / width
-            points.append([x, y, z])
-            colors.append([z, z, z])
+            y = self.map_2d[i, j]
+            z = i / height
+            x = j / width
+            points.append([x, z, y])
+            colors.append([y, y, y])
 
         if len(points) > 0:
             pcd = o3d.geometry.PointCloud()
