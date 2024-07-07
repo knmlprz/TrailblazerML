@@ -1,36 +1,48 @@
 import numpy as np
-from pykalman import KalmanFilter
-import matplotlib.pyplot as plt
-import open3d as o3d
+
 
 class ImuTracker:
     def __init__(self, visualize: bool = True):
         self.current_point = np.array([0, 0, 0])
         self.current_velocity = np.array([0, 0, 0])
+        self.pose_matrix = np.eye(4)
 
-    def update_wo_kalman(self, accel_data: (float,float,float), delta_t):
-        accel_data = np.array(accel_data)*1000
+    def update_position(self, accel_data: (float, float, float), delta_t):
+        """
+        Update the position of the camera based on the acceleration data and the time passed.
+        Args:
+            accel_data:
+            delta_t:
 
+        Returns:
+
+        """
+        accel_data = np.array([accel_data[0], accel_data[1], accel_data[2]]) * 1000
         delta_velocity = accel_data * delta_t
         self.current_velocity = self.current_velocity + delta_velocity
-        new_position = self.current_point + self.current_velocity * delta_t + 0.5* accel_data*delta_t**2
-        self.current_point = new_position
+        new_position = self.current_point + self.current_velocity * delta_t + 0.5 * accel_data * delta_t ** 2
+        self.current_point = np.array([new_position[0], 0, new_position[2]])
+        return self.current_point
 
+    def update(self, accel_data: (float, float, float), rotation_vector: (float, float, float),
+               delta_t: float) -> np.ndarray:
+        """
+        Update the position of the camera based on the acceleration data, rotation vector and the time passed.
+        Args:
+            accel_data:
+            rotation_vector:
+            delta_t:
 
-        return np.array(new_position)
+        Returns:
 
-    def update(self, accel_data, rotation_vector, delta_t ):
-        new_point = self.update_wo_kalman(accel_data, delta_t)
-        new_point = new_point.reshape(3, 1)
-        bottom_row = np.array([[0, 0, 0, 1]])
+        """
+        new_position = self.update_position(accel_data, delta_t)
         rotation_matrix = self.quaternion_rotation_matrix(rotation_vector)
-        pose = np.vstack([
-            np.hstack([rotation_matrix, new_point]),
-            bottom_row
-        ])
-        return pose
+        self.pose_matrix[:3, :3] = rotation_matrix
+        self.pose_matrix[:3, 3] = new_position
+        return self.pose_matrix
 
-    def quaternion_rotation_matrix(self, Q):
+    def quaternion_rotation_matrix(self, Q: (float, float, float, float)) -> np.ndarray:
         """
         Covert a quaternion into a full three-dimensional rotation matrix.
 
@@ -43,10 +55,10 @@ class ImuTracker:
                  frame to a point in the global reference frame.
         """
         # Extract the values from Q
-        q0 = Q[0] # 0 1 2 3
-        q1 = Q[1] # 1 2 3 0
-        q2 = Q[2] # 2 3 0 1
-        q3 = Q[3] # 3 0 1 2
+        q0 = Q[0]  # 0 1 2 3
+        q1 = Q[1]  # 1 2 3 0
+        q2 = Q[2]  # 2 3 0 1
+        q3 = Q[3]  # 3 0 1 2
 
         # First row of the rotation matrix
         r00 = 2 * (q0 * q0 + q1 * q1) - 1
@@ -69,10 +81,3 @@ class ImuTracker:
                                [r20, r21, r22]])
 
         return rot_matrix
-
-    def create_pose_matrix(self, position, quaternion):
-        rotation_matrix = self.quaternion_to_rotation_matrix(quaternion)
-        pose_matrix = np.eye(4)
-        pose_matrix[:3, :3] = rotation_matrix
-        pose_matrix[:3, 3] = position
-        return pose_matrix

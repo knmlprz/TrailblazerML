@@ -48,7 +48,6 @@ class CameraOAK:
             self.vis.add_geometry(self.line_set)
             self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
             self.vis.add_geometry(self.origin_arrow)
-
     def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
         """Get processed data like the RGB image, point cloud, and pose.
         Returns:
@@ -88,13 +87,11 @@ class CameraOAK:
 
         if self.pose is not None:
             self.line_points.append(self.pose[:3, 3])
+            self.pcd.transform(self.pose)
 
 
         if not self.pcd.is_empty():
             self.pcd = self.pcd.voxel_down_sample(voxel_size=100)
-            self.pcd.transform(self.pose)
-
-
 
     def visualize_data(self):
         """Visualize the point cloud data with control over geometry addition."""
