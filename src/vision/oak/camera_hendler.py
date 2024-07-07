@@ -63,8 +63,8 @@ class CameraHendler:
             getattr(dai.MedianFilter, depth_config["median_filter"])
         )
         self.depth.setLeftRightCheck(depth_config["left_right_check"])
-        self.depth.setExtendedDisparity(depth_config["extended_disparity"])
-        self.depth.setSubpixel(depth_config["subpixel"])
+        # self.depth.setExtendedDisparity(depth_config["extended_disparity"])
+        # self.depth.setSubpixel(depth_config["subpixel"])
         self.depth.setDepthAlign(
             getattr(dai.CameraBoardSocket, depth_config["align_to"])
         )
@@ -122,8 +122,9 @@ class CameraHendler:
         # initialConfig.postProcessing.decimationFilter.decimationFactor = 2
 
     def setup_pointcloud(self) -> None:
-        """Setup the pointcloud configuration."""
+        """ Setup the pointcloud configuration."""
         self.pointcloud = self.pipeline.create(dai.node.PointCloud)
+        self.pointcloud.initialConfig.setSparse(True)
         self.depth.depth.link(self.pointcloud.inputDepth)
         self.sync = self.pipeline.create(dai.node.Sync)
         self.camRgb.isp.link(self.sync.inputs["rgb"])
@@ -133,21 +134,16 @@ class CameraHendler:
         self.xOut.setStreamName("out")
 
     def setup_imu(self) -> None:
-        """Setup the IMU configuration."""
-        imu_config = self.config["imu"]
+        """ Setup the IMU configuration."""
+        imu_config = self.config['imu']
+        selected_data_type = imu_config['selected_data_type']
         self.imu = self.pipeline.create(dai.node.IMU)
         self.xlinkOut = self.pipeline.create(dai.node.XLinkOut)
         self.xlinkOut.setStreamName("imu")
 
-        self.imu.enableIMUSensor(
-            dai.IMUSensor.ACCELEROMETER, imu_config["ACCELEROMETER_RAW"]
-        )
-        self.imu.enableIMUSensor(
-            dai.IMUSensor.GYROSCOPE_RAW, imu_config["GYROSCOPE_RAW"]
-        )
-        self.imu.enableIMUSensor(
-            dai.IMUSensor.ARVR_STABILIZED_ROTATION_VECTOR, imu_config["ROTATION_VECTOR"]
-        )
+        for sensor_name, frequency in selected_data_type.items():
+            sensor_enum = getattr(dai.IMUSensor, sensor_name)  # Konwertuj nazwę sensora na odpowiedni enum
+            self.imu.enableIMUSensor(sensor_enum, frequency)
 
         self.imu.setBatchReportThreshold(imu_config["batch_threshold"])
         self.imu.setMaxBatchReports(imu_config["max_batch_reports"])
