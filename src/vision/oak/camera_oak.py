@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from .imu_tracker import ImuTracker
 from .camera_hendler import CameraHendler
+import matplotlib.pyplot as plt
 from .transform_data import assignment_to_sectors
 
 
@@ -117,8 +118,22 @@ class CameraOAK:
         if self.visualize:
             print(self.add_geometry)
             cvRGBFrame = cv2.cvtColor(self.cv_color_frame, cv2.COLOR_BGR2RGB)
-            colors = (cvRGBFrame.reshape(-1, 3) / 255.0).astype(np.float64)
+
+            # Załóżmy, że self.pcd to już istniejąca chmura punktów z punktami w self.pcd.points
+            points = np.asarray(self.pcd.points)
+            y_values = points[:, 1]  # Wartości Y
+
+            # Normalizacja Y
+            y_min, y_max = np.min(y_values), np.max(y_values)
+            y_normalized = (y_values - y_min) / (y_max - y_min)
+
+            # Użycie mapy kolorów z Matplotlib
+            cmap = plt.get_cmap("viridis")  # Możesz zmienić na inną mapę kolorów
+            colors = cmap(y_normalized)[:, :3]  # Pobranie tylko RGB, ignorowanie kanału alfa
+
+            # Przypisanie kolorów do chmury punktów
             self.pcd.colors = o3d.utility.Vector3dVector(colors)
+
             self.i += 1
             if self.i > 10 and self.add_geometry:
                 self.vis.add_geometry(self.pcd)

@@ -7,7 +7,7 @@ from click import getchar
 if __name__ == "__main__":
 
     # Example of how to use the classes and functions
-    config = load_config("vision/oak/config_oak.json")
+    config = load_config("utils/config_oak.json")
     oak = CameraOAK(config, visualize=True)
     Startloop = True
     while Startloop:
