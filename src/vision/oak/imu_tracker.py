@@ -12,9 +12,10 @@ class ImuTracker:
         accel_data = np.array(accel_data)*1000
 
         delta_velocity = accel_data * delta_t
+        self.current_velocity = self.current_velocity + delta_velocity
         new_position = self.current_point + self.current_velocity * delta_t + 0.5* accel_data*delta_t**2
         self.current_point = new_position
-        self.current_velocity = self.current_velocity + delta_velocity
+
 
         return np.array(new_position)
 
