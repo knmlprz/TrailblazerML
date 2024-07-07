@@ -115,22 +115,13 @@ class CameraOAK:
     def visualize_data(self):
         """Visualize the point cloud data with control over geometry addition."""
         if self.visualize:
-            print(self.add_geometry)
             cvRGBFrame = cv2.cvtColor(self.cv_color_frame, cv2.COLOR_BGR2RGB)
-
-            # Załóżmy, że self.pcd to już istniejąca chmura punktów z punktami w self.pcd.points
             points = np.asarray(self.pcd.points)
-            y_values = points[:, 1]  # Wartości Y
-
-            # Normalizacja Y
+            y_values = points[:, 1]
             y_min, y_max = np.min(y_values), np.max(y_values)
             y_normalized = (y_values - y_min) / (y_max - y_min)
-
-            # Użycie mapy kolorów z Matplotlib
-            cmap = plt.get_cmap("viridis")  # Możesz zmienić na inną mapę kolorów
-            colors = cmap(y_normalized)[:, :3]  # Pobranie tylko RGB, ignorowanie kanału alfa
-
-            # Przypisanie kolorów do chmury punktów
+            cmap = plt.get_cmap("viridis")
+            colors = cmap(y_normalized)[:, :3]
             self.pcd.colors = o3d.utility.Vector3dVector(colors)
 
             self.i += 1
@@ -149,14 +140,8 @@ class CameraOAK:
             depth_frame = depth_message.getFrame()
             depth_frame_color = cv2.normalize(depth_frame, None, 0, 255, cv2.NORM_MINMAX)
             depth_frame_color = cv2.applyColorMap(depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET)
-
-            # Assume self.cv_color_frame is the current RGB frame updated from the point cloud message
-
-            # Resize depth to match RGB image dimensions
             depth_frame_color_resized = cv2.resize(depth_frame_color,
                                                    (self.cv_color_frame.shape[1], self.cv_color_frame.shape[0]))
-
-            # Combine images horizontally
             combined_image = cv2.hconcat([self.cv_color_frame, depth_frame_color_resized])
 
             cv2.imshow("Combined Depth and RGB", combined_image)
