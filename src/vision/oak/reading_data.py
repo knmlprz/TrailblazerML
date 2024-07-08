@@ -87,7 +87,7 @@ class Simulation3D:
                 self.vis.update_geometry(self.line_set)
                 self.vis.poll_events()
                 self.vis.update_renderer()
-            return rgb, pcd, point
+            return rgb, pcd, pose
         except Exception as e:
             print(f"Failed during simulation: {e}")
             return None, None, None
