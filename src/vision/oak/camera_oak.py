@@ -48,7 +48,6 @@ class CameraOAK:
             self.vis.add_geometry(self.line_set)
             self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
             self.vis.add_geometry(self.origin_arrow)
-
     def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
         """Get processed data like the RGB image, point cloud, and pose.
         Returns:
@@ -75,27 +74,7 @@ class CameraOAK:
 
     def handle_imu_data(self, imu_data):
         """Process IMU data."""
-        imu_packets = imu_data.packets
-        for imu_packet in imu_packets:
-            accelero_values = imu_packet.acceleroMeter
-            rotation_vector = imu_packet.rotationVector
-            current_time = imu_packet.acceleroMeter.getTimestampDevice()
-
-            if self.base_time is None:
-                self.base_time = current_time
-
-            delta_t = (current_time - self.base_time).total_seconds()
-            self.base_time = current_time
-            self.pose = self.imu_tracker.update(
-                [accelero_values.x, accelero_values.y, accelero_values.z],
-                [
-                    rotation_vector.i,
-                    rotation_vector.j,
-                    rotation_vector.k,
-                    rotation_vector.real,
-                ],
-                delta_t,
-            )
+        self.get_shift_imu(imu_data)
 
     def handle_pc_data(self, pc_message):
         """Process point cloud data."""
@@ -108,6 +87,8 @@ class CameraOAK:
 
         if self.pose is not None:
             self.line_points.append(self.pose[:3, 3])
+            self.pcd.transform(self.pose)
+
 
         if not self.pcd.is_empty():
             self.pcd = self.pcd.voxel_down_sample(voxel_size=100)
@@ -115,23 +96,31 @@ class CameraOAK:
     def visualize_data(self):
         """Visualize the point cloud data with control over geometry addition."""
         if self.visualize:
-            cvRGBFrame = cv2.cvtColor(self.cv_color_frame, cv2.COLOR_BGR2RGB)
-            points = np.asarray(self.pcd.points)
-            y_values = points[:, 1]
-            y_min, y_max = np.min(y_values), np.max(y_values)
-            y_normalized = (y_values - y_min) / (y_max - y_min)
-            cmap = plt.get_cmap("viridis")
-            colors = cmap(y_normalized)[:, :3]
-            self.pcd.colors = o3d.utility.Vector3dVector(colors)
-
             self.i += 1
-            if self.i > 10 and self.add_geometry:
+            if self.visualize and self.i > 10 and self.add_geometry:
+                if self.pcd.is_empty():  # Sprawdź, czy chmura punktów jest pusta
+                    return  # Jeśli jest pusta, zakończ działanie funkcji
+
+                cvRGBFrame = cv2.cvtColor(self.cv_color_frame, cv2.COLOR_BGR2RGB)
+                points = np.asarray(self.pcd.points)
+                y_values = points[:, 1]
+
+                if len(y_values) == 0:
+                    return
+                y_min, y_max = np.min(y_values), np.max(y_values)
+                y_normalized = (y_values - y_min) / (y_max - y_min)
+                cmap = plt.get_cmap("viridis")
+                colors = cmap(y_normalized)[:, :3]
+                self.pcd.colors = o3d.utility.Vector3dVector(colors)
                 self.vis.add_geometry(self.pcd)
 
             self.vis.poll_events()
             self.vis.update_renderer()
-            self.update_trajectory()
             if self.add_geometry:
+                self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
+                self.origin_arrow.transform(self.pose)
+                self.vis.add_geometry(self.origin_arrow)
+                self.update_trajectory()
                 self.pcd.clear()
 
     def handle_depth_data(self, depth_message):
@@ -163,3 +152,31 @@ class CameraOAK:
         self.vis.update_geometry(self.line_set)
         self.vis.poll_events()
         self.vis.update_renderer()
+
+    def get_shift_imu(self, imu_data: dai.IMUData):
+        imu_packets = imu_data.packets
+        for imu_packet in imu_packets:
+            accelero_values = imu_packet.acceleroMeter
+            gyro_values = imu_packet.gyroscope
+            rotation_vector = imu_packet.rotationVector
+            current_time = imu_packet.acceleroMeter.getTimestampDevice()
+
+            if self.base_time is None:
+                self.base_time = current_time
+
+            delta_t = (current_time - self.base_time).total_seconds()
+            self.base_time = current_time
+            print(self.pose[:3, 3])
+            self.pose = self.imu_tracker.update(
+                [accelero_values.x, accelero_values.y, accelero_values.z],
+                #[gyro_values.x, gyro_values.y, gyro_values.z],
+                [
+                    rotation_vector.i,
+                    rotation_vector.j,
+                    rotation_vector.k,
+                    rotation_vector.real
+                ],
+                delta_t,
+                #self.pose[:3, 3]
+            )
+

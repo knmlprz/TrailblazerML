@@ -14,11 +14,11 @@
         "median_filter": "KERNEL_7x7",
         "left_right_check": true,
         "extended_disparity": false,
-        "subpixel": true,
+        "subpixel": false,
         "align_to": "CAM_A",
         "threshold_filter": {
             "min_range": 0,
-            "max_range": 10000
+            "max_range": 5000
         },
         "spatial_filter": {
             "enable": true,
@@ -32,10 +32,12 @@
         }
     },
     "imu": {
-        "ACCELEROMETER_RAW": 500,
-        "GYROSCOPE_RAW": 400,
-        "ROTATION_VECTOR": 400,
-        "batch_threshold": 1,
-        "max_batch_reports": 10
-    }
+    "selected_data_type": {
+      "LINEAR_ACCELERATION": 400,
+      "GYROSCOPE_RAW": 400,
+      "ARVR_STABILIZED_ROTATION_VECTOR": 400
+    },
+    "batch_threshold": 1,
+    "max_batch_reports": 10
+  }
 }
