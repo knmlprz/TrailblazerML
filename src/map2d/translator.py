@@ -21,19 +21,6 @@ class PointCloudMapper:
     def __del__(self):
         if self.visualize:
             self.vis.destroy_window()
-    
-    def normalize_values(self, points):
-        """
-        Normalizes the y-values of the given points to be within the range [-1, 1].
-        Args:
-            points (np.array): Points extracted from the point cloud.
-        Returns:
-            np.array: The array of normalized points.
-        """
-        y_min = np.min(points[:, 1])
-        y_max = np.max(points[:, 1])
-        points[:, 1] = 2 * (points[:, 1] - y_min) / (y_max - y_min) - 1
-        return points
 
     def cropped_map_to_2d_map(self, points, position=(0, 0)):
         """
@@ -55,58 +42,12 @@ class PointCloudMapper:
 
         overlay_map = points[:p_height, :p_width]
 
-        # Assign values to the 2D map
-        for i in range(p_height):
-            for j in range(p_width):
-                self.map_2d[position[1] + i, position[0] + j] = overlay_map[i, j]
+        self.map_2d[position[1]:p_height+position[1], position[0]:p_width+position[0]] = overlay_map
 
         # Visualization (optional)
         if self.visualize:
             if self.visualization_type == 0:
                 self.visualize_2d_map((0,0,0))
-            else:
-                self.visualize_2d_map_plot()
-
-
-        return self.map_2d
-    
-    def point_cloud_to_2d_map(self, point_cloud, accel_position=(0, 0, 0)):
-        """
-        Converts a point cloud to a 2D map.
-        Args:
-            point_cloud (open3d.geometry.PointCloud): The point cloud.
-            accel_position (tuple): Acceleration position (y, z, x).
-        Returns:
-            np.array: The resulting 2D map.
-        """
-        # Extract points from the point cloud
-        points = np.asarray(point_cloud.points)
-
-        # Translate points based on the acceleration position
-        translated_points = points + np.array(accel_position)
-
-        translated_points = self.normalize_values(translated_points)
-
-        # Determine the range of x and z axes
-        min_x, min_z = np.min(translated_points[:, [0, 2]], axis=0)
-        max_x, max_z = np.max(translated_points[:, [0, 2]], axis=0)
-
-        # Determine the size of the 2D map
-        x_range = np.linspace(min_x, max_x, self.res)
-        z_range = np.linspace(min_z, max_z, self.res)
-
-        # Assign values to the 2D map
-        for x, z, y in translated_points:
-            xi = np.searchsorted(x_range, x) - 1
-            zi = np.searchsorted(z_range, z) - 1
-
-            if 0 <= xi < self.res and 0 <= zi < self.res:
-                self.map_2d[zi, xi] = y
-
-        # Visualization (optional)
-        if self.visualize:
-            if self.visualization_type == 0:
-                self.visualize_2d_map(accel_position)
             else:
                 self.visualize_2d_map_plot()
 

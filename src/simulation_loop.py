@@ -57,7 +57,6 @@ if __name__ == "__main__":
         # track = track_maker.point_cloud_to_track(points)
         obstacle_map = generate_obstacle_map(500, 20, 100)
         #visualize_grid(obstacle_map)
-        #print(obstacle_map)
         rpx = np.random.randint(10, 200)
         rpz = np.random.randint(10, 200)
         ppp = (rpz, rpx)
