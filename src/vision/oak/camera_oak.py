@@ -23,7 +23,10 @@ class CameraOAK:
         self.imu_tracker = ImuTracker()
         self.visualize = visualize
         self.init_visualizer()
-        self.pose = np.eye(4)
+        self.pose = np.array([[1, 0, 0, 2500],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 2500],
+                              [0, 0, 0, 1]])
         self.cv_color_frame = np.zeros((720, 1280, 3), dtype=np.uint8)
         self.pcd = o3d.geometry.PointCloud()
         self.i = 0
@@ -70,7 +73,7 @@ class CameraOAK:
         if depth_message:
             self.handle_depth_data(depth_message)
 
-        return self.cv_color_frame, self.pcd, self.pose
+        return self.check_and_return_data()
 
     def handle_imu_data(self, imu_data):
         """Process IMU data."""
@@ -78,24 +81,27 @@ class CameraOAK:
 
     def handle_pc_data(self, pc_message):
         """Process point cloud data."""
-        self.pcd = o3d.geometry.PointCloud()
         in_point_cloud = pc_message["pcl"]
         points = in_point_cloud.getPoints().astype(np.float64)
         self.pcd.points = o3d.utility.Vector3dVector(points)
+
         in_color = pc_message["rgb"]
         self.cv_color_frame = in_color.getCvFrame()
 
         if self.pose is not None:
-            self.line_points.append(self.pose[:3, 3])
             self.pcd.transform(self.pose)
 
 
         if not self.pcd.is_empty():
-            self.pcd = self.pcd.voxel_down_sample(voxel_size=100)
+            pass
+            # self.pcd = self.pcd.voxel_down_sample(voxel_size=0.1)
+
 
     def visualize_data(self):
         """Visualize the point cloud data with control over geometry addition."""
         if self.visualize:
+            print(self.pcd)
+            pcd = o3d.geometry.PointCloud()
             self.i += 1
             if self.visualize and self.i > 10 and self.add_geometry:
                 if self.pcd.is_empty():  # Sprawdź, czy chmura punktów jest pusta
@@ -113,6 +119,7 @@ class CameraOAK:
                 colors = cmap(y_normalized)[:, :3]
                 self.pcd.colors = o3d.utility.Vector3dVector(colors)
                 self.vis.add_geometry(self.pcd)
+
 
             self.vis.poll_events()
             self.vis.update_renderer()
@@ -179,4 +186,35 @@ class CameraOAK:
                 delta_t,
                 #self.pose[:3, 3]
             )
+
+    def check_and_return_data(self):
+        """Checks if the data is empty and returns appropriate values."""
+        if self.cv_color_frame is None:
+            self.cv_color_frame = np.zeros((720, 1280, 3), dtype=np.uint8)  # Example frame size
+            print("cv_color_frame is empty, default black frame set.")
+
+        if self.pcd.is_empty():
+            print("pcd is empty, creating a flat surface of 10x10.")
+            self.pcd = self.create_flat_surface(10, 10)
+
+        if self.pose is None:
+            self.pose = np.eye(4)  # Identity matrix, representing no transformation
+            print("pose is empty, default identity matrix set.")
+
+        return self.cv_color_frame, self.pcd, self.pose
+
+    def create_flat_surface(self, width, depth):
+        """Creates a flat surface with the specified dimensions."""
+        # Creating a grid of points
+        x = np.linspace(-width / 2, width / 2, num=width)
+        z = np.linspace(-depth / 2, depth / 2, num=depth)
+        mesh_x, mesh_z = np.meshgrid(x, z)
+        y = np.zeros_like(mesh_x)
+
+        # Creating a point cloud
+        points = np.stack((mesh_x.flatten(), y.flatten(), mesh_z.flatten()), axis=-1)
+        flat_surface = o3d.geometry.PointCloud()
+        flat_surface.points = o3d.utility.Vector3dVector(points)
+
+        return flat_surface
 

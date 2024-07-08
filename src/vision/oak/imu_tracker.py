@@ -3,7 +3,7 @@ import numpy as np
 
 class ImuTracker:
     def __init__(self, visualize: bool = True):
-        self.current_point = np.array([0, 0, 0])
+        self.current_point = np.array([2500, 0, 2500])
         self.current_velocity = np.array([0, 0, 0])
         self.pose_matrix = np.eye(4)
 

@@ -1,19 +1,15 @@
 import numpy as np
 import open3d as o3d
 
+
 class TrackMaker:
     """
     Class to convert point cloud data to track data.
-    From 2d batch of points we are calculating 2 matrices:
-    - horizontal gradient
-    - vertical gradient
-    Then setting magnitude of gradient as a square root of sum of squares of both gradients.
-    Based on that magnitude we are setting threshold to get track data,
-    where łazik can drive on.
-    In the places where we don't have data we are setting NaN.
-    0 - can't drive
-    1 - can drive
-    NaN - no data
+    Converts a 2D batch of points into track data based on gradient magnitude,
+    setting thresholds for drivable areas.
+    NaN - indicates no data.
+    0 - indicates non-drivable areas.
+    1 - indicates drivable areas.
 
     Usage:
     track_maker = TrackMaker(threshold=0.2, has_visualization=True)
@@ -21,111 +17,86 @@ class TrackMaker:
     """
 
     def __init__(self, threshold: float = 0.1, has_visualization: bool = False):
-        self.original_map = None
-        self.has_visualization = has_visualization
-        self.visualization = None
         self.threshold = threshold
-        self.gradient_x = None
-        self.gradient_y = None
-        self.gradient_magnitude = None
-
+        self.has_visualization = has_visualization
+        self.visualization = o3d.visualization.Visualizer() if self.has_visualization else None
         if self.has_visualization:
-            self.visualization = o3d.visualization.Visualizer()
             self.visualization.create_window()
-            line_set = o3d.geometry.LineSet()
-            self.visualization.add_geometry(line_set)
-    
+
     def __del__(self):
-        if self.visualization:
+        if self.has_visualization and self.visualization:
             self.visualization.destroy_window()
 
-    def calculate_gradient_magnitude(self):
+    def calculate_gradient_magnitude(self, matrix):
         """
-        Calculate gradient magnitude of the point cloud.
-        Args:
-            None
-        Returns:
-            None
+        Calculate the gradient magnitude of the matrix.
+        Ensure the matrix is at least 2x2.
         """
-        self.gradient_x, self.gradient_y = np.gradient(self.original_map)
+        if matrix.shape[0] < 2 or matrix.shape[1] < 2:
+            raise ValueError("Matrix must be at least 2x2 to calculate gradients.")
+
+        self.gradient_x, self.gradient_y = np.gradient(matrix)
         self.gradient_magnitude = np.hypot(self.gradient_x, self.gradient_y)
-    
+
+    def pad_matrix_if_needed(self, matrix):
+        if matrix.shape[0] < 2:
+            matrix = np.vstack([matrix, matrix])
+        if matrix.shape[1] < 2:
+            matrix = np.hstack([matrix, matrix[:, :1]])
+        return matrix
+
     def gradient_threshold(self) -> np.array:
         """
-        Thresholding the gradient.
-        Args:
-            None
-        Returns:
-            np.array: Thresholded gradient. Array of 0s and 1s.
+        Apply a threshold to the gradient magnitude to determine drivable areas.
         """
         return (self.gradient_magnitude < self.threshold).astype(int)
-    
-    def preserve_nan_values(self, array: np.array) -> np.array:
+
+    def preserve_nan_values(self, matrix: np.array, track: np.array) -> np.array:
         """
-        Preserve NaN values in the array. Getting NaN values from the original map.
-        Args:
-            np.array: Array to preserve NaN values.
-        Returns:
-            np.array: Array with preserved NaN values (float).
+        Preserve NaN values in the track data based on the original matrix.
         """
-        array = array.astype(float)
-        array[np.isnan(self.original_map)] = np.nan
-        return array
-    
-    def point_cloud_to_track(self, pcd: np.array):
+        track_with_nans = track.astype(float)
+        track_with_nans[np.isnan(matrix)] = np.nan
+        return track_with_nans
+
+    def point_cloud_to_track(self, matrix):
         """
-        Convert point cloud to track data. Function that gathers all logic into one.
-        Use it to get track data from point cloud. 
-        Args:
-            np.array: Point cloud data.
-        Returns:
-            np.array: Track data.
+        Convert point cloud matrix to track data.
         """
-        self.original_map = pcd
-        self.calculate_gradient_magnitude()
+        matrix = self.pad_matrix_if_needed(matrix)
+        self.calculate_gradient_magnitude(matrix)
         track = self.gradient_threshold()
-        track_with_NaNs = self.preserve_nan_values(track)
-
+        track_with_nans = self.preserve_nan_values(matrix, track)
         if self.has_visualization:
-            self.visualize_track(track_with_NaNs)
+            self.visualize_track(track_with_nans)
+        return track_with_nans
 
-        return track_with_NaNs
-    
     def visualize_track(self, track: np.array):
         """
-        Visualize the track data.
-        Args:
-            np.array: Track 2d array.
-        Returns:
-            None
+        Visualize the track using Open3D.
         """
         if not self.has_visualization:
             return
-        
+        # Convert track data to a colored point cloud
         rows, cols = track.shape
-
         points = []
         colors = []
-
         for i in range(rows):
             for j in range(cols):
-                if np.isnan(track[i, j]):
-                    color = [0, 0, 1]  # Blue for NaNs
-                elif track[i, j]:
-                    color = [0, 1, 0]  # Green for drivable areas
-                else:
-                    color = [1, 0, 0]  # Red for non-drivable areas
-
-                points.append([j, -i, track[i, j] if not np.isnan(track[i, j]) else 0])
+                z = track[i, j] if not np.isnan(track[i, j]) else 0
+                color = [0, 0, 1] if np.isnan(track[i, j]) else ([0, 1, 0] if track[i, j] == 1 else [1, 0, 0])
+                points.append([j, -i, z])
                 colors.append(color)
-
-        points = np.array(points)
-        colors = np.array(colors)
-
         point_cloud = o3d.geometry.PointCloud()
         point_cloud.points = o3d.utility.Vector3dVector(points)
         point_cloud.colors = o3d.utility.Vector3dVector(colors)
-
         self.visualization.clear_geometries()
         self.visualization.add_geometry(point_cloud)
         self.visualization.poll_events()
+        self.visualization.update_renderer()
+
+# Example usage:
+# Assuming `matrix` is a 2D numpy array representing the point cloud data
+# matrix = np.random.random((100, 100))
+# track_maker = TrackMaker(threshold=0.2, has_visualization=True)
+# track = track_maker.point_cloud_to_track(matrix)

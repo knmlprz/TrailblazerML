@@ -65,6 +65,9 @@ class AStarGrid:
         path.append(start_node)
         path.reverse()
         return path
+    def update(self, grid, start):
+        self.grid = grid
+        self.start = start
 
     def get_neighbors(self, node):
         neighbors = []
@@ -200,3 +203,4 @@ visualizer.add_geometry(edge_line_set)
 
 visualizer.run()
 visualizer.destroy_window()
+
