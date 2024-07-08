@@ -36,6 +36,7 @@ if __name__ == "__main__":
     map_2d = np.full((res, res), np.nan)
     value_range = (-1, 1)
     # visualization_type - 0 means using open3d, any other number means using regular matplotlib
+
     mapper = m2d.PointCloudMapper(
         res, value_range, visualize=True, visualization_type=1
     )
@@ -52,7 +53,6 @@ if __name__ == "__main__":
         ### HERE WE CAN ADD SOME FUNCTIONALITY
         # TODO: ALL THE REST
         ###
-        
         # points = np.asarray(pcd.points)
         # track = track_maker.point_cloud_to_track(points)
         obstacle_map = generate_obstacle_map(500, 20, 100)
@@ -61,3 +61,4 @@ if __name__ == "__main__":
         rpz = np.random.randint(10, 200)
         ppp = (rpz, rpx)
         map_2d = mapper.cropped_map_to_2d_map(obstacle_map, ppp)
+        
