@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import open3d as o3d
+from .transform_data import assignment_to_sectors
 
 
 class Simulation3D:
@@ -33,9 +34,9 @@ class Simulation3D:
             self.vis.run()
             self.vis.destroy_window()
 
-    def simulation_reading_one_time(self, path_image: str, path_depth: str, path_pose: str) -> (
-            np.ndarray, o3d.geometry.PointCloud, np.ndarray):
-
+    def simulation_reading_one_time(
+        self, path_image: str, path_depth: str, path_pose: str
+    ) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
         """
         Function to simulate reading data from the camera.
         Args:
@@ -53,13 +54,21 @@ class Simulation3D:
             color_raw = o3d.geometry.Image(rgb)
             depth_raw = o3d.geometry.Image(depth)
             rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
-                color_raw, depth_raw, depth_scale=1.0, depth_trunc=3.0, convert_rgb_to_intensity=False)
+                color_raw,
+                depth_raw,
+                depth_scale=1.0,
+                depth_trunc=3.0,
+                convert_rgb_to_intensity=False,
+            )
 
             K = np.loadtxt(self.intrinsics_path)
-            intrinsic = o3d.camera.PinholeCameraIntrinsic(rgb.shape[1], rgb.shape[0], K[0, 0], K[1, 1], K[0, 2],
-                                                          K[1, 2])
+            intrinsic = o3d.camera.PinholeCameraIntrinsic(
+                rgb.shape[1], rgb.shape[0], K[0, 0], K[1, 1], K[0, 2], K[1, 2]
+            )
             pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic)
+            pcd = pcd.voxel_down_sample(voxel_size=0.05)
             pcd.transform(pose)
+            matrix = assignment_to_sectors(pcd)
 
             point = pose[:3, 3]
             if self.visualize:
@@ -95,7 +104,7 @@ def load_data(base_path: str) -> (list, list, list):
     data_paths = {
         "images": os.path.join(base_path, "image"),
         "sparse_depths": os.path.join(base_path, "sparse_depth"),
-        "poses": os.path.join(base_path, "absolute_pose")
+        "poses": os.path.join(base_path, "absolute_pose"),
     }
 
     data = {}
@@ -103,8 +112,12 @@ def load_data(base_path: str) -> (list, list, list):
     for key, path in data_paths.items():
         if not os.path.exists(path):
             raise FileNotFoundError(f"Directory not found: {path}")
-        files = [os.path.join(path, f) for f in sorted(os.listdir(path))
-                 if (key == 'poses' and f.endswith('.txt')) or (key != 'poses' and f.endswith('.png'))]
+        files = [
+            os.path.join(path, f)
+            for f in sorted(os.listdir(path))
+            if (key == "poses" and f.endswith(".txt"))
+            or (key != "poses" and f.endswith(".png"))
+        ]
         data[key] = files
 
     return data["images"], data["sparse_depths"], data["poses"]
@@ -143,6 +156,9 @@ def read_pose(pose_path: str) -> np.ndarray:
     pose (np.array): The pose matrix as a 4x4 numpy array.
     """
     pose = np.loadtxt(pose_path, dtype=np.float64)
-    if pose.shape == (3, 4):  # Convert 3x4 matrix to 4x4 by adding a row for homogeneous coordinates
+    if pose.shape == (
+        3,
+        4,
+    ):  # Convert 3x4 matrix to 4x4 by adding a row for homogeneous coordinates
         pose = np.vstack((pose, np.array([0, 0, 0, 1], dtype=np.float64)))
     return pose

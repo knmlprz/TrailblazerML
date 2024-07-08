@@ -5,3 +5,5 @@ data1500/**
 *.tar.gz
 .idea/
 __pycache__/
+src/measurement/
+src/vision/oak/sectors.npy

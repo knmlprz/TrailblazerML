@@ -2,56 +2,82 @@ import numpy as np
 
 
 class ImuTracker:
-    def __init__(self):
-        self.position = np.zeros(3)
-        self.velocity = np.zeros(3)
-        self.orientation = np.eye(3)
-        self.initialized = False
+    def __init__(self, visualize: bool = True):
+        self.current_point = np.array([0, 0, 0])
+        self.current_velocity = np.array([0, 0, 0])
+        self.pose_matrix = np.eye(4)
 
-    def quaternion_to_rotation_matrix(self, q: list) -> np.array:
-        """ Convert a quaternion into a rotation matrix.
+    def update_position(self, accel_data: (float, float, float), delta_t):
+        """
+        Update the position of the camera based on the acceleration data and the time passed.
         Args:
-            q (list): The quaternion to convert.
+            accel_data:
+            delta_t:
+
         Returns:
-            np.array: The rotation matrix 3x3.
 
         """
-        w, x, y, z = q
-        return np.array([
-            [1 - 2 * y ** 2 - 2 * z ** 2, 2 * x * y - 2 * z * w, 2 * x * z + 2 * y * w],
-            [2 * x * y + 2 * z * w, 1 - 2 * x ** 2 - 2 * z ** 2, 2 * y * z - 2 * x * w],
-            [2 * x * z - 2 * y * w, 2 * y * z + 2 * x * w, 1 - 2 * x ** 2 - 2 * y ** 2]
-        ])
+        accel_data = np.array([accel_data[0], accel_data[1], accel_data[2]]) * 1000
+        delta_velocity = accel_data * delta_t
+        self.current_velocity = self.current_velocity + delta_velocity
+        new_position = self.current_point + self.current_velocity * delta_t + 0.5 * accel_data * delta_t ** 2
+        self.current_point = np.array([new_position[0], 0, new_position[2]])
+        return self.current_point
 
-    def update(self, accel_data: list, rotation_vector: list, delta_t: float) -> np.array:
-        """ Update the IMU pose estimation.
-        Args:
-            accel_data (list): The acceleration data of .
-            rotation_vector (list): The rotation vector.
-            delta_t (float): The time delta. from the last update.
-        Returns:
-            np.array: The transformation matrix 4x4.
+    def update(self, accel_data: (float, float, float), rotation_vector: (float, float, float),
+               delta_t: float) -> np.ndarray:
         """
-        # Convert the rotation vector to a rotation matrix
-        rotation_matrix = self.quaternion_to_rotation_matrix(rotation_vector)
+        Update the position of the camera based on the acceleration data, rotation vector and the time passed.
+        Args:
+            accel_data:
+            rotation_vector:
+            delta_t:
 
-        # If this is the first update, initialize the orientation
-        if not self.initialized:
-            self.orientation = rotation_matrix
-            self.initialized = True
-            return np.eye(4)  # Return the identity matrix as the initial pose
+        Returns:
 
-        # Update velocity and position
-        accel_world = np.dot(self.orientation, accel_data)  # Convert acceleration to world coordinates
-        self.velocity += accel_world * delta_t
-        self.position += self.velocity * delta_t + 0.5 * accel_world * delta_t ** 2
+        """
+        new_position = self.update_position(accel_data, delta_t)
+        rotation_matrix = self.quaternion_rotation_matrix(rotation_vector)
+        self.pose_matrix[:3, :3] = rotation_matrix
+        self.pose_matrix[:3, 3] = new_position
+        return self.pose_matrix
 
-        # Update orientation
-        self.orientation = np.dot(rotation_matrix, self.orientation)
+    def quaternion_rotation_matrix(self, Q: (float, float, float, float)) -> np.ndarray:
+        """
+        Covert a quaternion into a full three-dimensional rotation matrix.
 
-        # Construct the 4x4 pose matrix
-        pose_matrix = np.eye(4)
-        pose_matrix[:3, :3] = self.orientation
-        pose_matrix[:3, 3] = self.position
+        Input
+        :param Q: A 4 element array representing the quaternion (q0,q1,q2,q3)
 
-        return pose_matrix
+        Output
+        :return: A 3x3 element matrix representing the full 3D rotation matrix.
+                 This rotation matrix converts a point in the local reference
+                 frame to a point in the global reference frame.
+        """
+        # Extract the values from Q
+        q0 = Q[0]  # 0 1 2 3
+        q1 = Q[1]  # 1 2 3 0
+        q2 = Q[2]  # 2 3 0 1
+        q3 = Q[3]  # 3 0 1 2
+
+        # First row of the rotation matrix
+        r00 = 2 * (q0 * q0 + q1 * q1) - 1
+        r01 = 2 * (q1 * q2 - q0 * q3)
+        r02 = 2 * (q1 * q3 + q0 * q2)
+
+        # Second row of the rotation matrix
+        r10 = 2 * (q1 * q2 + q0 * q3)
+        r11 = 2 * (q0 * q0 + q2 * q2) - 1
+        r12 = 2 * (q2 * q3 - q0 * q1)
+
+        # Third row of the rotation matrix
+        r20 = 2 * (q1 * q3 - q0 * q2)
+        r21 = 2 * (q2 * q3 + q0 * q1)
+        r22 = 2 * (q0 * q0 + q3 * q3) - 1
+
+        # 3x3 rotation matrix
+        rot_matrix = np.array([[r00, r01, r02],
+                               [r10, r11, r12],
+                               [r20, r21, r22]])
+
+        return rot_matrix
