@@ -120,3 +120,36 @@ def assignment_to_sectors(
     ]
 
     return cropped_results, min_non_nan_index
+
+def get_sector_index(xz_translation: (float,float),  sectors_path: str = "./vision/oak/sectors.npy") -> tuple:
+    """
+    Calculates the sector index for the given xz translation.
+
+    Parameters:
+    xz_translation (tuple): Tuple of x and z coordinates.
+    sector_size (float): The size of each sector.
+    sectors_path (str): Path to the numpy array representing the sector divisions.
+
+    Returns:
+    tuple: The sector index (x_index, z_index) corresponding to the xz_translation.
+    """
+    config = load_config()
+    sector_size = config["sector_size"]
+
+    # Ładowanie danych sektorów, zakładając, że zawierają one informacje o liczbie i rozmiarze sektorów
+    try:
+        sectors = np.load(sectors_path)
+    except FileNotFoundError:
+        print(f"Error: The sectors file was not found at {sectors_path}.")
+        return None
+
+    # Obliczenie indeksu sektora
+    x_index = int(xz_translation[0] // sector_size)
+    z_index = int(xz_translation[1] // sector_size)
+
+    # Sprawdzenie, czy indeksy mieszczą się w zakresie sektorów
+    if 0 <= x_index < sectors.shape[0] and 0 <= z_index < sectors.shape[1]:
+        return (x_index, z_index)
+    else:
+        print("Provided translation is out of the sector bounds.")
+        return (0, 0)

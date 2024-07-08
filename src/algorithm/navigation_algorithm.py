@@ -68,6 +68,9 @@ class AStarGrid:
         path.reverse()
         print(cost_so_far)
         return path
+    def update(self, grid, start):
+        self.grid = grid
+        self.start = start
 
     def get_neighbors(self, node):
         neighbors = []
@@ -138,47 +141,47 @@ def create_grid_visualization(grid, spacing=1.0):
 # plt.title("Trailblazer algorithm time")
 # plt.show()
 
-grid_size = 1000
-grid = AStarGrid(grid_size, grid_size, start_x=0, start_y=0, end_x=grid_size - 2, end_y=grid_size - 2)
-grid.generate_random_grid(grid_size, grid_size)
-
+# grid_size = 1000
+# grid = AStarGrid(grid_size, grid_size, start_x=0, start_y=0, end_x=grid_size - 2, end_y=grid_size - 2)
+# grid.generate_random_grid(grid_size, grid_size)
 #
-start = time.time()
-path = grid.a_star_search()
-end = time.time()
-
-time_taken = end - start
-print("Time taken: ", time_taken)
-
-# Create visualization data
-grid_points, grid_colors, edge_points, edge_colors = create_grid_visualization(grid, 0.1)
-path_points = [[j * 0.1, i * 0.1, 0] for i, j in path]
-path_colors = [[0, 1, 0] for _ in range(len(path_points))]
-
-# Create Open3D visualizer and add geometries
-visualizer = o3d.visualization.Visualizer()
-visualizer.create_window()
-
-# Create grid point cloud
-grid_point_cloud = o3d.geometry.PointCloud()
-grid_point_cloud.points = o3d.utility.Vector3dVector(grid_points)
-grid_point_cloud.colors = o3d.utility.Vector3dVector(grid_colors)
-visualizer.add_geometry(grid_point_cloud)
-
-# Create path point cloud
-path_point_cloud = o3d.geometry.PointCloud()
-path_point_cloud.points = o3d.utility.Vector3dVector(path_points)
-path_point_cloud.colors = o3d.utility.Vector3dVector(path_colors)
-visualizer.add_geometry(path_point_cloud)
-
-# Create edge line set
-edge_lines = [[i, i + 1] for i in range(0, len(edge_points), 2)]
-edge_line_set = o3d.geometry.LineSet()
-edge_line_set.points = o3d.utility.Vector3dVector(edge_points)
-edge_line_set.lines = o3d.utility.Vector2iVector(edge_lines)
-edge_line_set.colors = o3d.utility.Vector3dVector(edge_colors)
-visualizer.add_geometry(edge_line_set)
-
-# Run the visualizer
-visualizer.run()
-visualizer.destroy_window()
+# #
+# start = time.time()
+# path = grid.a_star_search()
+# end = time.time()
+#
+# time_taken = end - start
+# print("Time taken: ", time_taken)
+#
+# # Create visualization data
+# grid_points, grid_colors, edge_points, edge_colors = create_grid_visualization(grid, 0.1)
+# path_points = [[j * 0.1, i * 0.1, 0] for i, j in path]
+# path_colors = [[0, 1, 0] for _ in range(len(path_points))]
+#
+# # Create Open3D visualizer and add geometries
+# visualizer = o3d.visualization.Visualizer()
+# visualizer.create_window()
+#
+# # Create grid point cloud
+# grid_point_cloud = o3d.geometry.PointCloud()
+# grid_point_cloud.points = o3d.utility.Vector3dVector(grid_points)
+# grid_point_cloud.colors = o3d.utility.Vector3dVector(grid_colors)
+# visualizer.add_geometry(grid_point_cloud)
+#
+# # Create path point cloud
+# path_point_cloud = o3d.geometry.PointCloud()
+# path_point_cloud.points = o3d.utility.Vector3dVector(path_points)
+# path_point_cloud.colors = o3d.utility.Vector3dVector(path_colors)
+# visualizer.add_geometry(path_point_cloud)
+#
+# # Create edge line set
+# edge_lines = [[i, i + 1] for i in range(0, len(edge_points), 2)]
+# edge_line_set = o3d.geometry.LineSet()
+# edge_line_set.points = o3d.utility.Vector3dVector(edge_points)
+# edge_line_set.lines = o3d.utility.Vector2iVector(edge_lines)
+# edge_line_set.colors = o3d.utility.Vector3dVector(edge_colors)
+# visualizer.add_geometry(edge_line_set)
+#
+# # Run the visualizer
+# visualizer.run()
+# visualizer.destroy_window()
