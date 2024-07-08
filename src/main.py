@@ -10,6 +10,7 @@ import numpy as np
 if __name__ == "__main__":
 
     # Example of how to use the classes and functions
+
     config = load_config("utils/config_oak.json")
     oak = CameraOAK(config, visualize=True)
     point_cloud_mapper = PointCloudMapper()
