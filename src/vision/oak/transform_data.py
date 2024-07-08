@@ -58,6 +58,7 @@ def assignment_to_sectors(
                                          The array is cropped to include only the non-NaN values.
         - min_non_nan_index (np.ndarray): A 1D numpy array containing the minimum non-NaN index for both dimensions of the results matrix.
     """
+
     config = load_config()
     sector_size = config["sector_size"]
 
@@ -102,15 +103,14 @@ def assignment_to_sectors(
 
     # Extract keys and values from the centers_of_masses dictionary
     sectors = np.array(list(centers_of_masses.keys()))
-
     # Determine the size of the resulting matrix
+    print(sectors.shape)
     max_index = np.max(sectors)
     results = np.full((max_index + 1, max_index + 1), np.nan)
 
     # Assign center of mass values to the result matrix
     for (x_idx, z_idx), center_mass in centers_of_masses.items():
         results[x_idx, z_idx] = center_mass
-
     non_nan_indices = np.argwhere(~np.isnan(results))
     min_non_nan_index = np.min(non_nan_indices, axis=0)
     max_non_nan_index = np.max(non_nan_indices, axis=0)
@@ -153,3 +153,4 @@ def get_sector_index(xz_translation: (float,float),  sectors_path: str = "./visi
     else:
         print("Provided translation is out of the sector bounds.")
         return (0, 0)
+

@@ -13,32 +13,24 @@ if __name__ == "__main__":
     # Example of how to use the classes and functions
 
     config = load_config("utils/config_oak.json")
-    camera_oak = CameraOAK(config, visualize=True)
-    point_cloud_mapper = PointCloudMapper()
+    camera_oak = CameraOAK(config, visualize=False)
+    point_cloud_mapper = PointCloudMapper(res=5000)
     track_maker = TrackMaker()
     a_star_grid = AStarGrid(point_cloud_mapper.res, point_cloud_mapper.res, start_x=0, start_y=0, end_x=point_cloud_mapper.res - 3, end_y=point_cloud_mapper.res - 2)
     start_loop = True
     while start_loop:
         rgb, pcd, pose = camera_oak.get_data()
-        print(type(pcd))
-        if pcd.is_empty():
-            print("Chmura punktów jest pusta. Tworzenie domyślnej chmury punktów...")
-            # Tworzymy przykładowe punkty, np. 10 punktów na płaszczyźnie XY
-            num_points = 10
-            np_points = np.random.rand(num_points, 3)  # Losowe punkty w zakresie [0, 1]
-            np_points[:, 2] = 0  # Ustawienie współrzędnej Z na 0 dla wszystkich punktów
-
-            # Utworzenie nowej chmury punktów
-            pcd = o3d.geometry.PointCloud()
-            pcd.points = o3d.utility.Vector3dVector(np_points)
-
-
+        print(f"pcd {pcd }")
         matrix, first_sector  = assignment_to_sectors(pcd)
         rover_sector = get_sector_index((pose[0, 3], pose[2, 3]))
+        print(f"rover_sector {rover_sector}")
         map_01 = track_maker.point_cloud_to_track(matrix)
+        print(f"map_01.shape {map_01.shape}")
         global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector)
-        a_star_grid.update(global_map, rover_sector)
-        path_to_destination =a_star_grid.a_star_search()
+        print(f"global_map.shape {global_map.shape}")
+
+        # a_star_grid.update(global_map, rover_sector)
+        # path_to_destination =a_star_grid.a_star_search()
 
 
 
