@@ -1,7 +1,10 @@
 import serial
 class STMCom:
-    def __init__(self, port):
-        self.ser = serial.Serial(port, 115200, timeout=1)
+    def __init__(self, port, serial_port=None):
+        if serial_port:
+            self.ser = serial_port
+        else:
+            self.ser = serial.Serial(port, 115200, timeout=1)
         self.autonomy = False
         self.left_speed = 79
         self.right_speed = 79
@@ -15,7 +18,8 @@ class STMCom:
         #pabing from -1 to 1 to 0 to 1 t0 32 to 126
         left_speed = int(map(left_speed, -1, 1, 32, 126))
     def send_command(self):
-        command = bytes(['*', self.left_speed, self.right_speed])
+        start_byte = ord('*')
+        command = bytes([start_byte, self.left_speed, self.right_speed])
         checksum = sum(command) & 0xFF
         command += bytes([checksum])
         self.ser.write(command)
@@ -36,9 +40,69 @@ class STMCom:
     def close(self):
         self.ser.close()
 
+    def inject_response(self, data):
+        return self.read_response()
 
-
-# Przykład użycia
-input_value = -0.90  # Przykładowa wartość do przeskalowania
-mapped_value = scale_value(input_value, (-1, 1), (32, 126))
-print(f"Przeskalowana wartość: {mapped_value}")
+#
+# from unittest.mock import MagicMock
+# import serial
+#
+# # Przykładowa funkcja testująca
+# import unittest
+# from unittest.mock import MagicMock
+# from stm_com import STMCom
+#
+#
+# class TestSTMCom(unittest.TestCase):
+#     def test_read_response_with_valid_data(self):
+#         # Mock serial port
+#         mock_serial = MagicMock()
+#
+#         # Set up the mock to simulate incoming data that the read_response method expects
+#         # Simulating data: '*' as start byte, 'Y' as data byte, and valid checksum
+#         start_byte = ord('*')
+#         data_byte = ord('Y')
+#         checksum = (start_byte + data_byte) & 0xFF
+#         mock_serial.read.side_effect = [
+#             bytes([start_byte]),  # Response for read(1)
+#             bytes([data_byte, checksum])  # Response for read(2)
+#         ]
+#
+#         # Create an instance of STMCom using the mocked serial port
+#         stm = STMCom(port="dummy_port", serial_port=mock_serial)
+#
+#         # Call read_response and assert its effects
+#         stm.read_response()
+#         self.assertTrue(stm.autonomy)
+#         print(f"Autonomy status: {stm.autonomy}")
+#
+#     def test_read_response_with_invalid_checksum(self):
+#         # Mock serial port
+#         mock_serial = MagicMock()
+#
+#         # Simulating data: '*' as start byte, 'Y' as data byte, but incorrect checksum
+#         start_byte = ord('*')
+#         data_byte = ord('Y')
+#         incorrect_checksum = (start_byte + data_byte) & 0xFF  # Deliberately incorrect
+#         mock_serial.read.side_effect = [
+#             bytes([start_byte]),  # Response for read(1)
+#             bytes([data_byte, incorrect_checksum])  # Response for read(2)
+#         ]
+#
+#         # Create an instance of STMCom using the mocked serial port
+#         stm = STMCom(port="dummy_port", serial_port=mock_serial)
+#
+#         # Call read_response and assert its effects
+#         stm.read_response()
+#         self.assertFalse(stm.autonomy)
+#         print(f"Autonomy status: {stm.autonomy}")
+#
+#
+#     def tearDown(self):
+#         # This method will be called after each test
+#         print("Test completed.")
+#
+#
+# # Run the tests
+# if __name__ == '__main__':
+#     unittest.main()
