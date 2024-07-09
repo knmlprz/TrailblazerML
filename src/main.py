@@ -2,6 +2,7 @@ from map2d.pcd2track import TrackMaker
 from map2d.translator import PointCloudMapper
 from vision.oak.camera_oak import CameraOAK
 from algorithm.navigation_algorithm import AStarGrid
+from communication.stm_com import STMCom
 
 from vision.oak.config_oak import load_config
 from vision.oak.transform_data import assignment_to_sectors, get_sector_index
@@ -15,6 +16,7 @@ if __name__ == "__main__":
     config = load_config("utils/config_oak.json")
     camera_oak = CameraOAK(config, visualize=False)
     point_cloud_mapper = PointCloudMapper(res=5000)
+    stm_com = STMCom(port="/dev/ttyUSB0")
     track_maker = TrackMaker()
     a_star_grid = AStarGrid(point_cloud_mapper.res, point_cloud_mapper.res, start_x=0, start_y=0, end_x=point_cloud_mapper.res - 3, end_y=point_cloud_mapper.res - 2)
     start_loop = True
@@ -31,6 +33,8 @@ if __name__ == "__main__":
 
         # a_star_grid.update(global_map, rover_sector)
         # path_to_destination =a_star_grid.a_star_search()
+
+        stm_com.update(0.5, 0.5)
 
 
 
