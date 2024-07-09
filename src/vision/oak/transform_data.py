@@ -4,7 +4,7 @@ import os
 import json
 
 
-def load_config(config_path: str = "./utils/sectors_conf.json") -> dict:
+def load_config(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
@@ -39,7 +39,7 @@ def make_sectors(path: str = "./") -> None:
 
 
 def assignment_to_sectors(
-        pcd: o3d.geometry.PointCloud, path: str = "./vision/oak/sectors.npy"
+        pcd: o3d.geometry.PointCloud, path: str = "/home/filip/PycharmProjects/TrailblazerML/src/vision/oak/sectors.npy"
 )-> (np.ndarray, np.ndarray):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
@@ -121,7 +121,8 @@ def assignment_to_sectors(
 
     return cropped_results, min_non_nan_index
 
-def get_sector_index(xz_translation: (float,float),  sectors_path: str = "./vision/oak/sectors.npy") -> tuple:
+
+def get_sector_index(xz_translation: (float, float), sectors_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/vision/oak/sectors.npy") -> tuple:
     """
     Calculates the sector index for the given xz translation.
 
@@ -153,4 +154,3 @@ def get_sector_index(xz_translation: (float,float),  sectors_path: str = "./visi
     else:
         print("Provided translation is out of the sector bounds.")
         return (0, 0)
-
