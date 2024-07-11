@@ -82,10 +82,17 @@ class DestinationsCorrectionByARUCO:
 
         :return: (dict) Dictionary containing the corrected positions and their corresponding sector numbers.
         """
-        print(self.sector_size)
-        print(self.aruco_dict)
-        print(self.determineMarker(detected_markers["id"]))
-        return {}
+        marker_type = self.determineMarker(detected_markers["id"])
+        corrected_marker_position = self.correctCoordinates(detected_markers['position'], pose)
+        corrected_marker_position = [corrected_marker_position[0], corrected_marker_position[2], corrected_marker_position[1]]
+        sector_x, sector_z = self.calculateSector(corrected_marker_position[0], corrected_marker_position[2])
+        destinations = {
+            marker_type: {
+                'position': corrected_marker_position,
+                'sectors': (sector_x, sector_z)
+            }
+        }
+        return destinations
 
 
 if __name__ == "__main__":
@@ -94,7 +101,7 @@ if __name__ == "__main__":
                              [0, 1, 0, 0],
                              [0, 0, 1, 2500],
                              [0, 0, 0, 1]])
-    detected_marker = {"id": 269, "position": [3.13, 2.12, 4.14]}
+    detected_marker = {{"id": 269, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [3.13, 2.12, 4.14]}}
 
     new_destinations = correct_destination.newDestinations(detected_marker, example_pose)
     print(new_destinations)
