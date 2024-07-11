@@ -2,7 +2,13 @@ import numpy as np
 import json
 
 
-def load_config(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
+def load_config_sectors(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
+    with open(config_path, "r") as f:
+        config = json.load(f)
+    return config
+
+
+def load_config_aruco(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/aruco_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
@@ -10,7 +16,11 @@ def load_config(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/sr
 
 class DestinationsCorrectionByARUCO:
     def __init__(self):
-        self.sector_size = load_config()["sector_size"]
+        self.sector_size = load_config_sectors()["sector_size"]
+        self.aruco_dict = load_config_aruco()
+
+    def determineMarker(self):
+        pass
 
     def calculateSector(self, x: float, z: float) -> tuple:
         """
@@ -42,6 +52,7 @@ class DestinationsCorrectionByARUCO:
         :return: (dict) Dictionary containing the corrected positions and their corresponding sector numbers.
         """
         print(self.sector_size)
+        print(self.aruco_dict)
         return {}
 
 
