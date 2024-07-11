@@ -12,6 +12,22 @@ class DestinationsCorrectionByARUCO:
     def __init__(self):
         self.sector_size = load_config()["sector_size"]
 
+    def calculateSector(self, x: float, z: float) -> tuple:
+        """
+        Determine the sector for the given (x, z) coordinates.
+
+        Divides the space into a grid of sectors of a specified size and determines
+        which sector the given coordinates fall into.
+
+        :param x: (float) The x coordinate.
+        :param z: (float) The z coordinate.
+        :return: (tuple) A tuple (sector_x, sector_z) indicating the sector numbers in the x and z directions.
+        """
+        sector_x = int(x // self.sector_size)
+        sector_z = int(z // self.sector_size)
+
+        return sector_x, sector_z
+
     def newDestinations(self, detected_markers: dict, pose: np.ndarray) -> dict:
         """
         Compute new destinations corrected by ARUCO markers.
@@ -26,7 +42,7 @@ class DestinationsCorrectionByARUCO:
         :return: (dict) Dictionary containing the corrected positions and their corresponding sector numbers.
         """
         print(self.sector_size)
-        pass
+        return {}
 
 
 if __name__ == "__main__":
