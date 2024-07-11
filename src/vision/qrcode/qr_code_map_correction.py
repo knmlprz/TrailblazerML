@@ -19,8 +19,23 @@ class DestinationsCorrectionByARUCO:
         self.sector_size = load_config_sectors()["sector_size"]
         self.aruco_dict = load_config_aruco()
 
-    def determineMarker(self):
-        pass
+    def determineMarker(self, marker_id: int) -> str:
+        """
+        Determine if a marker is a destination or an entrance to a lava tube based on its ID.
+        Uses predefined marker IDs to categorize the marker as either a destination
+        or an entrance to a lava tube.
+
+        :param marker_id: (int) The ID of the detected marker.
+        :return: (str) 'destination' if the marker is a destination, 'entrance' if the marker is an entrance to a lava tube,
+        'unknown' if the marker ID is not recognized.
+        """
+        key = list(filter(lambda x: self.aruco_dict[x] == int(marker_id), self.aruco_dict))
+
+        if key[0] == "M1":
+            return "Destination"
+        if key[0] == "M2" or key[0] == "M3":
+            return "Lava_tube_entrance"
+        return "unknown"
 
     def calculateSector(self, x: float, z: float) -> tuple:
         """
@@ -38,6 +53,22 @@ class DestinationsCorrectionByARUCO:
 
         return sector_x, sector_z
 
+    def correctCoordinates(self, marker_position: list, pose: np.ndarray) -> np.ndarray:
+        """
+        Correct the coordinates (x, z) based on the detected marker position and the pose.
+
+        Applies the given pose transformation to the detected ARUCO marker position
+        to obtain corrected coordinates in the world frame.
+
+        :param marker_position: (list) The [x, y, z] position of the detected marker.
+        :param pose: (np.ndarray) 4x4 transformation matrix representing the pose.
+        :return: (np.ndarray) Corrected [x, y, z] coordinates.
+        """
+        marker_position = np.array([marker_position[0], marker_position[1], marker_position[2], 1])
+        correct_position = pose @ marker_position
+        correct_position = correct_position[:3]
+        return correct_position
+
     def newDestinations(self, detected_markers: dict, pose: np.ndarray) -> dict:
         """
         Compute new destinations corrected by ARUCO markers.
@@ -53,6 +84,7 @@ class DestinationsCorrectionByARUCO:
         """
         print(self.sector_size)
         print(self.aruco_dict)
+        print(self.determineMarker(detected_markers["id"]))
         return {}
 
 
@@ -62,7 +94,7 @@ if __name__ == "__main__":
                              [0, 1, 0, 0],
                              [0, 0, 1, 2500],
                              [0, 0, 0, 1]])
-    detected_marker = {"id": 1, "position": [3.13, 2.12, 4.14]}
+    detected_marker = {"id": 269, "position": [3.13, 2.12, 4.14]}
 
     new_destinations = correct_destination.newDestinations(detected_marker, example_pose)
     print(new_destinations)
