@@ -100,13 +100,13 @@ class DestinationsCorrectionByARUCO:
         return corrected_positions
 
 
-if __name__ == "__main__":
-    correct_destination = DestinationsCorrectionByARUCO()
-    example_pose = np.array([[1, 0, 0, 2500],
-                             [0, 1, 0, 0],
-                             [0, 0, 1, 2500],
-                             [0, 0, 0, 1]])
-    detected_markers = [{"id": 269, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
-
-    new_destinations = correct_destination.newDestinations(detected_markers, example_pose)
-    print(new_destinations)
+# if __name__ == "__main__":
+#     correct_destination = DestinationsCorrectionByARUCO()
+#     example_pose = np.array([[1, 0, 0, 2500],
+#                              [0, 1, 0, 0],
+#                              [0, 0, 1, 2500],
+#                              [0, 0, 0, 1]])
+#     detected_markers = [{"id": 269, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
+#
+#     new_destinations = correct_destination.newDestinations(detected_markers, example_pose)
+#     print(new_destinations)
