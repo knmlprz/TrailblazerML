@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print(f"map_01.shape {map_01.shape}")
         global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector)
         print(f"global_map.shape {global_map.shape}")
-        a_star_grid.update(global_map, rover_sector, end_goal)
+        a_star_grid.update(global_map, rover_sector, end_goal["destination"]["sectors"])
         path_to_destination = a_star_grid.a_star_search()
         moves = move(path_to_destination)
         print("move: ", moves, "\n")

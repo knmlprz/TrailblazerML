@@ -91,12 +91,11 @@ class DestinationsCorrectionByARUCO:
         corrected_positions = {}
 
         for marker in detected_markers:
-            marker_type = self.determineMarker(marker["id"])
             corrected_marker_position = self.correctCoordinates(marker['position'], pose)
             corrected_marker_position = [corrected_marker_position[0], corrected_marker_position[2],
                                          1]
             sector_x, sector_z = self.calculateSector(corrected_marker_position[0], corrected_marker_position[1])
-            corrected_positions[marker_type] = {
+            corrected_positions["destination"] = {
                 'position': corrected_marker_position,
                 'sectors': (sector_x, sector_z)
             }
@@ -104,13 +103,13 @@ class DestinationsCorrectionByARUCO:
         return corrected_positions
 
 
-# if __name__ == "__main__":
-#     correct_destination = DestinationsCorrectionByARUCO()
-#     example_pose = np.array([[1, 0, 0, 2500],
-#                              [0, 1, 0, 0],
-#                              [0, 0, 1, 2500],
-#                              [0, 0, 0, 1]])
-#     detected_markers = [{"id": 67, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
-#
-#     new_destinations = correct_destination.newDestinations(detected_markers, example_pose)
-#     print(new_destinations)
+if __name__ == "__main__":
+    correct_destination = DestinationsCorrectionByARUCO()
+    example_pose = np.array([[1, 0, 0, 2500],
+                             [0, 1, 0, 0],
+                             [0, 0, 1, 2500],
+                             [0, 0, 0, 1]])
+    detected_markers = [{"id": 67, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
+
+    new_destinations = correct_destination.newDestinations(detected_markers, example_pose)
+    print(new_destinations["destination"]["sectors"])
