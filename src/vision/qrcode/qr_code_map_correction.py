@@ -1,5 +1,6 @@
 import numpy as np
 import json
+from collections import defaultdict
 
 
 def load_config_sectors(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
@@ -32,11 +33,11 @@ class DestinationsCorrectionByARUCO:
         key = list(filter(lambda x: self.aruco_dict[x] == int(marker_id), self.aruco_dict))
 
         if key[0] == "M1":
-            return "Destination"
+            return "Airlock_entrance"
         if key[0] == "M2":
-            return "Lava_tube_entrance_right"
+            return "Lava_tube_entrance"
         if key[0] == "M3":
-            return "Lava_tube_entrance_left"
+            return "Lava_tube_exit"
         return "unknown"
 
     def calculateSector(self, x: float, z: float) -> tuple:
@@ -84,6 +85,9 @@ class DestinationsCorrectionByARUCO:
 
         :return: (dict) Dictionary containing the corrected positions and their corresponding sector numbers.
         """
+        marker_positions = defaultdict(list)
+        for marker in detected_markers:
+            marker_positions[marker["id"]].append(marker["position"])
         corrected_positions = {}
 
         for marker in detected_markers:
@@ -106,7 +110,7 @@ class DestinationsCorrectionByARUCO:
 #                              [0, 1, 0, 0],
 #                              [0, 0, 1, 2500],
 #                              [0, 0, 0, 1]])
-#     detected_markers = [{"id": 269, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
+#     detected_markers = [{"id": 67, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
 #
 #     new_destinations = correct_destination.newDestinations(detected_markers, example_pose)
 #     print(new_destinations)
