@@ -41,6 +41,8 @@ if __name__ == "__main__":
     value_range = (-1, 1)
     # visualization_type - 0 means using open3d, any other number means using regular matplotlib
 
+    padding = 8
+
     point_cloud_mapper = PointCloudMapper(res=5000)
     track_maker = TrackMaker(threshold=0.2, has_visualization=True)
     a_star_grid = AStarGrid(point_cloud_mapper.res, point_cloud_mapper.res, start_x=0, start_y=0,
@@ -59,7 +61,7 @@ if __name__ == "__main__":
         print(f"rover_sector {rover_sector}")
         map_01 = track_maker.point_cloud_to_track(matrix)
         print(f"map_01.shape {map_01.shape}")
-        global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector)
+        global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector, padding)
         print(f"global_map.shape {global_map.shape}")
         a_star_grid.update(global_map, rover_sector)
         path_to_destination = a_star_grid.a_star_search()

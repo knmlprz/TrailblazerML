@@ -7,12 +7,15 @@ from algorithm.navigation_algorithm import AStarGrid, move
 from communication.stm_com import STMCom
 from vision.oak.config_oak import load_config
 from vision.oak.transform_data import assignment_to_sectors, get_sector_index
-import open3d as o3d
-import numpy as np
+from vision.qrcode.qr_code import ReadARUCOCode
+from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
+
 
 def main_process():
     config = load_config("utils/config_oak.json")
     camera_oak = CameraOAK(config, visualize=False)
+    aruco = ReadARUCOCode()
+    correct_aruco = DestinationsCorrectionByARUCO()
     point_cloud_mapper = PointCloudMapper(res=5000)
     stm_com = STMCom(port="/dev/ttyACM0")
     track_maker = TrackMaker()
@@ -20,6 +23,9 @@ def main_process():
     start_loop = True
     while start_loop:
         rgb, pcd, pose = camera_oak.get_data()
+        isMarker, markerDict = aruco.read(rgb, False)
+        if isMarker:
+            new_destinations = correct_aruco.newDestinations(markerDict, pose)
         print(f"pcd {pcd}")
         print(f"pose shape: {pose.shape}, pose: {pose}")
         matrix, first_sector = assignment_to_sectors(pcd)
@@ -33,8 +39,7 @@ def main_process():
         path_to_destination = a_star_grid.a_star_search()
         moves = move(path_to_destination)
         print("move: ", moves, "\n")
-
-        start_autonumy = stm_com.update(moves[0], moves[1])
+        start_autonomy = stm_com.update(moves[0], moves[1])
 
 if __name__ == "__main__":
     api_process = multiprocessing.Process(target=run_api)
