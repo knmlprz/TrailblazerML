@@ -22,7 +22,7 @@ class PointCloudMapper:
         if self.visualize:
             self.vis.destroy_window()
 
-    def add_padding(overlay_map, padding):
+    def add_padding(self, overlay_map, padding):
         """
         Add padding to overlay map.
         Args:
