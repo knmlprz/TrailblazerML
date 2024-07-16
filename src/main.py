@@ -17,7 +17,7 @@ def main_process():
     aruco = ReadARUCOCode()
     correct_aruco = DestinationsCorrectionByARUCO()
     point_cloud_mapper = PointCloudMapper(res=5000)
-    # stm_com = STMCom(port="/dev/ttyACM0")
+    stm_com = STMCom(port="/dev/ttyACM0")
     track_maker = TrackMaker()
     a_star_grid = AStarGrid(point_cloud_mapper.res, point_cloud_mapper.res, start_x=0, start_y=0, end_x=point_cloud_mapper.res - 3, end_y=point_cloud_mapper.res - 2)
     start_loop = True
@@ -39,7 +39,7 @@ def main_process():
         path_to_destination = a_star_grid.a_star_search()
         moves = move(path_to_destination)
         print("move: ", moves, "\n")
-        # start_autonomy = stm_com.update(moves[0], moves[1])
+        start_autonomy = stm_com.update(moves[0], moves[1])
 
 if __name__ == "__main__":
     api_process = multiprocessing.Process(target=run_api)
