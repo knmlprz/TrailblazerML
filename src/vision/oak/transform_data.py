@@ -104,7 +104,7 @@ def assignment_to_sectors(
     # Extract keys and values from the centers_of_masses dictionary
     sectors = np.array(list(centers_of_masses.keys()))
     # Determine the size of the resulting matrix
-    print(sectors.shape)
+    print(f"sectors shape {sectors.shape}")
     max_index = np.max(sectors)
     results = np.full((max_index + 1, max_index + 1), np.nan)
 
