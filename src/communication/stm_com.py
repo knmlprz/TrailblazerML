@@ -51,9 +51,9 @@ class STMCom:
 
     def read_response(self):
         start = self.ser.read(1)
-        if start == b'*':
+        if start == b'&':
             read = self.ser.read(2)
-            calculated_checksum = (ord('*') + read[0]) & 0xFF
+            calculated_checksum = (ord('&') + read[0]) & 0xFF
             if read[0] == ord('Y') and read[1] == calculated_checksum:
                 self.autonomy = True
                 self.send_command()
