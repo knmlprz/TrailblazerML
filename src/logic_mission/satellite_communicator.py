@@ -103,7 +103,7 @@ class SatelliteCommunicator:
 
 
 if __name__ == "__main__":
-    satellite_communicator = SatelliteCommunicator(port="/dev/ttyAMA0", baudrate=9600)
+    satellite_communicator = SatelliteCommunicator(port="/dev/ttyUSB0", baudrate=9600)
     satellite_communicator.read_message()
     # satellite_communicator.send_acknowledge()
     # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_ARM_DISARM, b'\x01')
