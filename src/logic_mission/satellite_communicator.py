@@ -25,7 +25,7 @@ class SatelliteCommunicator:
 
     def read_message(self):
         while True:
-            print("l0")
+
             if self.serial_port.in_waiting > 0:
                 start_byte = self.serial_port.read(1)
                 print(f"l1 start_byte {start_byte.hex()}")
