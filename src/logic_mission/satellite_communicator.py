@@ -1,6 +1,7 @@
 import struct
 import serial
 
+
 class SatelliteCommunicator:
     START_BYTE = 0x7E
 
@@ -16,6 +17,7 @@ class SatelliteCommunicator:
     def __init__(self, port="/dev/ttyAMA0", baudrate=9600):
         self.serial_port = serial.Serial(port, baudrate, timeout=0.5)
         self.current_stage = 0
+
     def read_message(self):
         while True:
             if self.serial_port.in_waiting > 0:
@@ -25,7 +27,8 @@ class SatelliteCommunicator:
                     body_length = struct.unpack('B', self.serial_port.read(1))[0]
                     body = self.serial_port.read(body_length)
                     checksum = struct.unpack('>H', self.serial_port.read(2))[0]
-                    if self.verify_checksum(start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
+                    if self.verify_checksum(
+                            start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
                         self.process_message(message_id, body)
                         self.send_acknowledge()
 
@@ -89,7 +92,6 @@ class SatelliteCommunicator:
         self.current_stage = struct.unpack('B', body)[0]
         print("Set Stage command processed.")
 
-
     def handle_locate_aruco_tags(self, body):
         print("Locate Aruco Tags command processed.")
 
@@ -98,3 +100,16 @@ class SatelliteCommunicator:
 
     def handle_set_parameters(self, body):
         print("Set Parameters command processed.")
+
+
+if __name__ == "__main__":
+    satellite_communicator = SatelliteCommunicator(port="/dev/ttyAMA0", baudrate=9600)
+    satellite_communicator.read_message()
+    # satellite_communicator.send_acknowledge()
+    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_ARM_DISARM, b'\x01')
+    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_NAVIGATE_GPS, struct.pack('>ff', 34.052235, -118.243683))
+    # satellite_communicator.task_completed()
+    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_SET_STAGE, b'\x01')
+    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_LOCATE_ARUCO_TAGS, b'')
+    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_DETECTION, b'')
+    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_SET_PARAMETERS, b'')

@@ -24,7 +24,12 @@ class Mission:
     def handle_stage_1(self):
         print("Executing tasks for Stage 1...")
         if self.satellite_communicator.arm_status == True:
-            self.stm_com
+            self.stm_com.led_r = False
+            self.stm_com.led_g = True
+            self.stm_com.led_y = False
+            self.stm_com.girpper_open = True
+            self.stm_com.send_command()
+
 
 
 
