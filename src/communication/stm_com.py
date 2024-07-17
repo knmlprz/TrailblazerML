@@ -47,16 +47,20 @@ class STMCom:
         checksum = sum(command.encode()) & 0xFF
         command += chr(checksum)
         self.ser.write(command.encode())
+        self.read_response()
+
 
     def read_response(self):
-        start = self.ser.read(1)
-        if start == b'&':
-            read = self.ser.read(2)
-            calculated_checksum = (ord('&') + read[0]) & 0xFF
-            if read[0] == ord('Y') and read[1] == calculated_checksum:
-                self.autonomy = True
-                self.send_command()
-                print(f"Autonomy enabled send: left {self.left_speed} right {self.right_speed}")
+        while True:
+            if self.serial_port.in_waiting > 0:
+                start = self.ser.read(1)
+                if start == b'&':
+                    read = self.ser.read(2)
+                    calculated_checksum = (ord('&') + read[0]) & 0xFF
+                    if read[0] == ord('Y') and read[1] == calculated_checksum:
+                        break
+
+
 
     def scale_value(self, x, src_range, dst_range):
         scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))
