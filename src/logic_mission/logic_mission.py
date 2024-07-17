@@ -3,7 +3,7 @@ from ..communication.stm_com import STMCom
 class Mission:
     def __init__(self):
         self.stm_com = STMCom(port="/dev/ttyACM0")
-        self.satellite_communicator = SatelliteCommunicator(port="/dev/ttyAMA0", baudrate=9600)
+        self.satellite_communicator = SatelliteCommunicator(port="/dev/ttyAMA0", baudrate=115200)
         self.mision_is_on = True
         self.autonomy_is_on = False
     def loop_mission(self):
