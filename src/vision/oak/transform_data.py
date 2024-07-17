@@ -104,22 +104,24 @@ def assignment_to_sectors(
     # Extract keys and values from the centers_of_masses dictionary
     sectors = np.array(list(centers_of_masses.keys()))
     # Determine the size of the resulting matrix
-    print(f"sectors shape {sectors.shape}")
-    max_index = np.max(sectors)
-    results = np.full((max_index + 1, max_index + 1), np.nan)
+    if sectors != 0:
 
-    # Assign center of mass values to the result matrix
-    for (x_idx, z_idx), center_mass in centers_of_masses.items():
-        results[x_idx, z_idx] = center_mass
-    non_nan_indices = np.argwhere(~np.isnan(results))
-    min_non_nan_index = np.min(non_nan_indices, axis=0)
-    max_non_nan_index = np.max(non_nan_indices, axis=0)
-    cropped_results = results[
-        min_non_nan_index[0] : max_non_nan_index[0] + 1,
-        min_non_nan_index[1] : max_non_nan_index[1] + 1,
-    ]
+        max_index = np.max(sectors)
+        results = np.full((max_index + 1, max_index + 1), np.nan)
 
-    return cropped_results, min_non_nan_index
+        # Assign center of mass values to the result matrix
+        for (x_idx, z_idx), center_mass in centers_of_masses.items():
+            results[x_idx, z_idx] = center_mass
+        non_nan_indices = np.argwhere(~np.isnan(results))
+        min_non_nan_index = np.min(non_nan_indices, axis=0)
+        max_non_nan_index = np.max(non_nan_indices, axis=0)
+        cropped_results = results[
+            min_non_nan_index[0] : max_non_nan_index[0] + 1,
+            min_non_nan_index[1] : max_non_nan_index[1] + 1,
+        ]
+
+        return cropped_results, min_non_nan_index
+    return np.zeros(10), np.array([0, 0])
 
 
 def get_sector_index(xz_translation: (float, float), sectors_path: str = "vision/oak/sectors.npy") -> tuple:
