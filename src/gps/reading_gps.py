@@ -1,27 +1,22 @@
 import serial
 import pynmea2
 import time
+import string
 import json
-from filelock import FileLock
 
 outputDict = {}
-ser = serial.Serial(port="/dev/ttyTHS0", baudrate=9600)
+ser = serial.Serial(port="dev/ttyTSH0", baudrate=9600)
+with open("GPSdata.json", 'w') as OutputFile:
+    while True:
+        newline = ser.readline().decode("utf-8").split()
+        parsedLine = pynmea2.parse(newline)
+        if parsedLine.find("GPRMC") > -1:
+            outputDict['latitude'] = parsedLine.latitude
+            outputDict['longitude'] = parsedLine.longitude
+            json.dump(outputDict, OutputFile)
 
-lock = FileLock("untils")
 
-with lock:
-    with open("GPSdata.json", 'w') as OutputFile:
-        while True:
-            newline = ser.readline().decode("utf-8").strip()
-            try:
-                parsedLine = pynmea2.parse(newline)
-                if parsedLine.sentence_type == 'RMC':
-                    outputDict['latitude'] = parsedLine.latitude
-                    outputDict['longitude'] = parsedLine.longitude
-                    print(f"outputDict{outputDict}")
-                    OutputFile.seek(0)
-                    json.dump(outputDict, OutputFile)
-                    OutputFile.flush()
-                    OutputFile.truncate()
-            except pynmea2.ParseError as e:
-                print(f"Parse error: {e}")
+
+
+
+
