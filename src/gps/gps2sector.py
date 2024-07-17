@@ -1,3 +1,4 @@
+import numpy as np
 import open3d as o3d
 import json
 import math
@@ -14,7 +15,7 @@ class SectorFinder:
     """
 
     def __init__(self):
-        self.cords_position_json_path = "communication/api/api_data/position.json"
+        self.cords_position_json_path = "../utils/position.json"
         self.latitude = None
         self.longitude = None
         self.initial_latitude, self.initial_longitude = self.read_json_position()
@@ -32,11 +33,18 @@ class SectorFinder:
 
         return x_sector, y_sector
 
+    def update_pose_from_gps(self, pose: np.ndarray(4) = np.eye(4)) -> np.ndarray(4):
+        if pose is None:
+            pose = np.eye(4)
+        x_sector, y_sector = self.update_sector()
+        pose[0, 3] = x_sector
+        pose[2, 3] = y_sector
+        return pose
+
     def read_json_position(self) -> tuple[int, int]:
         with open(self.cords_position_json_path, "r") as cords_json:
             data = json.load(cords_json)
             return data['latitude'], data['longitude']
-  
 
     def convert_cords_to_distance_diff(self) -> tuple[int, int]:
         """
