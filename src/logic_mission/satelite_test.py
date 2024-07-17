@@ -5,7 +5,7 @@ from satellite_communicator  import SatelliteCommunicator
 
 if __name__ == "__main__":
     # Create an instance of the SatelliteCommunicator
-    communicator = SatelliteCommunicator(port="/dev/ttyUSB0", baudrate=115200)
+    communicator = SatelliteCommunicator(port="/dev/ttyUSB1", baudrate=115200)
 
     # Send Arm/Disarm command (Assuming 0x01 means Arm)
     communicator.send_message(SatelliteCommunicator.MSG_ID_ARM_DISARM, b'\x01')
