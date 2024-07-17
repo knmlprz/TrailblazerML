@@ -5,7 +5,7 @@ import string
 import json
 
 outputDict = {}
-ser = serial.Serial(port="dev/ttyTSH0", baudrate=9600)
+ser = serial.Serial(port="dev/ttyTHS0", baudrate=9600)
 with open("GPSdata.json", 'w') as OutputFile:
     while True:
         newline = ser.readline().decode("utf-8").split()
