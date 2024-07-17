@@ -1,7 +1,6 @@
 import struct
 import serial
 
-
 class SatelliteCommunicator:
     START_BYTE = 0x7E
 
@@ -17,6 +16,11 @@ class SatelliteCommunicator:
     def __init__(self, port="/dev/ttyUSB0", baudrate=9600):
         self.serial_port = serial.Serial(port, baudrate, timeout=0.5)
         self.current_stage = 0
+        self.log_file = open("communication_log.txt", "a")  # Open a file in append mode
+
+    def write_log(self, message):
+        self.log_file.write(message + "\n")  # Write message to file with a newline
+        self.log_file.flush()  # Ensure it gets written to disk
 
     def read_message(self):
         while True:
@@ -31,6 +35,7 @@ class SatelliteCommunicator:
                             start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
                         self.process_message(message_id, body)
                         self.send_acknowledge()
+                        self.write_log("Message processed: ID {} Body Length {}".format(message_id, body_length))
 
     def send_message(self, message_id, body):
         body_length = len(body)
@@ -38,6 +43,7 @@ class SatelliteCommunicator:
         checksum = self.crc16_ccitt(header + body)
         message = header + body + struct.pack('>H', checksum)
         self.serial_port.write(message)
+        self.write_log("Sent message: ID {} Body {}".format(message_id, body))
 
     def send_acknowledge(self):
         self.send_message(self.MSG_ID_ACK, b'')
@@ -103,8 +109,9 @@ class SatelliteCommunicator:
 
 
 if __name__ == "__main__":
-    satellite_communicator = SatelliteCommunicator(port="/dev/ttyUSB0", baudrate=9600)
-    satellite_communicator.read_message()
+    satellite_communicator = SatelliteCommunicator(port="/dev/ttyUSB0", baudrate=115200)
+    while True:
+        satellite_communicator.read_message()
     # satellite_communicator.send_acknowledge()
     # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_ARM_DISARM, b'\x01')
     # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_NAVIGATE_GPS, struct.pack('>ff', 34.052235, -118.243683))
