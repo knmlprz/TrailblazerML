@@ -29,7 +29,7 @@ def send_message(ser, message_id, body):
     header = struct.pack('BBB', START_BYTE, message_id, body_length)
     checksum = crc16_ccitt(header + body)
     message = header + body + struct.pack('>H', checksum)
-    ser.serial_port.write(message)
+    ser.write(message)
 
 
 def main():
