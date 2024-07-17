@@ -1,5 +1,6 @@
 import struct
 import serial
+import time
 
 class SatelliteCommunicator:
     START_BYTE = 0x7E
@@ -34,7 +35,7 @@ class SatelliteCommunicator:
                     body_length = struct.unpack('B', self.serial_port.read(1))[0]
                     body = self.serial_port.read(body_length)
                     checksum = struct.unpack('>H', self.serial_port.read(2))[0]
-                    print(f"l2 message_id {message_id.hex()} body_length {body_length.hex()} body {body.hex()} checksum {checksum.hex()}")
+                    print(f"l2 message_id {message_id.hex()} body_length {body_length.hex()} body {body.hex()} checksum {checksum}")
                     if self.verify_checksum(
                             start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
 
