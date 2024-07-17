@@ -15,7 +15,7 @@ class SatelliteCommunicator:
 
     def __init__(self, port="/dev/ttyAMA0", baudrate=9600):
         self.serial_port = serial.Serial(port, baudrate, timeout=0.5)
-
+        self.current_stage = 0
     def read_message(self):
         while True:
             if self.serial_port.in_waiting > 0:
@@ -72,7 +72,7 @@ class SatelliteCommunicator:
         print("Acknowledge received.")
 
     def handle_arm_disarm(self, body):
-        arm_status = struct.unpack('B', body)[0]
+        self.arm_status = struct.unpack('B', body)[0]
         print("Arm/Disarm command processed.")
 
     def handle_navigate_gps(self, body):
@@ -86,7 +86,9 @@ class SatelliteCommunicator:
         print("Sent 'Task Completed' message to host.")
 
     def handle_set_stage(self, body):
+        self.current_stage = struct.unpack('B', body)[0]
         print("Set Stage command processed.")
+
 
     def handle_locate_aruco_tags(self, body):
         print("Locate Aruco Tags command processed.")
