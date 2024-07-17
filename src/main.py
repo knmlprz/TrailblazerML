@@ -13,7 +13,7 @@ from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
 
 def main_process():
     config = load_config("utils/config_oak.json")
-    camera_oak = CameraOAK(config, visualize=True)
+    camera_oak = CameraOAK(config, visualize=False)
     aruco = ReadARUCOCode()
     correct_aruco = DestinationsCorrectionByARUCO()
     point_cloud_mapper = PointCloudMapper(res=5000)

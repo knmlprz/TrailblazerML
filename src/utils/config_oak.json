@@ -3,11 +3,11 @@
         "resolution": "THE_1080_P",
         "socket": "CAM_A",
         "isp_scale": [1, 3],
-        "fps": 5
+        "fps": 10
     },
     "mono_cameras": {
         "resolution": "THE_400_P",
-        "fps": 5
+        "fps": 10
     },
     "depth": {
         "preset": "HIGH_DENSITY",
