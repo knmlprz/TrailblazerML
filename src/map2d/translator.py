@@ -1,6 +1,6 @@
 import open3d as o3d
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class PointCloudMapper:
     def __init__(self, res=1000, value_range=(-1, 1), visualize=False, visualization_type=1):
@@ -85,16 +85,17 @@ class PointCloudMapper:
         Returns:
             None
         """
-        plt.clf()
-        
-        plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
-        plt.title('2D Map')
-        plt.xlabel('X axis')
-        plt.ylabel('Z axis')
-        plt.colorbar(label='Y value')
-        
-        # Pause to update the plot
-        plt.pause(0.01)  
+        pass
+        # plt.clf()
+        #
+        # plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
+        # plt.title('2D Map')
+        # plt.xlabel('X axis')
+        # plt.ylabel('Z axis')
+        # plt.colorbar(label='Y value')
+        #
+        # # Pause to update the plot
+        # plt.pause(0.01)
 
     def visualize_2d_map(self, accel_position):
         """
