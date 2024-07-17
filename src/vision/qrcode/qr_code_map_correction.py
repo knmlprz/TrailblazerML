@@ -1,14 +1,15 @@
 import numpy as np
 import json
+from collections import defaultdict
 
 
-def load_config_sectors(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
+def load_config_sectors(config_path: str = "utils/sectors_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
 
 
-def load_config_aruco(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/aruco_conf.json") -> dict:
+def load_config_aruco(config_path: str = "utils/aruco_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
@@ -32,11 +33,11 @@ class DestinationsCorrectionByARUCO:
         key = list(filter(lambda x: self.aruco_dict[x] == int(marker_id), self.aruco_dict))
 
         if key[0] == "M1":
-            return "Destination"
+            return "Airlock_entrance"
         if key[0] == "M2":
-            return "Lava_tube_entrance_right"
+            return "Lava_tube_entrance"
         if key[0] == "M3":
-            return "Lava_tube_entrance_left"
+            return "Lava_tube_exit"
         return "unknown"
 
     def calculateSector(self, x: float, z: float) -> tuple:
@@ -84,15 +85,17 @@ class DestinationsCorrectionByARUCO:
 
         :return: (dict) Dictionary containing the corrected positions and their corresponding sector numbers.
         """
+        marker_positions = defaultdict(list)
+        for marker in detected_markers:
+            marker_positions[marker["id"]].append(marker["position"])
         corrected_positions = {}
 
         for marker in detected_markers:
-            marker_type = self.determineMarker(marker["id"])
             corrected_marker_position = self.correctCoordinates(marker['position'], pose)
             corrected_marker_position = [corrected_marker_position[0], corrected_marker_position[2],
                                          1]
             sector_x, sector_z = self.calculateSector(corrected_marker_position[0], corrected_marker_position[1])
-            corrected_positions[marker_type] = {
+            corrected_positions["destination"] = {
                 'position': corrected_marker_position,
                 'sectors': (sector_x, sector_z)
             }
@@ -106,7 +109,7 @@ class DestinationsCorrectionByARUCO:
 #                              [0, 1, 0, 0],
 #                              [0, 0, 1, 2500],
 #                              [0, 0, 0, 1]])
-#     detected_markers = [{"id": 269, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
+#     detected_markers = [{"id": 67, "position": [3.13, 2.12, 4.14]}, {"id": 67, "position": [103.13, 1552.12, 8.14]}]
 #
 #     new_destinations = correct_destination.newDestinations(detected_markers, example_pose)
-#     print(new_destinations)
+#     print(new_destinations["destination"]["sectors"])

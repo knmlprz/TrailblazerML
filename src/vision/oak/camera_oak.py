@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from .imu_tracker import ImuTracker
 from .camera_hendler import CameraHendler
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from .transform_data import assignment_to_sectors
 
 
@@ -51,6 +51,7 @@ class CameraOAK:
             self.vis.add_geometry(self.line_set)
             self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
             self.vis.add_geometry(self.origin_arrow)
+
     def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
         """Get processed data like the RGB image, point cloud, and pose.
         Returns:
@@ -91,11 +92,9 @@ class CameraOAK:
         if self.pose is not None:
             self.pcd.transform(self.pose)
 
-
         if not self.pcd.is_empty():
             pass
             # self.pcd = self.pcd.voxel_down_sample(voxel_size=0.1)
-
 
     def visualize_data(self):
         """Visualize the point cloud data with control over geometry addition."""
@@ -115,11 +114,11 @@ class CameraOAK:
                     return
                 y_min, y_max = np.min(y_values), np.max(y_values)
                 y_normalized = (y_values - y_min) / (y_max - y_min)
-                cmap = plt.get_cmap("viridis")
-                colors = cmap(y_normalized)[:, :3]
+
+                # Map each normalized y-value to a color
+                colors = np.array([np.array([y, 1 - y, 0]) for y in y_normalized])
                 self.pcd.colors = o3d.utility.Vector3dVector(colors)
                 self.vis.add_geometry(self.pcd)
-
 
             self.vis.poll_events()
             self.vis.update_renderer()
@@ -176,7 +175,7 @@ class CameraOAK:
             print(self.pose[:3, 3])
             self.pose = self.imu_tracker.update(
                 [accelero_values.x, accelero_values.y, accelero_values.z],
-                #[gyro_values.x, gyro_values.y, gyro_values.z],
+                # [gyro_values.x, gyro_values.y, gyro_values.z],
                 [
                     rotation_vector.i,
                     rotation_vector.j,
@@ -184,7 +183,7 @@ class CameraOAK:
                     rotation_vector.real
                 ],
                 delta_t,
-                #self.pose[:3, 3]
+                # self.pose[:3, 3]
             )
 
     def check_and_return_data(self):
@@ -217,4 +216,3 @@ class CameraOAK:
         flat_surface.points = o3d.utility.Vector3dVector(points)
 
         return flat_surface
-

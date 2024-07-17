@@ -1,13 +1,22 @@
-import open3d as o3d
 import numpy as np
-import time
 import heapq
 import random
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 class AStarGrid:
-    def __init__(self, rows, cols, start_x, start_y, end_x, end_y):
+    """
+    Class representing an A* grid for pathfinding.
+
+    :param rows: (int) Number of rows in the grid.
+    :param cols: (int) Number of columns in the grid.
+    :param start_x: (int) X-coordinate of the start position.
+    :param start_y: (int) Y-coordinate of the start position.
+    :param end_x: (int) X-coordinate of the goal position.
+    :param end_y: (int) Y-coordinate of the goal position.
+    """
+
+    def __init__(self, rows: int, cols: int, start_x: int, start_y: int, end_x: int, end_y: int):
         self.rows = rows
         self.cols = cols
         self.spacing = 1.0
@@ -15,7 +24,13 @@ class AStarGrid:
         self.start = (start_x, start_y)
         self.goal = (end_x, end_y)
 
-    def generate_random_grid(self, rows, cols):
+    def generate_random_grid(self, rows: int, cols: int):
+        """
+        Generate a random grid with obstacles.
+
+        :param rows: (int) Number of rows in the grid.
+        :param cols: (int) Number of columns in the grid.
+        """
         for i in range(rows):
             for j in range(cols):
                 if (i, j) != self.start and (i, j) != self.goal:
@@ -27,7 +42,13 @@ class AStarGrid:
                 else:
                     self.grid[i, j] = 1
 
-    def a_star_search(self):
+    def a_star_search(self) -> list:
+        """
+        Perform A* search to find the shortest path from start to goal.
+
+        :return: (list) List of tuples representing the path from start to goal.
+                 Returns an empty list if no path is found.
+        """
         start_node = self.start
         goal_node = self.goal
 
@@ -69,11 +90,25 @@ class AStarGrid:
         path.reverse()
         return path
 
-    def update(self, grid, start):
+    def update(self, grid: np.ndarray, start: tuple, goal: tuple):
+        """
+        Update the grid, start, and goal positions.
+
+        :param grid: (np.ndarray) The grid to be updated.
+        :param start: (tuple) The new start position as (x, y).
+        :param goal: (tuple) The new goal position as (x, y).
+        """
         self.grid = grid
         self.start = start
+        self.goal = goal
 
-    def get_neighbors(self, node):
+    def get_neighbors(self, node: tuple) -> list:
+        """
+        Get the neighboring nodes for a given node.
+
+        :param node: (tuple) The current node as (x, y).
+        :return: (list) List of neighboring nodes as tuples.
+        """
         neighbors = []
         row, col = node
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
@@ -86,13 +121,34 @@ class AStarGrid:
         return neighbors
 
     def cost(self, current, next_node):
+        """
+        Calculate the cost of moving from the current node to the next node.
+
+        :param current: (tuple) The current node as (x, y).
+        :param next_node: (tuple) The next node as (x, y).
+        :return: (int) The cost of the move.
+        """
         return 1  # constant cost for moving from one cell to another
 
-    def heuristic(self, goal, next_node):
+    def heuristic(self, goal: tuple, next_node: tuple) -> int:
+        """
+        Heuristic function for A* search. Calculates the Manhattan distance.
+
+        :param goal: (tuple) The goal node as (x, y).
+        :param next_node: (tuple) The next node as (x, y).
+        :return: (int) The heuristic value.
+        """
         return abs(goal[0] - next_node[0]) + abs(goal[1] - next_node[1])
 
 
 def create_grid_visualization(grid, spacing=1.0):
+    """
+    Create a visualization of the grid with points and colors.
+
+    :param grid: (AStarGrid) The A* grid object.
+    :param spacing: (float) The spacing between grid points.
+    :return: (tuple) Tuple containing points, colors, edge_points, and edge_colors.
+    """
     points = []
     colors = []
 
@@ -121,6 +177,12 @@ def create_grid_visualization(grid, spacing=1.0):
 
 
 def move(path):
+    """
+    Determine the move direction and power based on the given path.
+
+    :param path: (list) List of nodes representing the path.
+    :return: (tuple) Move power as a tuple.
+    """
     direction_map = {
         (-1, 0): (-1.0, -1.0),  # Down
         (1, 0): (1.0, 1.0),  # Up
@@ -138,6 +200,7 @@ def move(path):
     move_power = direction_map.get(move_direction, None)
 
     return move_power
+
 # grid_size = 1000
 # grid = AStarGrid(grid_size, grid_size, start_x=0, start_y=0, end_x=grid_size - 2, end_y=grid_size - 2)
 # grid.generate_random_grid(grid_size, grid_size)
