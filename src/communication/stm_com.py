@@ -17,7 +17,6 @@ class STMCom:
         self.gripper_open = False
         self.byte_light_maini = 0b0000
 
-
     def update(self, left_jetson, right_jeston):
         self.left_speed = self.scale_value(left_jetson, (-1, 1), (32, 126))
         self.right_speed = self.scale_value(right_jeston, (-1, 1), (32, 126))
@@ -65,4 +64,3 @@ class STMCom:
 
     def close(self):
         self.ser.close()
-
