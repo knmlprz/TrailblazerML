@@ -3,7 +3,7 @@ import numpy as np
 import time
 import heapq
 import random
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 class AStarGrid:

@@ -4,7 +4,7 @@ import os
 import json
 
 
-def load_config(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
+def load_config(config_path: str = "utils/sectors_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
@@ -39,7 +39,7 @@ def make_sectors(path: str = "./") -> None:
 
 
 def assignment_to_sectors(
-        pcd: o3d.geometry.PointCloud, path: str = "/home/filip/PycharmProjects/TrailblazerML/src/vision/oak/sectors.npy"
+        pcd: o3d.geometry.PointCloud, path: str = "vision/oak/sectors.npy"
 )-> (np.ndarray, np.ndarray):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
@@ -104,25 +104,27 @@ def assignment_to_sectors(
     # Extract keys and values from the centers_of_masses dictionary
     sectors = np.array(list(centers_of_masses.keys()))
     # Determine the size of the resulting matrix
-    print(sectors.shape)
-    max_index = np.max(sectors)
-    results = np.full((max_index + 1, max_index + 1), np.nan)
+    if sectors.shape != 0:
 
-    # Assign center of mass values to the result matrix
-    for (x_idx, z_idx), center_mass in centers_of_masses.items():
-        results[x_idx, z_idx] = center_mass
-    non_nan_indices = np.argwhere(~np.isnan(results))
-    min_non_nan_index = np.min(non_nan_indices, axis=0)
-    max_non_nan_index = np.max(non_nan_indices, axis=0)
-    cropped_results = results[
-        min_non_nan_index[0] : max_non_nan_index[0] + 1,
-        min_non_nan_index[1] : max_non_nan_index[1] + 1,
-    ]
+        max_index = np.max(sectors)
+        results = np.full((max_index + 1, max_index + 1), np.nan)
 
-    return cropped_results, min_non_nan_index
+        # Assign center of mass values to the result matrix
+        for (x_idx, z_idx), center_mass in centers_of_masses.items():
+            results[x_idx, z_idx] = center_mass
+        non_nan_indices = np.argwhere(~np.isnan(results))
+        min_non_nan_index = np.min(non_nan_indices, axis=0)
+        max_non_nan_index = np.max(non_nan_indices, axis=0)
+        cropped_results = results[
+            min_non_nan_index[0] : max_non_nan_index[0] + 1,
+            min_non_nan_index[1] : max_non_nan_index[1] + 1,
+        ]
+
+        return cropped_results, min_non_nan_index
+    return np.zeros(10), np.array([0, 0])
 
 
-def get_sector_index(xz_translation: (float, float), sectors_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/vision/oak/sectors.npy") -> tuple:
+def get_sector_index(xz_translation: (float, float), sectors_path: str = "vision/oak/sectors.npy") -> tuple:
     """
     Calculates the sector index for the given xz translation.
 
@@ -154,3 +156,4 @@ def get_sector_index(xz_translation: (float, float), sectors_path: str = "/home/
     else:
         print("Provided translation is out of the sector bounds.")
         return (0, 0)
+
