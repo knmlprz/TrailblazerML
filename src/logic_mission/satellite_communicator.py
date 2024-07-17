@@ -26,21 +26,22 @@ class SatelliteCommunicator:
         while True:
             print("l0")
             if self.serial_port.in_waiting > 0:
-                print("l1")
                 start_byte = self.serial_port.read(1)
+                print(f"l1 start_byte {start_byte.hex()}")
                 if start_byte == struct.pack('B', self.START_BYTE):
-                    print("l2")
+
                     message_id = struct.unpack('B', self.serial_port.read(1))[0]
                     body_length = struct.unpack('B', self.serial_port.read(1))[0]
                     body = self.serial_port.read(body_length)
                     checksum = struct.unpack('>H', self.serial_port.read(2))[0]
+                    print(f"l2 message_id {message_id.hex()} body_length {body_length.hex()} body {body.hex()} checksum {checksum.hex()}")
                     if self.verify_checksum(
                             start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
-                        print("l3")
+
                         self.process_message(message_id, body)
                         self.send_acknowledge()
                         self.write_log("Message processed: ID {} Body Length {}".format(message_id, body_length))
-
+                        print(f"l3 Message processed: ID {message_id} Body Length {body_length}")
     def send_message(self, message_id, body):
         body_length = len(body)
         header = struct.pack('BBB', self.START_BYTE, message_id, body_length)
