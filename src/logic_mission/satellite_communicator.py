@@ -14,7 +14,7 @@ class SatelliteCommunicator:
     MSG_ID_DETECTION = 0x09
     MSG_ID_SET_PARAMETERS = 0x0A
 
-    def __init__(self, port="/dev/ttyAMA0", baudrate=9600):
+    def __init__(self, port="/dev/ttyUSB0", baudrate=9600):
         self.serial_port = serial.Serial(port, baudrate, timeout=0.5)
         self.current_stage = 0
 
