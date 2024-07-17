@@ -1,4 +1,5 @@
 import struct
+from satellite_communicator  import SatelliteCommunicator
 
 # Assuming SatelliteCommunicator class code is already defined and imported as you provided earlier.
 
