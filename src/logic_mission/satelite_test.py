@@ -33,7 +33,7 @@ def send_message(ser, message_id, body):
 
 
 def main():
-    port = '/dev/ttyUSB0'  # Adjust this as per your connection
+    port = '/dev/ttyUSB1'  # Adjust this as per your connection
     baudrate = 115200
     with serial.Serial(port, baudrate, timeout=1) as ser:
         send_message(ser, 0x01, b'')
@@ -41,7 +41,7 @@ def main():
         message_id = 0x01# Navigate GPS message ID
         latitude = 34.052235  # Example latitude
         longitude = -118.243683  # Example longitude
-        # body = struct.pack('>ff', latitude, longitude)
+        body = struct.pack('>ff', latitude, longitude)
         #body =0x01
         body =  b'0x01'
         send_message(ser, message_id, body)

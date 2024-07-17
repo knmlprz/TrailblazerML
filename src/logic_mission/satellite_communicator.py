@@ -18,7 +18,8 @@ class SatelliteCommunicator:
         self.serial_port = serial.Serial(port, baudrate, timeout=0.5)
         self.current_stage = 0
         self.log_file = open("communication_log.txt", "a")  # Open a file in append mode
-
+        self.latitude = None
+        self.longitude = None
     def write_log(self, message):
         self.log_file.write(message + "\n")  # Write message to file with a newline
         self.log_file.flush()  # Ensure it gets written to disk
@@ -91,6 +92,7 @@ class SatelliteCommunicator:
         print("Arm/Disarm command processed.")
 
     def handle_navigate_gps(self, body):
+        self.latitude = struct.unpack('>ff', body)[0]
         print("Navigate GPS command processed.")
 
     def handle_task_completed(self, body):

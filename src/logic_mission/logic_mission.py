@@ -13,13 +13,17 @@ class Mission:
 
     def run_stage_pipeline(self, stage):
         # Define actions based on the current stage
-        if stage == 1:
-            self.handle_stage_1()
-        elif stage == 2:
-            self.handle_stage_2()
-        elif stage == 3:
-            self.handle_stage_3()
-        # Add more stages as needed
+        if self.satellite_communicator.arm_status:
+
+            if stage == 1:
+                self.handle_stage_1()
+            elif stage == 2:
+                self.handle_stage_2()
+            elif stage == 3:
+                self.handle_stage_3()
+            # Add more stages as needed
+        else:
+            self.mision_is_on = False
 
     def handle_stage_1(self):
         print("Executing tasks for Stage 1...")
@@ -29,6 +33,7 @@ class Mission:
             self.stm_com.led_y = False
             self.stm_com.girpper_open = True
             self.stm_com.send_command()
+
 
 
 
