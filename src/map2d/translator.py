@@ -1,6 +1,6 @@
 import open3d as o3d
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class PointCloudMapper:
     def __init__(self, res=1000, value_range=(-1, 1), visualize=False, visualization_type=1):
@@ -22,12 +22,32 @@ class PointCloudMapper:
         if self.visualize:
             self.vis.destroy_window()
 
-    def cropped_map_to_2d_map(self, points, position=(0, 0)):
+    def add_padding(self, overlay_map, padding):
+        """
+        Add padding to overlay map.
+        Args:
+            overlay_map (np.array): The overlay map.
+            padding (int): Target padding.
+        Returns:
+            np.array: The resulting 2D map.
+        """
+        new_map = np.copy(overlay_map)
+
+        index = np.argwhere(overlay_map == 1)
+
+        for i, j in index:
+            new_map[max(0, i-padding):min(new_map.shape[0], i+padding+1), 
+                    max(0, j-padding):min(new_map.shape[1], j+padding+1)] = 1
+        
+        return new_map
+
+    def cropped_map_to_2d_map(self, points, position=(0, 0), padding=8):
         """
         Converts a point map to global 2D map.
         Args:
             points (np.array): The point map.
             position (tuple): Position (x, z).
+            padding (int): Target padding.
         Returns:
             np.array: The resulting 2D map.
         """
@@ -41,6 +61,10 @@ class PointCloudMapper:
             p_height = self.res - position[1]
 
         overlay_map = points[:p_height, :p_width]
+
+        # Add padding
+        if padding > 0:
+            overlay_map = self.add_padding(overlay_map, padding)
 
         self.map_2d[position[1]:p_height+position[1], position[0]:p_width+position[0]] = overlay_map
 
@@ -61,16 +85,17 @@ class PointCloudMapper:
         Returns:
             None
         """
-        plt.clf()
-        
-        plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
-        plt.title('2D Map')
-        plt.xlabel('X axis')
-        plt.ylabel('Z axis')
-        plt.colorbar(label='Y value')
-        
-        # Pause to update the plot
-        plt.pause(0.01)  
+        pass
+        # plt.clf()
+        #
+        # plt.imshow(self.map_2d.T, cmap='viridis', origin='lower')
+        # plt.title('2D Map')
+        # plt.xlabel('X axis')
+        # plt.ylabel('Z axis')
+        # plt.colorbar(label='Y value')
+        #
+        # # Pause to update the plot
+        # plt.pause(0.01)
 
     def visualize_2d_map(self, accel_position):
         """

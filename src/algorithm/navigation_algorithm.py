@@ -1,6 +1,7 @@
 import numpy as np
 import heapq
 import random
+# import matplotlib.pyplot as plt
 
 
 class AStarGrid:

@@ -3,13 +3,13 @@ import json
 from collections import defaultdict
 
 
-def load_config_sectors(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/sectors_conf.json") -> dict:
+def load_config_sectors(config_path: str = "utils/sectors_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
 
 
-def load_config_aruco(config_path: str = "/home/filip/PycharmProjects/TrailblazerML/src/utils/aruco_conf.json") -> dict:
+def load_config_aruco(config_path: str = "utils/aruco_conf.json") -> dict:
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
