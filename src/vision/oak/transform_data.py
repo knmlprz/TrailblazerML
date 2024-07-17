@@ -154,3 +154,6 @@ def get_sector_index(xz_translation: (float, float), sectors_path: str = "vision
     else:
         print("Provided translation is out of the sector bounds.")
         return (0, 0)
+
+
+make_sectors()
