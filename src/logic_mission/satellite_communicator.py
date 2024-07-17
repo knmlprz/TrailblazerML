@@ -2,7 +2,7 @@ import struct
 import serial
 
 class SatelliteCommunicator:
-     START_BYTE = 0x7E
+    START_BYTE = 0x7E
 
     MSG_ID_ACK = 0x00
     MSG_ID_ARM_DISARM = 0x01
