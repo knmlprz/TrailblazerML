@@ -8,6 +8,7 @@ class STMCom:
         self.autonomy = False
         self.left_speed = 79
         self.right_speed = 79
+        self.stop_rover = False
 
     def update(self, left_jetson, right_jeston):
         self.left_speed = self.scale_value(left_jetson, (-1, 1), (32, 126))
@@ -18,6 +19,9 @@ class STMCom:
         #pabing from -1 to 1 to 0 to 1 t0 32 to 126
         left_speed = int(map(left_speed, -1, 1, 32, 126))
     def send_command(self):
+        if self.stop_rover:
+            self.left_speed = 79
+            self.right_speed = 79
         start_byte = ord('*')
         command = bytes([start_byte, self.left_speed, self.right_speed])
         checksum = sum(command) & 0xFF
