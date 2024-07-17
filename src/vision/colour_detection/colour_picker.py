@@ -6,7 +6,7 @@ def nothing(x):
     pass
 
 # Initialize the webcam
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("/home/filip/Downloads/Messenger_creation_2568467f-e19a-4d6e-9a99-af0b2ff3f443.mp4")
 cap.set(3, 1280)
 cap.set(4, 720)
 
@@ -70,7 +70,6 @@ while True:
     if key == ord('s'):
         thearray = [[l_h, l_s, l_v], [u_h, u_s, u_v]]
         print(thearray)
-        np.save('hsv_value.npy', thearray)
         break
 
 # Release the webcam and destroy all OpenCV windows
