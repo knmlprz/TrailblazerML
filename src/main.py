@@ -29,7 +29,6 @@ def main_process():
         print(f"pcd {pcd}")
         print(f"pose shape: {pose.shape}, pose: {pose}")
         matrix, first_sector = assignment_to_sectors(pcd)
-        print((pose[0, 3], pose[2, 3], "####"))
         rover_sector = get_sector_index((pose[0, 3], pose[2, 3]))
         print(f"rover_sector {rover_sector}")
         map_01 = track_maker.point_cloud_to_track(matrix)
