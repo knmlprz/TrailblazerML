@@ -18,7 +18,7 @@ class GoAutonomy:
         self.aruco = ReadARUCOCode()
         self.correct_aruco = DestinationsCorrectionByARUCO()
         self.point_cloud_mapper = PointCloudMapper(res=5000)
-        self.self.stm_com = stm_com
+        self.stm_com = stm_com
         self.stelite_com = stelite_com
         self.track_maker = TrackMaker()
         self.end_goal = (self.point_cloud_mapper.res - 3, self.point_cloud_mapper.res - 2)
