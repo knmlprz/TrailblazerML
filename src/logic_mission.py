@@ -1,7 +1,7 @@
 from logic_mission.satellite_communicator import SatelliteCommunicator
 from communication.stm_com import STMCom
 from go_autonomy import GoAutonomy
-
+import time
 
 class Mission:
     def __init__(self):
@@ -31,7 +31,9 @@ class Mission:
 
     def handle_stage_1(self):
         print("Executing tasks for Stage 1...")
+        time.sleep(3)
         if self.satellite_communicator.arm_status != 0:
+            time.sleep(3)
             self.stm_com.led_r = False
             self.stm_com.led_g = True
             self.stm_com.led_y = False
@@ -39,6 +41,7 @@ class Mission:
             self.stm_com.send_command()
 
             if self.satellite_communicator.latitude != None and self.satellite_communicator.longitude != None:
+                time.sleep(3)
                 self.stm_com.led_r = False
                 self.stm_com.led_g = False
                 self.stm_com.led_y = True
