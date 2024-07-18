@@ -46,13 +46,17 @@ class STMCom:
         command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
         checksum = sum(command.encode()) & 0xFF
         command += chr(checksum)
-        self.ser.write(command.encode())
-        print(f"send to stm {command}")
-        self.read_response()
+        ty = True
+        while ty:
+            self.ser.write(command.encode())
+            print(f"send to stm {command[0]}")
+            print(f"send to stm {command[1]}")
+            print(f"send to stm {command[2]}")
+            print(f"send to stm {command[3]}")
+            ty = self.read_response()
 
 
     def read_response(self):
-        while True:
             if self.ser.in_waiting > 0:
                 start = self.ser.read(1)
                 print(f"l1 start {start}")
@@ -63,7 +67,7 @@ class STMCom:
                     print(f"l2 start {read}")
                     if read[0] == ord('Y') and read[1] == calculated_checksum:
                         print(f"l3 start {read}")
-                        break
+                    return False
 
 
 
