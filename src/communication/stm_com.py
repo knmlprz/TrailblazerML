@@ -52,7 +52,7 @@ class STMCom:
 
     def read_response(self):
         while True:
-            if self.serial_port.in_waiting > 0:
+            if self.ser.in_waiting > 0:
                 start = self.ser.read(1)
                 if start == b'&':
                     read = self.ser.read(2)
