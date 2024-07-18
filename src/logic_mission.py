@@ -9,6 +9,8 @@ class Mission:
         self.satellite_communicator = SatelliteCommunicator(port="/dev/ttyTHS1", baudrate=115200)
         self.mision_is_on = True
         self.autonomy_is_on = False
+
+        time.sleep(1)
         self.stm_com.led_r = True
         self.stm_com.led_g = False
         self.stm_com.led_y = False
