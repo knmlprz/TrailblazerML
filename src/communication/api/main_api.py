@@ -30,4 +30,4 @@ async def set_target(target: Coordinates):
     return {"message": "Target saved successfully."}
 
 def run_api():
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8899)
