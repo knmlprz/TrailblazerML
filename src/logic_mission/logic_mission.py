@@ -31,36 +31,36 @@ class Mission:
 
     def handle_stage_1(self):
         print("Executing tasks for Stage 1...")
-        if self.satellite_communicator.arm_status == True:
+        if self.satellite_communicator.arm_status != 0:
             self.stm_com.led_r = False
             self.stm_com.led_g = True
             self.stm_com.led_y = False
             self.stm_com.girpper_open = False
             self.stm_com.send_command()
 
-        if self.satellite_communicator.latitude != None and self.satellite_communicator.longitude != None:
-            self.stm_com.led_r = False
-            self.stm_com.led_g = False
-            self.stm_com.led_y = True
-            self.stm_com.girpper_open = False
-            self.stm_com.send_command()
-            go_autonomy = GoAutonomy()
-            while self.satellite_communicator != 0 and not go_autonomy.rover_in_target:
-                go_autonomy.run()
+            if self.satellite_communicator.latitude != None and self.satellite_communicator.longitude != None:
+                self.stm_com.led_r = False
+                self.stm_com.led_g = False
+                self.stm_com.led_y = True
+                self.stm_com.girpper_open = False
+                self.stm_com.send_command()
+                go_autonomy = GoAutonomy()
+                while self.satellite_communicator.arm_status != 0 and not go_autonomy.rover_in_target:
+                    go_autonomy.run()
 
-            self.stm_com.led_r = False
-            self.stm_com.led_g = False
-            self.stm_com.led_y = True
-            self.stm_com.girpper_open = True
-            self.stm_com.send_command()
+                self.stm_com.led_r = False
+                self.stm_com.led_g = False
+                self.stm_com.led_y = True
+                self.stm_com.girpper_open = True
+                self.stm_com.send_command()
 
-            self.stm_com.led_r = False
-            self.stm_com.led_g = True
-            self.stm_com.led_y = False
-            self.stm_com.girpper_open = False
-            self.stm_com.send_command()
+                self.stm_com.led_r = False
+                self.stm_com.led_g = True
+                self.stm_com.led_y = False
+                self.stm_com.girpper_open = False
+                self.stm_com.send_command()
 
-            self.satellite_communicator.task_completed()
+                self.satellite_communicator.task_completed()
 
     def handle_stage_2(self):
         print("Executing tasks for Stage 2...")
