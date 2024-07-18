@@ -44,9 +44,9 @@ class STMCom:
                 (1 if self.led_y else 0) << 2 |
                 (1 if self.gripper_open else 0) << 3
         )
-        command = bytes([self.right_speed, self.left_speed, self.byte_light_main])
+        command = struct.pack('BBB', self.right_speed, self.left_speed, self.byte_light_main)
         checksum = sum(command) & 0xFF
-        command.append(checksum)
+        command += struct.pack('B', checksum)
         # command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
         # checksum = sum(command.encode()) & 0xFF
         # command += chr(checksum)
