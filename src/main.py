@@ -9,7 +9,7 @@ from vision.oak.config_oak import load_config
 from vision.oak.transform_data import assignment_to_sectors, get_sector_index
 from vision.qrcode.qr_code import ReadARUCOCode
 from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
-from gps.gps2sector import SectorFinder
+#from gps.gps2sector import SectorFinder
 
 
 def main_process():
