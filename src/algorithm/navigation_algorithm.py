@@ -184,14 +184,14 @@ def move(path):
     :return: (tuple) Move power as a tuple.
     """
     direction_map = {
-        (-1, 0): (-1.0, -1.0),  # Down
-        (1, 0): (1.0, 1.0),  # Up
-        (0, -1): (-0.5, 0.5),  # Left
-        (0, 1): (0.5, -0.5),  # Right
-        (-1, -1): (1.0, 0.5),  # Up-Right
-        (-1, 1): (0.5, 1.0),  # Up-Left
-        (1, -1): (-0.5, -1.0),  # Down-Left
-        (1, 1): (-1.0, -0.5)  # Down-Right
+        (-1, 0): (-0.4, -0.4),  # Down
+        (1, 0): (0.4, 0.4),  # Up
+        (0, -1): (-0.2, 0.2),  # Left
+        (0, 1): (0.2, -0.2),  # Right
+        (-1, -1): (0.4, 0.5),  # Up-Right
+        (-1, 1): (0.2, 0.4),  # Up-Left
+        (1, -1): (-0.2, -0.4),  # Down-Left
+        (1, 1): (-0.4, -0.2)  # Down-Right
     }
     current_node = path[0]
     next_node = path[1]
