@@ -21,7 +21,7 @@ class STMCom:
     def update(self, left_jetson, right_jeston):
         self.left_speed = self.scale_value(left_jetson, (-1, 1), (32, 126))
         self.right_speed = self.scale_value(right_jeston, (-1, 1), (32, 126))
-        self.read_response()
+        self.send_command()
         return self.autonomy
 
     # def send_command(self):
