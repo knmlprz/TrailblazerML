@@ -49,7 +49,7 @@ def main_process():
 
 
 if __name__ == "__main__":
-    # api_process = multiprocessing.Process(target=run_api)
-    # api_process.start()
-    main_process()
-    # api_process.join()
+    api_process = multiprocessing.Process(target=run_api)
+    api_process.start()
+    # main_process()
+    api_process.join()
