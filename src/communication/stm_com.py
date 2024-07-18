@@ -50,6 +50,11 @@ class STMCom:
         # command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
         # checksum = sum(command.encode()) & 0xFF
         # command += chr(checksum)
+        command = bytearray([self.right_speed, self.left_speed, self.byte_light_maini])
+
+        checksum = sum(command) & 0xFF
+
+        command.append(checksum)
         ty = True
         while ty:
             self.ser.write(command)
