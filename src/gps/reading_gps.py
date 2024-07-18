@@ -13,7 +13,7 @@ while True:
             print(f"outputDict: {outputDict}")
             outputDict['latitude'] = parsedLine.latitude
             outputDict['longitude'] = parsedLine.longitude
-            with open("../utils/position.json", 'w') as OutputFile:
+            with open("/home/jetson/repos/TrailblazerML/utils/position.json", 'w') as OutputFile:
                 json.dump(outputDict, OutputFile)
     except UnicodeDecodeError:
         print("Invalid byte encountered. Skipping.")
