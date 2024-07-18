@@ -24,6 +24,8 @@ class RoverController:
 
     def create_fuzzy_controller(self):
         # Definicja zmiennych wejściowych i wyjściowych
+        #
+        #
         angle = ctrl.Antecedent(np.arange(-180, 181, 1), 'angle')
         angle['left'] = fuzz.trapmf(angle.universe, [-180, -180, -90, 0])
         angle['straight'] = fuzz.trimf(angle.universe, [-10, 0, 10])
