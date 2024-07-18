@@ -7,7 +7,7 @@ outputDict = {}
 ser = serial.Serial(port="/dev/ttyTHS0", baudrate=9600)
 
 # Upewnij się, że katalog istnieje
-output_path = "/home/jetson/repos/TrailblazerML/utils"
+output_path = "/home/jetson/repos/TrailblazerML/src/utils"
 os.makedirs(output_path, exist_ok=True)
 
 while True:
