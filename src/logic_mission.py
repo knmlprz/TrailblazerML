@@ -10,12 +10,7 @@ class Mission:
         self.mision_is_on = True
         self.autonomy_is_on = False
 
-        time.sleep(1)
-        self.stm_com.led_r = True
-        self.stm_com.led_g = False
-        self.stm_com.led_y = False
-        self.stm_com.girpper_open = False
-        self.stm_com.send_command()
+
 
     def loop_mission(self):
         while self.mision_is_on:
@@ -37,6 +32,12 @@ class Mission:
             self.mision_is_on = False
 
     def handle_stage_1(self):
+        time.sleep(1)
+        self.stm_com.led_r = True
+        self.stm_com.led_g = False
+        self.stm_com.led_y = False
+        self.stm_com.girpper_open = False
+        self.stm_com.send_command()
         print("Executing tasks for Stage 1...")
         time.sleep(3)
         if self.satellite_communicator.arm_status != 0:
