@@ -57,6 +57,7 @@ class STMCom:
 
 
     def read_response(self):
+        print("XX")
         if self.ser.in_waiting > 0:
             start = self.ser.read(1)
             print(f"l1 start {start}")
