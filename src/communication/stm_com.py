@@ -52,7 +52,7 @@ class STMCom:
         # command += chr(checksum)
         ty = True
         while ty:
-            self.ser.write(command.encode())
+            self.ser.write(command)
             print(f"send to stm {command[0]}")
             print(f"send to stm {command[1]}")
             print(f"send to stm {command[2]}")
