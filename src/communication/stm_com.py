@@ -47,6 +47,7 @@ class STMCom:
         checksum = sum(command.encode()) & 0xFF
         command += chr(checksum)
         self.ser.write(command.encode())
+        print(f"send to stm {command}")
         self.read_response()
 
 
@@ -54,10 +55,14 @@ class STMCom:
         while True:
             if self.ser.in_waiting > 0:
                 start = self.ser.read(1)
+                print(f"l1 start {start}")
                 if start == b'&':
+
                     read = self.ser.read(2)
                     calculated_checksum = (ord('&') + read[0]) & 0xFF
+                    print(f"l2 start {read}")
                     if read[0] == ord('Y') and read[1] == calculated_checksum:
+                        print(f"l3 start {read}")
                         break
 
 
