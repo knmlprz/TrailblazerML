@@ -3,9 +3,6 @@ import json
 from pydantic import BaseModel
 import uvicorn
 from pathlib import Path
-
-
-
 app = FastAPI()
 
 class Coordinates(BaseModel):
