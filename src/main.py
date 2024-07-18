@@ -24,9 +24,9 @@ def main_process():
     start_loop = True
     while start_loop:
         rgb, pcd, pose = camera_oak.get_data()
-        isMarker, markerDict = aruco.read(rgb, False)
-        if isMarker:
-            end_goal = correct_aruco.newDestinations(markerDict, pose)
+        # isMarker, markerDict = aruco.read(rgb, False)
+        # if isMarker:
+        #     end_goal = correct_aruco.newDestinations(markerDict, pose)
         print(f"pcd {pcd}")
         print(f"pose shape: {pose.shape}, pose: {pose}")
         matrix, first_sector = assignment_to_sectors(pcd)
