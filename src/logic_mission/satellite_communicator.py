@@ -1,6 +1,7 @@
 import struct
 import serial
 import time
+import struct
 
 class SatelliteCommunicator:
     START_BYTE = 0x7E
@@ -16,33 +17,33 @@ class SatelliteCommunicator:
 
     def __init__(self, port="/dev/ttyUSB0", baudrate=9600):
         self.serial_port = serial.Serial(port, baudrate, timeout=0.5)
-        self.current_stage = 0
+        self.current_stage = 1
         self.log_file = open("communication_log.txt", "a")  # Open a file in append mode
-
+        self.latitude = 32.234
+        self.longitude = 32.234
+        self.arm_status = 1
     def write_log(self, message):
         self.log_file.write(message + "\n")  # Write message to file with a newline
         self.log_file.flush()  # Ensure it gets written to disk
 
     def read_message(self):
-        while True:
+        if self.serial_port.in_waiting > 0:
+            start_byte = self.serial_port.read(1)
+            print(f"l1 start_byte {start_byte.hex()}")
+            if start_byte == struct.pack('B', self.START_BYTE):
 
-            if self.serial_port.in_waiting > 0:
-                start_byte = self.serial_port.read(1)
-                print(f"l1 start_byte {start_byte.hex()}")
-                if start_byte == struct.pack('B', self.START_BYTE):
+                message_id = struct.unpack('B', self.serial_port.read(1))[0]
+                body_length = struct.unpack('B', self.serial_port.read(1))[0]
+                body = self.serial_port.read(body_length)
+                checksum = struct.unpack('>H', self.serial_port.read(2))[0]
+                print(f"l2 message_id {message_id} body_length {body_length} body {body.hex()} checksum {checksum}")
+                if self.verify_checksum(
+                        start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
 
-                    message_id = struct.unpack('B', self.serial_port.read(1))[0]
-                    body_length = struct.unpack('B', self.serial_port.read(1))[0]
-                    body = self.serial_port.read(body_length)
-                    checksum = struct.unpack('>H', self.serial_port.read(2))[0]
-                    print(f"l2 message_id {message_id} body_length {body_length} body {body.hex()} checksum {checksum}")
-                    if self.verify_checksum(
-                            start_byte + struct.pack('B', message_id) + struct.pack('B', body_length) + body, checksum):
-
-                        self.process_message(message_id, body)
-                        self.send_acknowledge()
-                        self.write_log("Message processed: ID {} Body Length {}".format(message_id, body_length))
-                        print(f"l3 Message processed: ID {message_id} Body Length {body_length}")
+                    self.process_message(message_id, body)
+                    self.send_acknowledge()
+                    self.write_log("Message processed: ID {} Body Length {}".format(message_id, body_length))
+                    print(f"l3 Message processed: ID {message_id} Body Length {body_length}")
     def send_message(self, message_id, body):
         body_length = len(body)
         header = struct.pack('BBB', self.START_BYTE, message_id, body_length)
@@ -91,6 +92,7 @@ class SatelliteCommunicator:
         print("Arm/Disarm command processed.")
 
     def handle_navigate_gps(self, body):
+        self.latitude = struct.unpack('>ff', body)[0]
         print("Navigate GPS command processed.")
 
     def handle_task_completed(self, body):
@@ -112,17 +114,3 @@ class SatelliteCommunicator:
 
     def handle_set_parameters(self, body):
         print("Set Parameters command processed.")
-
-
-if __name__ == "__main__":
-    satellite_communicator = SatelliteCommunicator(port="/dev/ttyUSB0", baudrate=115200)
-    while True:
-        satellite_communicator.read_message()
-    # satellite_communicator.send_acknowledge()
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_ARM_DISARM, b'\x01')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_NAVIGATE_GPS, struct.pack('>ff', 34.052235, -118.243683))
-    # satellite_communicator.task_completed()
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_SET_STAGE, b'\x01')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_LOCATE_ARUCO_TAGS, b'')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_DETECTION, b'')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_SET_PARAMETERS, b'')

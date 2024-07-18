@@ -1,4 +1,5 @@
 import serial
+import struct
 
 
 class STMCom:
@@ -6,7 +7,7 @@ class STMCom:
         if serial_port:
             self.ser = serial_port
         else:
-            self.ser = serial.Serial(port, 115200, timeout=1)
+            self.ser = serial.Serial(port, 115200, timeout=0.5)
         self.autonomy = False
         self.left_speed = 79
         self.right_speed = 79
@@ -18,9 +19,9 @@ class STMCom:
         self.byte_light_maini = 0b0000
 
     def update(self, left_jetson, right_jeston):
-        self.left_speed = self.scale_value(left_jetson, (-1, 1), (32, 126))
-        self.right_speed = self.scale_value(right_jeston, (-1, 1), (32, 126))
-        self.read_response()
+        self.left_speed = self.scale_value(left_jetson, (-1, 1), (64, 93))
+        self.right_speed = self.scale_value(right_jeston, (-1, 1), (64, 93))
+        self.send_command()
         return self.autonomy
 
     # def send_command(self):
@@ -43,20 +44,42 @@ class STMCom:
                 (1 if self.led_y else 0) << 2 |
                 (1 if self.gripper_open else 0) << 3
         )
-        command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
-        checksum = sum(command.encode()) & 0xFF
-        command += chr(checksum)
-        self.ser.write(command.encode())
+        command = struct.pack('BBBB', 38, self.right_speed, self.left_speed, self.byte_light_maini)
+        checksum = sum(command) & 0xFF
+        command += struct.pack('B', checksum)
+        # command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
+        # checksum = sum(command.encode()) & 0xFF
+        # command += chr(checksum)
+        # command = bytearray([self.right_speed, self.left_speed, self.byte_light_maini])
+        #
+        # checksum = sum(command) & 0xFF
+        #
+        # command.append(checksum)
+        ty = True
+        while ty:
+            self.ser.write(command)
+            print(f"send to stm {command[0]}")
+            print(f"send to stm {command[1]}")
+            print(f"send to stm {command[2]}")
+            print(f"send to stm {command[3]}")
+            print(f"send to stm {command[4]}")
+            ty = self.read_response()
+        print("end")
 
     def read_response(self):
-        start = self.ser.read(1)
-        if start == b'&':
-            read = self.ser.read(2)
-            calculated_checksum = (ord('&') + read[0]) & 0xFF
-            if read[0] == ord('Y') and read[1] == calculated_checksum:
-                self.autonomy = True
-                self.send_command()
-                print(f"Autonomy enabled send: left {self.left_speed} right {self.right_speed}")
+        print("XX")
+        if self.ser.in_waiting > 0:
+            start = self.ser.read(1)
+            print(f"l1 start {start}")
+            if start == b'&':
+
+                read = self.ser.read(2)
+                calculated_checksum = (ord('&') + read[0]) & 0xFF
+                print(f"l2 start {read}")
+                if read[0] == ord('Y') and read[1] == calculated_checksum:
+                    print(f"l3 start {read}")
+                    return False
+        return True
 
     def scale_value(self, x, src_range, dst_range):
         scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))
@@ -64,3 +87,10 @@ class STMCom:
 
     def close(self):
         self.ser.close()
+
+
+def scale_value(x, src_range, dst_range):
+    scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))
+    return int(scaled)
+x = scale_value(0.5, (-1,1), (64, 93))
+print(x)

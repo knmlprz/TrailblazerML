@@ -28,24 +28,24 @@ def main_process():
     start_loop = True
     while start_loop:
         rgb, pcd, pose = camera_oak.get_data()
-        isMarker, markerDict = aruco.read(rgb, False)
-        if isMarker:
-            end_goal = correct_aruco.newDestinations(markerDict, pose)
+        # isMarker, markerDict = aruco.read(rgb, False)
+        # if isMarker:
+        #     end_goal = correct_aruco.newDestinations(markerDict, pose)
         print(f"pcd {pcd}")
         print(f"pose shape: {pose.shape}, pose: {pose}")
-        =sector_finder.update_sector()
-    matrix, first_sector = assignment_to_sectors(pcd)
-    rover_sector = get_sector_index((pose[0, 3], pose[2, 3]))
-    print(f"rover_sector {rover_sector}")
-    map_01 = track_maker.point_cloud_to_track(matrix)
-    print(f"map_01.shape {map_01.shape}")
-    global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector)
-    print(f"global_map.shape {global_map.shape}")
-    a_star_grid.update(global_map, rover_sector, end_goal["destination"]["sectors"])
-    path_to_destination = a_star_grid.a_star_search()
-    moves = move(path_to_destination)
-    print("move: ", moves, "\n")
-    # start_autonomy = stm_com.update(moves[0], moves[1])
+
+        matrix, first_sector = assignment_to_sectors(pcd)
+        rover_sector = get_sector_index((pose[0, 3], pose[2, 3]))
+        print(f"rover_sector {rover_sector}")
+        map_01 = track_maker.point_cloud_to_track(matrix)
+        print(f"map_01.shape {map_01.shape}")
+        global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector)
+        print(f"global_map.shape {global_map.shape}")
+        a_star_grid.update(global_map, rover_sector, end_goal)
+        path_to_destination = a_star_grid.a_star_search()
+        moves = move(path_to_destination)
+        print("move: ", moves, "\n")
+        # start_autonomy = stm_com.update(moves[0], moves[1])
 
 
 if __name__ == "__main__":
