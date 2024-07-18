@@ -19,6 +19,8 @@ class Mission:
 
     def run_stage_pipeline(self, stage):
         # Define actions based on the current stage
+        #
+
         if self.satellite_communicator.arm_status:
 
             if stage == 1:
