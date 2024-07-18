@@ -55,7 +55,7 @@ class Mission:
                 self.stm_com.led_y = True
                 self.stm_com.girpper_open = False
                 self.stm_com.send_command()
-                rc = RoverController()
+                rc = RoverController("utils/position.json",39.8849380,32.7775717)
                 while self.satellite_communicator.arm_status != 0 or not rc.on_goalt:
                     rc.navigate()
 

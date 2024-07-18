@@ -100,8 +100,7 @@ class RoverController:
 
 # Przykład użycia klasy RoverController
 gps_file = 'utils/position.json'  # Ścieżka do pliku JSON z danymi GPS
-latitude_goal = 50.019
-longitude_goal = 21.984
+
 rover = RoverController(gps_file, latitude_goal, longitude_goal)
 rover.navigate()
 rover.plot_path()
