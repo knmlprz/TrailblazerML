@@ -1,10 +1,7 @@
-import multiprocessing
-from communication.api.main_api import run_api
 from map2d.pcd2track import TrackMaker
 from map2d.translator import PointCloudMapper
 from vision.oak.camera_oak import CameraOAK
 from algorithm.navigation_algorithm import AStarGrid, move
-from communication.stm_com import STMCom
 from vision.oak.config_oak import load_config
 from vision.oak.transform_data import assignment_to_sectors, get_sector_index
 from vision.qrcode.qr_code import ReadARUCOCode
