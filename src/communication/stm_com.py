@@ -67,7 +67,7 @@ class STMCom:
                     print(f"l2 start {read}")
                     if read[0] == ord('Y') and read[1] == calculated_checksum:
                         print(f"l3 start {read}")
-                    return False
+                        return False
 
 
 
