@@ -22,7 +22,7 @@ class GoAutonomy:
         self.stelite_com = stelite_com
         self.track_maker = TrackMaker()
         self.end_goal = (self.point_cloud_mapper.res - 3, self.point_cloud_mapper.res - 2)
-        self.a_star_grid = AStarGrid(self.point_cloud_mapper.res, self.point_cloud_mapper.res, start_x=0, start_y=0, end_x=end_goal[0], end_y=end_goal[1])
+        self.a_star_grid = AStarGrid(self.point_cloud_mapper.res, self.point_cloud_mapper.res, start_x=0, start_y=0, end_x=self.end_goal[0], end_y=self.end_goal[1])
         self.start_loop = True
         self.rover_in_target = False
 
