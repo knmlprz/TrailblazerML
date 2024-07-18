@@ -20,6 +20,7 @@ class SatelliteCommunicator:
         self.log_file = open("communication_log.txt", "a")  # Open a file in append mode
         self.latitude = 32.234
         self.longitude = 32.234
+        self.arm_status = 1
     def write_log(self, message):
         self.log_file.write(message + "\n")  # Write message to file with a newline
         self.log_file.flush()  # Ensure it gets written to disk
