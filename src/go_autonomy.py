@@ -30,7 +30,7 @@ class GoAutonomy:
         rgb, pcd, pose = self.camera_oak.get_data()
         isMarker, markerDict = self.aruco.read(rgb, False)
         if isMarker:
-            end_goal = self.correct_aruco.newDestinations(markerDict, pose)
+            end_goal1 = self.correct_aruco.newDestinations(markerDict, pose)
         print(f"pcd {pcd}")
         print(f"pose shape: {pose.shape}, pose: {pose}")
         matrix, first_sector = assignment_to_sectors(pcd)
@@ -40,7 +40,7 @@ class GoAutonomy:
         print(f"map_01.shape {map_01.shape}")
         global_map = self.point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector)
         print(f"global_map.shape {global_map.shape}")
-        self.a_star_grid.update(global_map, rover_sector, self.end_goal["destination"]["sectors"])
+        self.a_star_grid.update(global_map, rover_sector, end_goal1["destination"]["sectors"])
         path_to_destination = self.a_star_grid.a_star_search()
         moves = move(path_to_destination)
         print("move: ", moves, "\n")
