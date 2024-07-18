@@ -1,6 +1,6 @@
 from logic_mission.satellite_communicator import SatelliteCommunicator
-from src.communication.stm_com import STMCom
-from src.go_autonomy import GoAutonomy
+from communication.stm_com import STMCom
+from go_autonomy import GoAutonomy
 
 
 class Mission:
