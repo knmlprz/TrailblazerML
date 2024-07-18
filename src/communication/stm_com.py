@@ -62,7 +62,7 @@ class STMCom:
             print(f"send to stm {command[1]}")
             print(f"send to stm {command[2]}")
             print(f"send to stm {command[3]}")
-            # print(f"send to stm {command[4]}")
+            print(f"send to stm {command[4]}")
             ty = self.read_response()
         print("end")
 
