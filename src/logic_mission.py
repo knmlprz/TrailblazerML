@@ -5,8 +5,8 @@ from go_autonomy import GoAutonomy
 
 class Mission:
     def __init__(self):
-        self.stm_com = STMCom(port="/dev/ttyACM0")
-        self.satellite_communicator = SatelliteCommunicator(port="/dev/ttyAMA0", baudrate=115200)
+        self.stm_com = STMCom(port="/dev/ttyUSB0")
+        self.satellite_communicator = SatelliteCommunicator(port="/dev/ttyTHS1", baudrate=115200)
         self.mision_is_on = True
         self.autonomy_is_on = False
 
