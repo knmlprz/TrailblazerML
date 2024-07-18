@@ -87,3 +87,10 @@ class STMCom:
 
     def close(self):
         self.ser.close()
+
+
+def scale_value(x, src_range, dst_range):
+    scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))
+    return int(scaled)
+x = scale_value(0.5, (-1,1), (64, 93))
+print(x)
