@@ -7,7 +7,7 @@ class STMCom:
         if serial_port:
             self.ser = serial_port
         else:
-            self.ser = serial.Serial(port, 115200, timeout=1)
+            self.ser = serial.Serial(port, 115200, timeout=0.5)
         self.autonomy = False
         self.left_speed = 79
         self.right_speed = 79
