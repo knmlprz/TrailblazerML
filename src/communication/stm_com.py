@@ -54,6 +54,7 @@ class STMCom:
             print(f"send to stm {command[2]}")
             print(f"send to stm {command[3]}")
             ty = self.read_response()
+        print("end")
 
 
     def read_response(self):
