@@ -19,8 +19,8 @@ class STMCom:
         self.byte_light_maini = 0b0000
 
     def update(self, left_jetson, right_jeston):
-        self.left_speed = self.scale_value(left_jetson, (-1, 1), (32, 126))
-        self.right_speed = self.scale_value(right_jeston, (-1, 1), (32, 126))
+        self.left_speed = self.scale_value(left_jetson, (-1, 1), (32 + (94 * 0.3), 126 - (94 * 0.3)))
+        self.right_speed = self.scale_value(right_jeston, (-1, 1), (32 + (94 * 0.3), 126 - (94 * 0.3)))
         self.send_command()
         return self.autonomy
 
@@ -44,7 +44,7 @@ class STMCom:
                 (1 if self.led_y else 0) << 2 |
                 (1 if self.gripper_open else 0) << 3
         )
-        command = struct.pack('BBBB',38, self.right_speed, self.left_speed, self.byte_light_maini)
+        command = struct.pack('BBBB', 38, self.right_speed, self.left_speed, self.byte_light_maini)
         checksum = sum(command) & 0xFF
         command += struct.pack('B', checksum)
         # command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
@@ -66,7 +66,6 @@ class STMCom:
             ty = self.read_response()
         print("end")
 
-
     def read_response(self):
         print("XX")
         if self.ser.in_waiting > 0:
@@ -81,9 +80,6 @@ class STMCom:
                     print(f"l3 start {read}")
                     return False
         return True
-
-
-
 
     def scale_value(self, x, src_range, dst_range):
         scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))

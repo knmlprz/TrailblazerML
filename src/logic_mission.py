@@ -32,16 +32,16 @@ class Mission:
             self.mision_is_on = False
 
     def handle_stage_1(self):
-        time.sleep(1)
+        time.sleep(0.5)
         self.stm_com.led_r = True
         self.stm_com.led_g = False
         self.stm_com.led_y = False
         self.stm_com.girpper_open = False
         self.stm_com.send_command()
         print("Executing tasks for Stage 1...")
-        time.sleep(3)
+        time.sleep(0.5)
         if self.satellite_communicator.arm_status != 0:
-            time.sleep(3)
+            time.sleep(0.5)
             self.stm_com.led_r = False
             self.stm_com.led_g = True
             self.stm_com.led_y = False
@@ -49,7 +49,7 @@ class Mission:
             self.stm_com.send_command()
 
             if self.satellite_communicator.latitude != None and self.satellite_communicator.longitude != None:
-                time.sleep(3)
+                time.sleep(0.5)
                 self.stm_com.led_r = False
                 self.stm_com.led_g = False
                 self.stm_com.led_y = True
