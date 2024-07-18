@@ -114,17 +114,3 @@ class SatelliteCommunicator:
 
     def handle_set_parameters(self, body):
         print("Set Parameters command processed.")
-
-
-if __name__ == "__main__":
-    satellite_communicator = SatelliteCommunicator(port="/dev/ttyUSB0", baudrate=115200)
-    while True:
-        satellite_communicator.read_message()
-    # satellite_communicator.send_acknowledge()
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_ARM_DISARM, b'\x01')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_NAVIGATE_GPS, struct.pack('>ff', 34.052235, -118.243683))
-    # satellite_communicator.task_completed()
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_SET_STAGE, b'\x01')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_LOCATE_ARUCO_TAGS, b'')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_DETECTION, b'')
-    # satellite_communicator.send_message(SatelliteCommunicator.MSG_ID_SET_PARAMETERS, b'')
