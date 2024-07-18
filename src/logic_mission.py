@@ -44,7 +44,7 @@ class Mission:
                 self.stm_com.led_y = True
                 self.stm_com.girpper_open = False
                 self.stm_com.send_command()
-                go_autonomy = GoAutonomy()
+                go_autonomy = GoAutonomy( self.stm_com, self.satellite_communicator)
                 while self.satellite_communicator.arm_status != 0 and not go_autonomy.rover_in_target:
                     go_autonomy.run()
 
