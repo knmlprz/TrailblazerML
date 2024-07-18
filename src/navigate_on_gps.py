@@ -4,7 +4,7 @@ import time
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
-import matplotlib.pyplot as plt
+
 from communication.stm_com import STMCom
 
 
@@ -89,20 +89,16 @@ class RoverController:
             self.control_rover()
             time.sleep(1)
 
-    def plot_path(self):
-        latitudes, longitudes = zip(*self.path)
-        plt.plot(longitudes, latitudes, marker='o')
-        plt.plot(self.longitude_goal, self.latitude_goal, marker='x', markersize=12, color='red')
-        plt.xlabel('Longitude')
-        plt.ylabel('Latitude')
-        plt.title('Rover Path')
-        plt.grid(True)
-        plt.show()
+    # def plot_path(self):
+    #     latitudes, longitudes = zip(*self.path)
+    #     plt.plot(longitudes, latitudes, marker='o')
+    #     plt.plot(self.longitude_goal, self.latitude_goal, marker='x', markersize=12, color='red')
+    #     plt.xlabel('Longitude')
+    #     plt.ylabel('Latitude')
+    #     plt.title('Rover Path')
+    #     plt.grid(True)
+    #     plt.show()
 
 
 # Przykład użycia klasy RoverController
-gps_file = 'utils/position.json'  # Ścieżka do pliku JSON z danymi GPS
 
-rover = RoverController(gps_file, latitude_goal, longitude_goal)
-rover.navigate()
-rover.plot_path()
