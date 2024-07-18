@@ -1,6 +1,6 @@
 from logic_mission.satellite_communicator import SatelliteCommunicator
 from communication.stm_com import STMCom
-from go_autonomy import GoAutonomy
+from navigate_on_gps import RoverController
 import time
 
 class Mission:
@@ -55,9 +55,9 @@ class Mission:
                 self.stm_com.led_y = True
                 self.stm_com.girpper_open = False
                 self.stm_com.send_command()
-                go_autonomy = GoAutonomy( self.stm_com, self.satellite_communicator)
-                while self.satellite_communicator.arm_status != 0 and not go_autonomy.rover_in_target:
-                    go_autonomy.run()
+                rc = RoverController()
+                while self.satellite_communicator.arm_status != 0 or not rc.on_goalt:
+                    rc.navigate()
 
                 self.stm_com.led_r = False
                 self.stm_com.led_g = False
