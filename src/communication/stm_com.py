@@ -19,8 +19,8 @@ class STMCom:
         self.byte_light_maini = 0b0000
 
     def update(self, left_jetson, right_jeston):
-        self.left_speed = self.scale_value(left_jetson, (-1, 1), (32 + (94 * 0.3), 126 - (94 * 0.3)))
-        self.right_speed = self.scale_value(right_jeston, (-1, 1), (32 + (94 * 0.3), 126 - (94 * 0.3)))
+        self.left_speed = self.scale_value(left_jetson, (-1, 1), (64, 93))
+        self.right_speed = self.scale_value(right_jeston, (-1, 1), (64, 93))
         self.send_command()
         return self.autonomy
 
