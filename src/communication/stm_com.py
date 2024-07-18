@@ -44,7 +44,7 @@ class STMCom:
                 (1 if self.led_y else 0) << 2 |
                 (1 if self.gripper_open else 0) << 3
         )
-        command = struct.pack('BBB',b'&', self.right_speed, self.left_speed, self.byte_light_maini)
+        command = struct.pack('BBBB',b'&', self.right_speed, self.left_speed, self.byte_light_maini)
         checksum = sum(command) & 0xFF
         command += struct.pack('B', checksum)
         # command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
@@ -62,6 +62,7 @@ class STMCom:
             print(f"send to stm {command[1]}")
             print(f"send to stm {command[2]}")
             print(f"send to stm {command[3]}")
+            print(f"send to stm {command[4]}")
             ty = self.read_response()
         print("end")
 
