@@ -1,6 +1,7 @@
 import struct
 import serial
 import time
+import struct
 
 class SatelliteCommunicator:
     START_BYTE = 0x7E
