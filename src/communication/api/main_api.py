@@ -5,7 +5,6 @@ import uvicorn
 from pathlib import Path
 
 
-BASE_DIR = Path(__file__).resolve().parent
 
 app = FastAPI()
 
@@ -16,7 +15,7 @@ class Coordinates(BaseModel):
 @app.get("/v1/position")
 async def get_position():
     try:
-        with open(BASE_DIR / "data/position.json", "r") as file:
+        with open("utils/position.json", "r") as file:
             position = json.load(file)
         return position
     except FileNotFoundError:
@@ -25,7 +24,7 @@ async def get_position():
 @app.post("/v1/target")
 async def set_target(target: Coordinates):
     # Użycie absolutnej ścieżki do pliku
-    with open(BASE_DIR / "data/target.json", "w") as file:
+    with open("utils/target.json", "w") as file:
         json.dump(target.dict(), file)
     return {"message": "Target saved successfully."}
 
