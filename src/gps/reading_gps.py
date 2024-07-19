@@ -6,6 +6,7 @@ outputDict = {}
 ser = serial.Serial(port="/dev/ttyTHS0", baudrate=9600)
 
 while True:
+    print("Reading GPS")
     try:
         newline = ser.readline().decode("utf-8").strip()
         parsedLine = pynmea2.parse(newline)
