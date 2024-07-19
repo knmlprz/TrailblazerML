@@ -9,7 +9,6 @@ while True:
     try:
         newline = ser.readline().decode("utf-8").strip()
         parsedLine = pynmea2.parse(newline)
-        print("Reading GPS")
         if newline.find("$GPRMC") > -1:
             print(f"outputDict: {outputDict}")
             outputDict['latitude'] = parsedLine.latitude
