@@ -9,6 +9,7 @@ from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
 
 
 class GoAutonomy:
+    """class for autonomous navigation of the rover. use it in the logic of mission control."""
     def __init__(self, stm_com, stelite_com):
         self.config = load_config("utils/config_oak.json")
         self.camera_oak = CameraOAK(self.config, visualize=False)
@@ -24,6 +25,11 @@ class GoAutonomy:
         self.rover_in_target = False
 
     def run(self):
+        """
+        Run the autonomy of the rover. The rover will move from the current position ( rover_sector )  to the goal (slef.end_goal).
+        Returns:
+
+        """
         rgb, pcd, pose = self.camera_oak.get_data()
         # isMarker, markerDict = self.aruco.read(rgb, False)
         # if isMarker:

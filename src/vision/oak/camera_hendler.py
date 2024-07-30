@@ -72,8 +72,6 @@ class CameraHendler:
         # Get the current configuration to modify
         initialConfig = self.depth.initialConfig.get()
 
-        # Apply post processing settings
-        # Threshold filter
         threshold_filter = depth_config["threshold_filter"]
         initialConfig.postProcessing.thresholdFilter.minRange = threshold_filter[
             "min_range"
@@ -142,7 +140,7 @@ class CameraHendler:
         self.xlinkOut.setStreamName("imu")
 
         for sensor_name, frequency in selected_data_type.items():
-            sensor_enum = getattr(dai.IMUSensor, sensor_name)  # Konwertuj nazwę sensora na odpowiedni enum
+            sensor_enum = getattr(dai.IMUSensor, sensor_name)
             self.imu.enableIMUSensor(sensor_enum, frequency)
 
         self.imu.setBatchReportThreshold(imu_config["batch_threshold"])
