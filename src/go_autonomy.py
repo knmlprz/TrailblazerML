@@ -1,10 +1,7 @@
-import multiprocessing
-from communication.api.main_api import run_api
 from map2d.pcd2track import TrackMaker
 from map2d.translator import PointCloudMapper
 from vision.oak.camera_oak import CameraOAK
 from algorithm.navigation_algorithm import AStarGrid, move
-from communication.stm_com import STMCom
 from vision.oak.config_oak import load_config
 from vision.oak.transform_data import assignment_to_sectors, get_sector_index
 from vision.qrcode.qr_code import ReadARUCOCode
@@ -12,6 +9,7 @@ from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
 
 
 class GoAutonomy:
+    """class for autonomous navigation of the rover. use it in the logic of mission control."""
     def __init__(self, stm_com, stelite_com):
         self.config = load_config("utils/config_oak.json")
         self.camera_oak = CameraOAK(self.config, visualize=False)
@@ -27,6 +25,11 @@ class GoAutonomy:
         self.rover_in_target = False
 
     def run(self):
+        """
+        Run the autonomy of the rover. The rover will move from the current position ( rover_sector )  to the goal (slef.end_goal).
+        Returns:
+
+        """
         rgb, pcd, pose = self.camera_oak.get_data()
         # isMarker, markerDict = self.aruco.read(rgb, False)
         # if isMarker:

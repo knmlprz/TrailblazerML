@@ -4,7 +4,6 @@ import numpy as np
 import cv2
 from .imu_tracker import ImuTracker
 from .camera_hendler import CameraHendler
-# import matplotlib.pyplot as plt
 from .transform_data import assignment_to_sectors
 
 
@@ -77,7 +76,9 @@ class CameraOAK:
         return self.check_and_return_data()
 
     def handle_imu_data(self, imu_data):
-        """Process IMU data."""
+        """Process IMU data.
+        Args: imu_data (dai.IMUData): The IMU data packet.
+        """
         self.get_shift_imu(imu_data)
 
     def handle_pc_data(self, pc_message):
@@ -160,6 +161,14 @@ class CameraOAK:
         self.vis.update_renderer()
 
     def get_shift_imu(self, imu_data: dai.IMUData):
+        """
+        Get the shift of the camera based on the IMU data.
+        Args:
+            imu_data: (dai.IMUData) The IMU data packet.
+
+        Returns:
+
+        """
         imu_packets = imu_data.packets
         for imu_packet in imu_packets:
             accelero_values = imu_packet.acceleroMeter
