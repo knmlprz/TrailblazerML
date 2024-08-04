@@ -20,5 +20,5 @@ competition one of the tasks is autonomy
 - [Daniel Kleczyński](https://github.com/Kleczyk)
 - [Filip Walkowicz](https://github.com/FWalkowicz)
 - [Jakub Bartecki](https://github.com/kubabartecki)
-- [Mateusz Sygnator](https://github.com/FWalkowicz)
+- [Mateusz Sygnator](https://github.com/Sygnator)
 - [Damian Kobylinski](https://github.com/DamianKobylinski)
