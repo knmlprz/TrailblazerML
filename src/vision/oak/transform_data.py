@@ -50,7 +50,7 @@ def assignment_to_sectors(
 
     Parameters:
     pcd (o3d.geometry.PointCloud): The input point cloud containing 3D points.
-    path (str): File path where the sectors numpy array is loaded from. Default is './src/vision/oak/sectors.npy'.
+    path (str): File path where the sectors numpy array is loaded from. Default is './pack1/vision/oak/sectors.npy'.
 
     Returns:
     tuple: A tuple containing:

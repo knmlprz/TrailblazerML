@@ -29,7 +29,7 @@ poetry add package_name --dev
 Describe how to run the project, e.g.:
 
 ```bash
-poetry run python src/main.py
+poetry run python pack1/main.py
 ```
 
 # Downloading Data
