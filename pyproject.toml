@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "trailblazerml"
 version = "0.1.0"
-description = "RoverGO"
+description = "TrailBlazerML"
 authors = ["Kleczyk <danielkleczynski@gmail.com>"]
 license = "MIT"
 
