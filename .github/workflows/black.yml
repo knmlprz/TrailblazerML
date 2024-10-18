@@ -27,4 +27,4 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git commit -am "Format code with Black" || exit 0  # The exit 0 is used to prevent the workflow from failing if no changes are made
-          git push
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
