@@ -27,7 +27,9 @@ class SectorFinder:
         self.latitude, self.longitude = self.read_json_position()
 
         dist_x, dist_y = self.convert_cords_to_distance_diff()
-        sector_diff_x, sector_diff_y = self.convert_distance_to_sector_diff(dist_x, dist_y)
+        sector_diff_x, sector_diff_y = self.convert_distance_to_sector_diff(
+            dist_x, dist_y
+        )
         x_sector = self.INITIAL_X_SECTOR + sector_diff_x
         y_sector = self.INITIAL_Y_SECTOR + sector_diff_y
 
@@ -44,7 +46,7 @@ class SectorFinder:
     def read_json_position(self) -> tuple[int, int]:
         with open(self.cords_position_json_path, "r") as cords_json:
             data = json.load(cords_json)
-            return data['latitude'], data['longitude']
+            return data["latitude"], data["longitude"]
 
     def convert_cords_to_distance_diff(self) -> tuple[int, int]:
         """

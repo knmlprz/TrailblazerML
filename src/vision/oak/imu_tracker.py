@@ -20,12 +20,20 @@ class ImuTracker:
         accel_data = np.array([accel_data[0], accel_data[1], accel_data[2]]) * 1000
         delta_velocity = accel_data * delta_t
         self.current_velocity = self.current_velocity + delta_velocity
-        new_position = self.current_point + self.current_velocity * delta_t + 0.5 * accel_data * delta_t ** 2
+        new_position = (
+            self.current_point
+            + self.current_velocity * delta_t
+            + 0.5 * accel_data * delta_t**2
+        )
         self.current_point = np.array([new_position[0], 0, new_position[2]])
         return self.current_point
 
-    def update(self, accel_data: (float, float, float), rotation_vector: (float, float, float),
-               delta_t: float) -> np.ndarray:
+    def update(
+        self,
+        accel_data: (float, float, float),
+        rotation_vector: (float, float, float),
+        delta_t: float,
+    ) -> np.ndarray:
         """
         Update the position of the camera based on the acceleration data, rotation vector and the time passed.
         Args:
@@ -76,8 +84,6 @@ class ImuTracker:
         r22 = 2 * (q0 * q0 + q3 * q3) - 1
 
         # 3x3 rotation matrix
-        rot_matrix = np.array([[r00, r01, r02],
-                               [r10, r11, r12],
-                               [r20, r21, r22]])
+        rot_matrix = np.array([[r00, r01, r02], [r10, r11, r12], [r20, r21, r22]])
 
         return rot_matrix

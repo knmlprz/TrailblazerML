@@ -19,7 +19,9 @@ class TrackMaker:
     def __init__(self, threshold: float = 0.1, has_visualization: bool = False):
         self.threshold = threshold
         self.has_visualization = has_visualization
-        self.visualization = o3d.visualization.Visualizer() if self.has_visualization else None
+        self.visualization = (
+            o3d.visualization.Visualizer() if self.has_visualization else None
+        )
         if self.has_visualization:
             self.visualization.create_window()
 
@@ -84,7 +86,11 @@ class TrackMaker:
         for i in range(rows):
             for j in range(cols):
                 z = track[i, j] if not np.isnan(track[i, j]) else 0
-                color = [0, 0, 1] if np.isnan(track[i, j]) else ([0, 1, 0] if track[i, j] == 1 else [1, 0, 0])
+                color = (
+                    [0, 0, 1]
+                    if np.isnan(track[i, j])
+                    else ([0, 1, 0] if track[i, j] == 1 else [1, 0, 0])
+                )
                 points.append([j, -i, z])
                 colors.append(color)
         point_cloud = o3d.geometry.PointCloud()
@@ -94,6 +100,7 @@ class TrackMaker:
         self.visualization.add_geometry(point_cloud)
         self.visualization.poll_events()
         self.visualization.update_renderer()
+
 
 # Example usage:
 # Assuming `matrix` is a 2D numpy array representing the point cloud data

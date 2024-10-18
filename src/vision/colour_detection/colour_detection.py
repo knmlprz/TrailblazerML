@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 
+
 def detect_sand_colour(image: np.ndarray) -> bool:
     """
     Detects the presence of the sand color in the given image.

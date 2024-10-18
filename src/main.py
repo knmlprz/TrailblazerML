@@ -8,7 +8,8 @@ from vision.oak.config_oak import load_config
 from vision.oak.transform_data import assignment_to_sectors, get_sector_index
 from vision.qrcode.qr_code import ReadARUCOCode
 from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
-#from gps.gps2sector import SectorFinder
+
+# from gps.gps2sector import SectorFinder
 
 
 def main_process():
@@ -22,8 +23,14 @@ def main_process():
     track_maker = TrackMaker()
     sector_finder = SectorFinder()
     end_goal = (point_cloud_mapper.res - 3, point_cloud_mapper.res - 2)
-    a_star_grid = AStarGrid(point_cloud_mapper.res, point_cloud_mapper.res, start_x=0, start_y=0, end_x=end_goal[0],
-                            end_y=end_goal[1])
+    a_star_grid = AStarGrid(
+        point_cloud_mapper.res,
+        point_cloud_mapper.res,
+        start_x=0,
+        start_y=0,
+        end_x=end_goal[0],
+        end_y=end_goal[1],
+    )
     start_loop = True
     while start_loop:
         rgb, pcd, pose = camera_oak.get_data()

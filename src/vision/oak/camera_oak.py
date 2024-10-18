@@ -22,10 +22,9 @@ class CameraOAK:
         self.imu_tracker = ImuTracker()
         self.visualize = visualize
         self.init_visualizer()
-        self.pose = np.array([[1, 0, 0, 2500],
-                              [0, 1, 0, 0],
-                              [0, 0, 1, 2500],
-                              [0, 0, 0, 1]])
+        self.pose = np.array(
+            [[1, 0, 0, 2500], [0, 1, 0, 0], [0, 0, 1, 2500], [0, 0, 0, 1]]
+        )
         self.cv_color_frame = np.zeros((720, 1280, 3), dtype=np.uint8)
         self.pcd = o3d.geometry.PointCloud()
         self.i = 0
@@ -43,12 +42,16 @@ class CameraOAK:
         if self.visualize:
             self.vis = o3d.visualization.VisualizerWithKeyCallback()
             self.vis.create_window()
-            self.vis.register_key_callback(32, self.toggle_geometry_addition)  # Space bar to toggle
+            self.vis.register_key_callback(
+                32, self.toggle_geometry_addition
+            )  # Space bar to toggle
             self.add_geometry = True  # Flag to control geometry addition
             self.line_points = []
             self.line_set = o3d.geometry.LineSet()
             self.vis.add_geometry(self.line_set)
-            self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
+            self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(
+                size=150, origin=[0, 0, 0]
+            )
             self.vis.add_geometry(self.origin_arrow)
 
     def get_data(self) -> (np.ndarray, o3d.geometry.PointCloud, np.ndarray):
@@ -58,7 +61,9 @@ class CameraOAK:
         """
         imu_queue = self.device.getOutputQueue(name="imu", maxSize=50, blocking=False)
         pc_queue = self.device.getOutputQueue(name="out", maxSize=5, blocking=False)
-        depth_queue = self.device.getOutputQueue(name="depth", maxSize=5, blocking=False)
+        depth_queue = self.device.getOutputQueue(
+            name="depth", maxSize=5, blocking=False
+        )
 
         imu_data = imu_queue.tryGet()
         if imu_data:
@@ -124,7 +129,9 @@ class CameraOAK:
             self.vis.poll_events()
             self.vis.update_renderer()
             if self.add_geometry:
-                self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(size=150, origin=[0, 0, 0])
+                self.origin_arrow = o3d.geometry.TriangleMesh.create_coordinate_frame(
+                    size=150, origin=[0, 0, 0]
+                )
                 self.origin_arrow.transform(self.pose)
                 self.vis.add_geometry(self.origin_arrow)
                 self.update_trajectory()
@@ -134,11 +141,19 @@ class CameraOAK:
         """Process depth data and combine it with RGB data for visualization."""
         if self.visualize:
             depth_frame = depth_message.getFrame()
-            depth_frame_color = cv2.normalize(depth_frame, None, 0, 255, cv2.NORM_MINMAX)
-            depth_frame_color = cv2.applyColorMap(depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET)
-            depth_frame_color_resized = cv2.resize(depth_frame_color,
-                                                   (self.cv_color_frame.shape[1], self.cv_color_frame.shape[0]))
-            combined_image = cv2.hconcat([self.cv_color_frame, depth_frame_color_resized])
+            depth_frame_color = cv2.normalize(
+                depth_frame, None, 0, 255, cv2.NORM_MINMAX
+            )
+            depth_frame_color = cv2.applyColorMap(
+                depth_frame_color.astype(np.uint8), cv2.COLORMAP_JET
+            )
+            depth_frame_color_resized = cv2.resize(
+                depth_frame_color,
+                (self.cv_color_frame.shape[1], self.cv_color_frame.shape[0]),
+            )
+            combined_image = cv2.hconcat(
+                [self.cv_color_frame, depth_frame_color_resized]
+            )
 
             cv2.imshow("Combined Depth and RGB", combined_image)
             cv2.waitKey(1)
@@ -189,7 +204,7 @@ class CameraOAK:
                     rotation_vector.i,
                     rotation_vector.j,
                     rotation_vector.k,
-                    rotation_vector.real
+                    rotation_vector.real,
                 ],
                 delta_t,
                 # self.pose[:3, 3]
@@ -198,7 +213,9 @@ class CameraOAK:
     def check_and_return_data(self):
         """Checks if the data is empty and returns appropriate values."""
         if self.cv_color_frame is None:
-            self.cv_color_frame = np.zeros((720, 1280, 3), dtype=np.uint8)  # Example frame size
+            self.cv_color_frame = np.zeros(
+                (720, 1280, 3), dtype=np.uint8
+            )  # Example frame size
             print("cv_color_frame is empty, default black frame set.")
 
         if self.pcd.is_empty():

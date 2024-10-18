@@ -12,7 +12,9 @@ class LogicMission:
     def __init__(self):
 
         self.stm_com = STMCom(port="/dev/ttyACM0")
-        self.satellite_communicator = SatelliteCommunicator(port="/dev/ttyTHS1", baudrate=115200)
+        self.satellite_communicator = SatelliteCommunicator(
+            port="/dev/ttyTHS1", baudrate=115200
+        )
         self.mision_is_on = True
         self.autonomy_is_on = False
 
@@ -73,7 +75,10 @@ class LogicMission:
             self.stm_com.girpper_open = False
             self.stm_com.send_command()
 
-            if self.satellite_communicator.latitude != None and self.satellite_communicator.longitude != None:
+            if (
+                self.satellite_communicator.latitude != None
+                and self.satellite_communicator.longitude != None
+            ):
                 time.sleep(0.5)
                 self.stm_com.led_r = False
                 self.stm_com.led_g = False

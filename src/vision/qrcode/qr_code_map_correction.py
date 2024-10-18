@@ -30,7 +30,9 @@ class DestinationsCorrectionByARUCO:
         :return: (str) 'destination' if the marker is a destination, 'entrance' if the marker is an entrance to a lava tube,
         'unknown' if the marker ID is not recognized.
         """
-        key = list(filter(lambda x: self.aruco_dict[x] == int(marker_id), self.aruco_dict))
+        key = list(
+            filter(lambda x: self.aruco_dict[x] == int(marker_id), self.aruco_dict)
+        )
 
         if key[0] == "M1":
             return "Airlock_entrance"
@@ -67,7 +69,9 @@ class DestinationsCorrectionByARUCO:
         :param pose: (np.ndarray) 4x4 transformation matrix representing the pose.
         :return: (np.ndarray) Corrected [x, y, z] coordinates.
         """
-        marker_position = np.array([marker_position[0], marker_position[1], marker_position[2], 1])
+        marker_position = np.array(
+            [marker_position[0], marker_position[1], marker_position[2], 1]
+        )
         correct_position = pose @ marker_position
         correct_position = correct_position[:3]
         return correct_position
@@ -91,13 +95,20 @@ class DestinationsCorrectionByARUCO:
         corrected_positions = {}
 
         for marker in detected_markers:
-            corrected_marker_position = self.correctCoordinates(marker['position'], pose)
-            corrected_marker_position = [corrected_marker_position[0], corrected_marker_position[2],
-                                         1]
-            sector_x, sector_z = self.calculateSector(corrected_marker_position[0], corrected_marker_position[1])
+            corrected_marker_position = self.correctCoordinates(
+                marker["position"], pose
+            )
+            corrected_marker_position = [
+                corrected_marker_position[0],
+                corrected_marker_position[2],
+                1,
+            ]
+            sector_x, sector_z = self.calculateSector(
+                corrected_marker_position[0], corrected_marker_position[1]
+            )
             corrected_positions["destination"] = {
-                'position': corrected_marker_position,
-                'sectors': (sector_x, sector_z)
+                "position": corrected_marker_position,
+                "sectors": (sector_x, sector_z),
             }
 
         return corrected_positions
