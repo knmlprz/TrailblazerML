@@ -1,11 +1,11 @@
 name: Automated Code Formatting with Black
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   format:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
