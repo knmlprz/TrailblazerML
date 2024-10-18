@@ -10,6 +10,7 @@ from vision.qrcode.qr_code_map_correction import DestinationsCorrectionByARUCO
 
 class GoAutonomy:
     """class for autonomous navigation of the rover. use it in the logic of mission control."""
+
     def __init__(self, stm_com, stelite_com):
         self.config = load_config("utils/config_oak.json")
         self.camera_oak = CameraOAK(self.config, visualize=False)
@@ -19,8 +20,18 @@ class GoAutonomy:
         self.stm_com = stm_com
         self.stelite_com = stelite_com
         self.track_maker = TrackMaker()
-        self.end_goal = (self.point_cloud_mapper.res - 3, self.point_cloud_mapper.res - 2)
-        self.a_star_grid = AStarGrid(self.point_cloud_mapper.res, self.point_cloud_mapper.res, start_x=0, start_y=0, end_x=self.end_goal[0], end_y=self.end_goal[1])
+        self.end_goal = (
+            self.point_cloud_mapper.res - 3,
+            self.point_cloud_mapper.res - 2,
+        )
+        self.a_star_grid = AStarGrid(
+            self.point_cloud_mapper.res,
+            self.point_cloud_mapper.res,
+            start_x=0,
+            start_y=0,
+            end_x=self.end_goal[0],
+            end_y=self.end_goal[1],
+        )
         self.start_loop = True
         self.rover_in_target = False
 
@@ -50,4 +61,3 @@ class GoAutonomy:
         start_autonomy = self.stm_com.update(moves[0], moves[1])
         if self.a_star_grid.goal == rover_sector:
             self.rover_in_target = True
-

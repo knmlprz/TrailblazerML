@@ -1,6 +1,7 @@
 import numpy as np
 import heapq
 import random
+
 # import matplotlib.pyplot as plt
 
 
@@ -16,7 +17,9 @@ class AStarGrid:
     :param end_y: (int) Y-coordinate of the goal position.
     """
 
-    def __init__(self, rows: int, cols: int, start_x: int, start_y: int, end_x: int, end_y: int):
+    def __init__(
+        self, rows: int, cols: int, start_x: int, start_y: int, end_x: int, end_y: int
+    ):
         self.rows = rows
         self.cols = cols
         self.spacing = 1.0
@@ -111,7 +114,16 @@ class AStarGrid:
         """
         neighbors = []
         row, col = node
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        directions = [
+            (-1, 0),
+            (1, 0),
+            (0, -1),
+            (0, 1),
+            (-1, -1),
+            (-1, 1),
+            (1, -1),
+            (1, 1),
+        ]
 
         for dr, dc in directions:
             new_row, new_col = row + dr, col + dc
@@ -160,7 +172,10 @@ def create_grid_visualization(grid, spacing=1.0):
             elif grid.grid[i, j] == 1:
                 colors.append([1, 1, 0])
 
-    edge_colors = [[0.5, 0.5, 0.5] for _ in range((grid.rows - 1) * grid.cols + (grid.cols - 1) * grid.rows)]
+    edge_colors = [
+        [0.5, 0.5, 0.5]
+        for _ in range((grid.rows - 1) * grid.cols + (grid.cols - 1) * grid.rows)
+    ]
     edge_points = []
 
     for i in range(grid.rows):
@@ -191,7 +206,7 @@ def move(path):
         (-1, -1): (0.4, 0.5),  # Up-Right
         (-1, 1): (0.2, 0.4),  # Up-Left
         (1, -1): (-0.2, -0.4),  # Down-Left
-        (1, 1): (-0.4, -0.2)  # Down-Right
+        (1, 1): (-0.4, -0.2),  # Down-Right
     }
     current_node = path[0]
     next_node = path[1]
@@ -200,6 +215,7 @@ def move(path):
     move_power = direction_map.get(move_direction, None)
 
     return move_power
+
 
 # grid_size = 1000
 # grid = AStarGrid(grid_size, grid_size, start_x=0, start_y=0, end_x=grid_size - 2, end_y=grid_size - 2)
@@ -242,4 +258,3 @@ def move(path):
 #
 # visualizer.run()
 # visualizer.destroy_window()
-

@@ -39,8 +39,8 @@ def make_sectors(path: str = "./") -> None:
 
 
 def assignment_to_sectors(
-        pcd: o3d.geometry.PointCloud, path: str = "vision/oak/sectors.npy"
-)-> (np.ndarray, np.ndarray):
+    pcd: o3d.geometry.PointCloud, path: str = "vision/oak/sectors.npy"
+) -> (np.ndarray, np.ndarray):
     """
     Assigns points from a point cloud to sectors and calculates the center of mass for each sector.
 
@@ -124,7 +124,9 @@ def assignment_to_sectors(
     return np.zeros(10), np.array([0, 0])
 
 
-def get_sector_index(xz_translation: (float, float), sectors_path: str = "vision/oak/sectors.npy") -> tuple:
+def get_sector_index(
+    xz_translation: (float, float), sectors_path: str = "vision/oak/sectors.npy"
+) -> tuple:
     """
     Calculates the sector index for the given xz translation.
 
@@ -156,4 +158,3 @@ def get_sector_index(xz_translation: (float, float), sectors_path: str = "vision
     else:
         print("Provided translation is out of the sector bounds.")
         return (0, 0)
-

@@ -39,14 +39,16 @@ class STMCom:
             self.left_speed = 79
             self.right_speed = 79
         self.byte_light_maini = (
-                (1 if self.led_r else 0) |
-                (1 if self.led_g else 0) << 1 |
-                (1 if self.led_y else 0) << 2 |
-                (1 if self.gripper_open else 0) << 3
+            (1 if self.led_r else 0)
+            | (1 if self.led_g else 0) << 1
+            | (1 if self.led_y else 0) << 2
+            | (1 if self.gripper_open else 0) << 3
         )
-        command = struct.pack('BBBB', 38, self.right_speed, self.left_speed, self.byte_light_maini)
+        command = struct.pack(
+            "BBBB", 38, self.right_speed, self.left_speed, self.byte_light_maini
+        )
         checksum = sum(command) & 0xFF
-        command += struct.pack('B', checksum)
+        command += struct.pack("B", checksum)
         # command = f"&{chr(self.right_speed)}{chr(self.left_speed)}{chr(self.byte_light_maini)}"
         # checksum = sum(command.encode()) & 0xFF
         # command += chr(checksum)
@@ -71,18 +73,22 @@ class STMCom:
         if self.ser.in_waiting > 0:
             start = self.ser.read(1)
             print(f"l1 start {start}")
-            if start == b'&':
+            if start == b"&":
 
                 read = self.ser.read(2)
-                calculated_checksum = (ord('&') + read[0]) & 0xFF
+                calculated_checksum = (ord("&") + read[0]) & 0xFF
                 print(f"l2 start {read}")
-                if read[0] == ord('Y') and read[1] == calculated_checksum:
+                if read[0] == ord("Y") and read[1] == calculated_checksum:
                     print(f"l3 start {read}")
                     return False
         return True
 
     def scale_value(self, x, src_range, dst_range):
-        scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))
+        scaled = dst_range[0] + (
+            (x - src_range[0])
+            * (dst_range[1] - dst_range[0])
+            / (src_range[1] - src_range[0])
+        )
         return int(scaled)
 
     def close(self):
@@ -90,7 +96,13 @@ class STMCom:
 
 
 def scale_value(x, src_range, dst_range):
-    scaled = dst_range[0] + ((x - src_range[0]) * (dst_range[1] - dst_range[0]) / (src_range[1] - src_range[0]))
+    scaled = dst_range[0] + (
+        (x - src_range[0])
+        * (dst_range[1] - dst_range[0])
+        / (src_range[1] - src_range[0])
+    )
     return int(scaled)
-x = scale_value(0.5, (-1,1), (64, 93))
+
+
+x = scale_value(0.5, (-1, 1), (64, 93))
 print(x)

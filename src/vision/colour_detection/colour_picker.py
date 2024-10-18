@@ -1,12 +1,16 @@
 import cv2
 import numpy as np
 
+
 # Callback function for trackbars, does nothing
 def nothing(x):
     pass
 
+
 # Initialize the webcam
-cap = cv2.VideoCapture("/home/filip/Downloads/Messenger_creation_2568467f-e19a-4d6e-9a99-af0b2ff3f443.mp4")
+cap = cv2.VideoCapture(
+    "/home/filip/Downloads/Messenger_creation_2568467f-e19a-4d6e-9a99-af0b2ff3f443.mp4"
+)
 cap.set(3, 1280)
 cap.set(4, 720)
 
@@ -59,7 +63,7 @@ while True:
     stacked = np.hstack((mask_3, frame, res))
 
     # Show the stacked images
-    cv2.imshow('Trackbars', cv2.resize(stacked, None, fx=0.4, fy=0.4))
+    cv2.imshow("Trackbars", cv2.resize(stacked, None, fx=0.4, fy=0.4))
 
     # Break the loop if 'ESC' is pressed
     key = cv2.waitKey(1)
@@ -67,7 +71,7 @@ while True:
         break
 
     # Save the HSV values if 's' is pressed
-    if key == ord('s'):
+    if key == ord("s"):
         thearray = [[l_h, l_s, l_v], [u_h, u_s, u_v]]
         print(thearray)
         break

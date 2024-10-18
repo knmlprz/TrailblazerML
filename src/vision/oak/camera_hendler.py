@@ -120,7 +120,7 @@ class CameraHendler:
         # initialConfig.postProcessing.decimationFilter.decimationFactor = 2
 
     def setup_pointcloud(self) -> None:
-        """ Setup the pointcloud configuration."""
+        """Setup the pointcloud configuration."""
         self.pointcloud = self.pipeline.create(dai.node.PointCloud)
         self.pointcloud.initialConfig.setSparse(True)
         self.depth.depth.link(self.pointcloud.inputDepth)
@@ -132,9 +132,9 @@ class CameraHendler:
         self.xOut.setStreamName("out")
 
     def setup_imu(self) -> None:
-        """ Setup the IMU configuration."""
-        imu_config = self.config['imu']
-        selected_data_type = imu_config['selected_data_type']
+        """Setup the IMU configuration."""
+        imu_config = self.config["imu"]
+        selected_data_type = imu_config["selected_data_type"]
         self.imu = self.pipeline.create(dai.node.IMU)
         self.xlinkOut = self.pipeline.create(dai.node.XLinkOut)
         self.xlinkOut.setStreamName("imu")

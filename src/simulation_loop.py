@@ -17,14 +17,16 @@ def generate_obstacle_map(size, num_obstacles, max_obstacle_size):
         x_start = np.random.randint(0, size - obstacle_width)
         y_start = np.random.randint(0, size - obstacle_height)
 
-        grid[x_start:x_start + obstacle_width, y_start:y_start + obstacle_height] = 1
+        grid[
+            x_start : x_start + obstacle_width, y_start : y_start + obstacle_height
+        ] = 1
 
     return grid
 
 
 def visualize_grid(grid):
     plt.figure(figsize=(10, 10))
-    plt.imshow(grid, cmap='gray', interpolation='none')
+    plt.imshow(grid, cmap="gray", interpolation="none")
     plt.title("Obstacle Map")
     plt.colorbar()
     plt.show()
@@ -45,8 +47,14 @@ if __name__ == "__main__":
 
     point_cloud_mapper = PointCloudMapper(res=5000)
     track_maker = TrackMaker(threshold=0.2, has_visualization=True)
-    a_star_grid = AStarGrid(point_cloud_mapper.res, point_cloud_mapper.res, start_x=0, start_y=0,
-                            end_x=point_cloud_mapper.res - 3, end_y=point_cloud_mapper.res - 2)
+    a_star_grid = AStarGrid(
+        point_cloud_mapper.res,
+        point_cloud_mapper.res,
+        start_x=0,
+        start_y=0,
+        end_x=point_cloud_mapper.res - 3,
+        end_y=point_cloud_mapper.res - 2,
+    )
     # simulation loop
     for image_path, depth_path, pose_path in zip(
         S3D.images, S3D.sparse_depths, S3D.poses
@@ -61,7 +69,9 @@ if __name__ == "__main__":
         print(f"rover_sector {rover_sector}")
         map_01 = track_maker.point_cloud_to_track(matrix)
         print(f"map_01.shape {map_01.shape}")
-        global_map = point_cloud_mapper.cropped_map_to_2d_map(map_01, first_sector, padding)
+        global_map = point_cloud_mapper.cropped_map_to_2d_map(
+            map_01, first_sector, padding
+        )
         print(f"global_map.shape {global_map.shape}")
         a_star_grid.update(global_map, rover_sector)
         path_to_destination = a_star_grid.a_star_search()

@@ -7,7 +7,7 @@ while True:
     ret, frame = vid.read()
     isMarker, markerDict = aruco.read(frame, True)
     print(isMarker, f"dict: {markerDict}")
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
 vid.release()

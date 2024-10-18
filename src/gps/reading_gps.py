@@ -11,9 +11,11 @@ while True:
         parsedLine = pynmea2.parse(newline)
         if newline.find("$GPRMC") > -1:
             print(f"outputDict: {outputDict}")
-            outputDict['latitude'] = parsedLine.latitude
-            outputDict['longitude'] = parsedLine.longitude
-            with open("/home/jetson/repos/TrailblazerML/src/utils/position.json", 'w') as OutputFile:
+            outputDict["latitude"] = parsedLine.latitude
+            outputDict["longitude"] = parsedLine.longitude
+            with open(
+                "/home/jetson/repos/TrailblazerML/src/utils/position.json", "w"
+            ) as OutputFile:
                 json.dump(outputDict, OutputFile)
     except UnicodeDecodeError:
         print("Invalid byte encountered. Skipping.")

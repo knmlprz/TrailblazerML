@@ -1,9 +1,13 @@
 import open3d as o3d
 import numpy as np
+
 # import matplotlib.pyplot as plt
 
+
 class PointCloudMapper:
-    def __init__(self, res=1000, value_range=(-1, 1), visualize=False, visualization_type=1):
+    def __init__(
+        self, res=1000, value_range=(-1, 1), visualize=False, visualization_type=1
+    ):
         self.res = res
         self.value_range = value_range
         self.map_2d = np.full((res, res), np.nan)
@@ -36,9 +40,11 @@ class PointCloudMapper:
         index = np.argwhere(overlay_map == 1)
 
         for i, j in index:
-            new_map[max(0, i-padding):min(new_map.shape[0], i+padding+1), 
-                    max(0, j-padding):min(new_map.shape[1], j+padding+1)] = 1
-        
+            new_map[
+                max(0, i - padding) : min(new_map.shape[0], i + padding + 1),
+                max(0, j - padding) : min(new_map.shape[1], j + padding + 1),
+            ] = 1
+
         return new_map
 
     def cropped_map_to_2d_map(self, points, position=(0, 0), padding=8):
@@ -66,12 +72,14 @@ class PointCloudMapper:
         if padding > 0:
             overlay_map = self.add_padding(overlay_map, padding)
 
-        self.map_2d[position[1]:p_height+position[1], position[0]:p_width+position[0]] = overlay_map
+        self.map_2d[
+            position[1] : p_height + position[1], position[0] : p_width + position[0]
+        ] = overlay_map
 
         # Visualization (optional)
         if self.visualize:
             if self.visualization_type == 0:
-                self.visualize_2d_map((0,0,0))
+                self.visualize_2d_map((0, 0, 0))
             else:
                 self.visualize_2d_map_plot()
 
@@ -135,7 +143,9 @@ class PointCloudMapper:
                 if len(self.points) > 1:
                     lines = [[j, j + 1] for j in range(len(self.points) - 1)]
                     self.line_set.lines = o3d.utility.Vector2iVector(lines)
-                    colors = [[1, 0, 0] for _ in range(len(lines))]  # red color for trajectory lines
+                    colors = [
+                        [1, 0, 0] for _ in range(len(lines))
+                    ]  # red color for trajectory lines
                     self.line_set.colors = o3d.utility.Vector3dVector(colors)
 
                 self.vis.update_geometry(self.line_set)
