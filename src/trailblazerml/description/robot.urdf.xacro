@@ -1,6 +1,12 @@
-<?xml version=1.0>
+<?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="rover">
     <!--  Tutaj wszystkie importy części łazika -->
+        <xacro:include filename="robot_core.xacro" />
+        <xacro:include filename="parts/wheel_left.xacro" />
+        <xacro:include filename="parts/wheel_right.xacro" />
 
-    <!-- -------------------------------------- -->
+    <!--  wywołanie kół -->
+        <xacro:wheel_left name="wheel_left_front" mass="0.5">
+
+        </xacro:wheel_left>
 </robot>
