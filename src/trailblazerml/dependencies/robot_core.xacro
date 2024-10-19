@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- IMPORTY CZĘŚCI -->
+        <xacro:include filename="macros/colors.xacro" />
+        <xacro:include filename="macros/inertial_macros.xacro"
+    <!-- -------------------------------------- -->
+
+    <!-- DEFINIOWANIE STAŁYCH -->
+        <xacro:property name="wheel_radius" value="0.04" />
+        <xacro:property name="wheel_length" value="0.05" />
+        <xacro:property name="wheel_color_name" value="red" />
+        <xacro:property name="wheel_color_rgb" value="${xacro:call('material_color', wheel_color_name)}" />
+    <!-- -------------------------------------- -->
+
+
+</robot>
