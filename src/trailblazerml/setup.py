@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+from glob import glob
+
 
 package_name = 'trailblazerml'
 
@@ -10,6 +12,12 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
+        ('share/' + package_name + '/worlds', glob('worlds/*.world')),
+        ('share/' + package_name + '/description', glob('description/*.xacro')),
+        ('share/' + package_name + '/description/parts', glob('description/parts/*.xacro')),
+        ('share/' + package_name + '/description/macros', glob('description/macros/*.xacro')),
+        ('share/' + package_name + '/models/rover_stl', glob('models/rover_stl/*.stl')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
