@@ -1,6 +1,7 @@
 from setuptools import find_packages, setup
+from glob import glob
 
-package_name = 'trailblazerml'
+package_name = 'gazebo_viz'
 
 setup(
     name=package_name,
@@ -10,6 +11,11 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob('launch/*.py')),
+        ('share/' + package_name + '/worlds', glob('worlds/*.world')),
+        ('share/' + package_name + '/description', glob('description/*.xacro')),
+        ('share/' + package_name + '/config', glob('config/*.yaml')),
+        ('share/' + package_name + '/meshes', glob('meshes/*.stl')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
