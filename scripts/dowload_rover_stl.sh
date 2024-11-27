@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Target directory for downloads
-TARGET_DIR="./src/trailblazerml/models/rover_stl/"
+TARGET_DIR="../src/gazebo_viz/meshes/"
 
 # Check if the target directory exists, if not, create it
 if [ ! -d "$TARGET_DIR" ]; then
