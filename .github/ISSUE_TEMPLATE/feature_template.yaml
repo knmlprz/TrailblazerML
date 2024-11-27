@@ -2,7 +2,7 @@ name: Bug Report
 description: File to present feature.
 title: "[Feature]: "
 labels: ["Trzeba Zapierdalać"]
-projects: ["knmlprz/TrailblazerML"]
+projects: ["knmlprz/TrailblazerML-`v0.2.0`"]
 assignees:
   - octocat
 body:
