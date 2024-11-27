@@ -1,0 +1,23 @@
+joy_node:
+  ros__parameters:
+    device_id: 0
+    deadzone: 0.05
+    autorepeat_rate: 20.0
+
+teleop_node:
+  ros__parameters:
+    axis_linear: # Left thumb stick vertical
+      x: 1
+    scale_linear:
+      x: 5.0
+
+    axis_angular: # Left thumb stick horizontal
+      yaw: 0
+    scale_angular:
+      yaw: 0.4
+
+    velocity_buttons:
+      x: 2
+      a: 0  # A button to control linear velocity backward
+      b: 1  # B button to control angular velocity right
+      y: 3
