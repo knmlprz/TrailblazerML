@@ -5,7 +5,6 @@ labels: ["Trzeba Zapierdalać"]
 projects: ["knmlprz/25"]
 assignees:
   - octocat
-status: "Todo"
 body:
   - type: markdown
     attributes:
