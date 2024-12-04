@@ -1,5 +1,5 @@
 name: Bug Template
-description: Issue template for reporting bugs
+description: Template for bugs reporting
 title: "[Bug]: "
 labels: [ "Trzeba Zapierdalać" ]
 projects: [ "knmlprz/25" ]
