@@ -4,7 +4,8 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.11.9
 
-COPY . .
+COPY src /opt/ros/humble/
+COPY scripts /scripts/
 
 RUN apt-get update && apt-get install -y \
     curl locales software-properties-common git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
@@ -47,12 +48,13 @@ RUN apt-get update && apt-get install -y \
   rm -rf /var/lib/apt/lists/*
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 RUN bash -c "source ~/.bashrc"
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["bash"]
