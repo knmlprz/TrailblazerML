@@ -46,7 +46,6 @@ Follow the official [ROS2 Humble installation guide](https://docs.ros.org/en/hum
       ros-humble-ros2-controllers \
       ros-humble-gazebo-ros2-control \
       ros-humble-position-controllers \
-      ros-humble-controller-manager-spawner \
       ros-humble-xacro \
       joystick \
       jstest-gtk \
