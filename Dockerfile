@@ -21,6 +21,8 @@ RUN curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-instal
 
 RUN bash -l -c "pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION"
 
+RUN pip install numpy lxml
+
 RUN add-apt-repository universe && \
     rm -rf /var/lib/apt/lists/*
 
@@ -49,7 +51,6 @@ RUN apt-get update && apt-get install -y \
   ros-humble-ros2-controllers \
   ros-humble-gazebo-ros2-control \
   ros-humble-position-controllers \
-#  ros-humble-controller-manager-spawner \
   ros-humble-xacro \
   joystick \
   jstest-gtk \
@@ -59,7 +60,7 @@ RUN apt-get update && apt-get install -y \
   ros-humble-gazebo-ros2-control && \
   rm -rf /var/lib/apt/lists/*
 
-COPY . /Traiblazer/
+COPY . /TrailblazerML/
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
@@ -69,6 +70,6 @@ RUN bash -c "source ~/.bashrc"
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["bash"]
