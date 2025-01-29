@@ -1,0 +1,33 @@
+[1.585s] Invoking command in '/home/konrad/TrailblazerML/src/trailblazerml': PYTHONPATH=/home/konrad/TrailblazerML/src/build/trailblazerml/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/konrad/TrailblazerML/src/install/trailblazerml/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/trailblazerml build --build-base /home/konrad/TrailblazerML/src/build/trailblazerml/build install --record /home/konrad/TrailblazerML/src/build/trailblazerml/install.log --single-version-externally-managed install_data
+[2.059s] running egg_info
+[2.061s] creating ../build/trailblazerml/trailblazerml.egg-info
+[2.062s] writing ../build/trailblazerml/trailblazerml.egg-info/PKG-INFO
+[2.062s] writing dependency_links to ../build/trailblazerml/trailblazerml.egg-info/dependency_links.txt
+[2.063s] writing entry points to ../build/trailblazerml/trailblazerml.egg-info/entry_points.txt
+[2.063s] writing requirements to ../build/trailblazerml/trailblazerml.egg-info/requires.txt
+[2.063s] writing top-level names to ../build/trailblazerml/trailblazerml.egg-info/top_level.txt
+[2.063s] writing manifest file '../build/trailblazerml/trailblazerml.egg-info/SOURCES.txt'
+[2.067s] reading manifest file '../build/trailblazerml/trailblazerml.egg-info/SOURCES.txt'
+[2.071s] writing manifest file '../build/trailblazerml/trailblazerml.egg-info/SOURCES.txt'
+[2.071s] running build
+[2.071s] running build_py
+[2.072s] creating /home/konrad/TrailblazerML/src/build/trailblazerml/build
+[2.072s] creating /home/konrad/TrailblazerML/src/build/trailblazerml/build/lib
+[2.072s] creating /home/konrad/TrailblazerML/src/build/trailblazerml/build/lib/trailblazerml
+[2.072s] copying trailblazerml/__init__.py -> /home/konrad/TrailblazerML/src/build/trailblazerml/build/lib/trailblazerml
+[2.072s] running install
+[2.072s] running install_lib
+[2.072s] creating /home/konrad/TrailblazerML/src/install/trailblazerml/lib/python3.10/site-packages/trailblazerml
+[2.073s] copying /home/konrad/TrailblazerML/src/build/trailblazerml/build/lib/trailblazerml/__init__.py -> /home/konrad/TrailblazerML/src/install/trailblazerml/lib/python3.10/site-packages/trailblazerml
+[2.073s] byte-compiling /home/konrad/TrailblazerML/src/install/trailblazerml/lib/python3.10/site-packages/trailblazerml/__init__.py to __init__.cpython-310.pyc
+[2.073s] running install_data
+[2.073s] creating /home/konrad/TrailblazerML/src/install/trailblazerml/share/ament_index
+[2.073s] creating /home/konrad/TrailblazerML/src/install/trailblazerml/share/ament_index/resource_index
+[2.073s] creating /home/konrad/TrailblazerML/src/install/trailblazerml/share/ament_index/resource_index/packages
+[2.073s] copying resource/trailblazerml -> /home/konrad/TrailblazerML/src/install/trailblazerml/share/ament_index/resource_index/packages
+[2.073s] copying package.xml -> /home/konrad/TrailblazerML/src/install/trailblazerml/share/trailblazerml
+[2.073s] running install_egg_info
+[2.074s] Copying ../build/trailblazerml/trailblazerml.egg-info to /home/konrad/TrailblazerML/src/install/trailblazerml/lib/python3.10/site-packages/trailblazerml-0.0.0-py3.10.egg-info
+[2.077s] running install_scripts
+[2.119s] writing list of installed files to '/home/konrad/TrailblazerML/src/build/trailblazerml/install.log'
+[2.217s] Invoked command in '/home/konrad/TrailblazerML/src/trailblazerml' returned '0': PYTHONPATH=/home/konrad/TrailblazerML/src/build/trailblazerml/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/konrad/TrailblazerML/src/install/trailblazerml/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/trailblazerml build --build-base /home/konrad/TrailblazerML/src/build/trailblazerml/build install --record /home/konrad/TrailblazerML/src/build/trailblazerml/install.log --single-version-externally-managed install_data

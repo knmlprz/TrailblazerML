@@ -1,0 +1,34 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 30
+    controllers:
+      - diff_drive_controller_left
+      - diff_drive_controller_right
+      - joint_broad
+    diff_drive_controller_left:
+      type: diff_drive_controller/DiffDriveController
+    diff_drive_controller_right:
+      type: diff_drive_controller/DiffDriveController
+    joint_broad:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+diff_drive_controller_left:
+  ros__parameters:
+    publish_rate: 50.0
+    base_frame_id: base_link
+    left_wheel_names: ['left_wheel_front_joint']
+    right_wheel_names: ['left_wheel_back_joint']
+    wheel_separation: 1.17
+    wheel_radius: 0.13
+    use_stamped_vel: false
+
+diff_drive_controller_right:
+  ros__parameters:
+    publish_rate: 50.0
+    base_frame_id: base_link
+    left_wheel_names: ['right_wheel_front_joint']
+    right_wheel_names: ['right_wheel_back_joint']
+    wheel_separation: 1.17
+    wheel_radius: 0.13
+    use_stamped_vel: false
+

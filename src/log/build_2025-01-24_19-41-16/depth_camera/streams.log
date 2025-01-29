@@ -1,0 +1,61 @@
+[0.046s] Invoking command in '/home/konrad/TrailblazerML/src/build/depth_camera': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/konrad/TrailblazerML/install/trailblazerml:/home/konrad/TrailblazerML/install/rover_teleop_twist_joy:/home/konrad/TrailblazerML/install/gazebo_viz:/opt/ros/humble /usr/bin/cmake /home/konrad/TrailblazerML/src/depth-camera -DCMAKE_INSTALL_PREFIX=/home/konrad/TrailblazerML/src/install/depth_camera
+[0.400s] -- The C compiler identification is GNU 11.4.0
+[0.639s] -- The CXX compiler identification is GNU 11.4.0
+[0.657s] -- Detecting C compiler ABI info
+[0.802s] -- Detecting C compiler ABI info - done
+[0.832s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.836s] -- Detecting C compile features
+[0.837s] -- Detecting C compile features - done
+[0.847s] -- Detecting CXX compiler ABI info
+[1.163s] -- Detecting CXX compiler ABI info - done
+[1.177s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.178s] -- Detecting CXX compile features
+[1.179s] -- Detecting CXX compile features - done
+[1.190s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.575s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.755s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[2.074s] -- Added test 'copyright' to check source files copyright and LICENSE
+[2.081s] -- Added test 'flake8' to check Python code syntax and style conventions
+[2.086s] -- Added test 'lint_cmake' to check CMake code style
+[2.087s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.092s] -- Added test 'xmllint' to check XML markup files
+[2.098s] -- Configuring done
+[2.114s] -- Generating done
+[2.129s] -- Build files have been written to: /home/konrad/TrailblazerML/src/build/depth_camera
+[2.144s] Invoked command in '/home/konrad/TrailblazerML/src/build/depth_camera' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/konrad/TrailblazerML/install/trailblazerml:/home/konrad/TrailblazerML/install/rover_teleop_twist_joy:/home/konrad/TrailblazerML/install/gazebo_viz:/opt/ros/humble /usr/bin/cmake /home/konrad/TrailblazerML/src/depth-camera -DCMAKE_INSTALL_PREFIX=/home/konrad/TrailblazerML/src/install/depth_camera
+[2.145s] Invoking command in '/home/konrad/TrailblazerML/src/build/depth_camera': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/konrad/TrailblazerML/install/trailblazerml:/home/konrad/TrailblazerML/install/rover_teleop_twist_joy:/home/konrad/TrailblazerML/install/gazebo_viz:/opt/ros/humble /usr/bin/cmake --build /home/konrad/TrailblazerML/src/build/depth_camera -- -j4 -l4
+[2.302s] Invoked command in '/home/konrad/TrailblazerML/src/build/depth_camera' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/konrad/TrailblazerML/install/trailblazerml:/home/konrad/TrailblazerML/install/rover_teleop_twist_joy:/home/konrad/TrailblazerML/install/gazebo_viz:/opt/ros/humble /usr/bin/cmake --build /home/konrad/TrailblazerML/src/build/depth_camera -- -j4 -l4
+[2.309s] Invoking command in '/home/konrad/TrailblazerML/src/build/depth_camera': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/konrad/TrailblazerML/install/trailblazerml:/home/konrad/TrailblazerML/install/rover_teleop_twist_joy:/home/konrad/TrailblazerML/install/gazebo_viz:/opt/ros/humble /usr/bin/cmake --install /home/konrad/TrailblazerML/src/build/depth_camera
+[2.357s] -- Install configuration: ""
+[2.357s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/config
+[2.357s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/config/empty.yaml
+[2.357s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description
+[2.357s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description/gazebo_control.xacro
+[2.357s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description/rover.urdf.xacro
+[2.357s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description/camera.xacro
+[2.358s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description/rover_core.xacro
+[2.360s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description/depth_camera.xacro
+[2.360s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/description/inertial_macros.xacro
+[2.361s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/launch
+[2.361s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/launch/rsp.launch.py
+[2.361s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/launch/launch_simulation.launch.py
+[2.361s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/worlds
+[2.361s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/worlds/world.world
+[2.365s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/worlds/pa.world
+[2.367s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/worlds/empty.world
+[2.367s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/ament_index/resource_index/package_run_dependencies/depth_camera
+[2.367s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/ament_index/resource_index/parent_prefix_path/depth_camera
+[2.367s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/environment/ament_prefix_path.sh
+[2.368s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/environment/ament_prefix_path.dsv
+[2.368s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/environment/path.sh
+[2.368s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/environment/path.dsv
+[2.369s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/local_setup.bash
+[2.369s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/local_setup.sh
+[2.369s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/local_setup.zsh
+[2.369s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/local_setup.dsv
+[2.370s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/package.dsv
+[2.380s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/ament_index/resource_index/packages/depth_camera
+[2.381s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/cmake/depth_cameraConfig.cmake
+[2.381s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/cmake/depth_cameraConfig-version.cmake
+[2.381s] -- Installing: /home/konrad/TrailblazerML/src/install/depth_camera/share/depth_camera/package.xml
+[2.402s] Invoked command in '/home/konrad/TrailblazerML/src/build/depth_camera' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/konrad/TrailblazerML/install/trailblazerml:/home/konrad/TrailblazerML/install/rover_teleop_twist_joy:/home/konrad/TrailblazerML/install/gazebo_viz:/opt/ros/humble /usr/bin/cmake --install /home/konrad/TrailblazerML/src/build/depth_camera

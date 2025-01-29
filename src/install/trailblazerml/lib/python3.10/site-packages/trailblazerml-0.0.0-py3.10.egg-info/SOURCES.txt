@@ -1,0 +1,15 @@
+package.xml
+setup.cfg
+setup.py
+../build/trailblazerml/trailblazerml.egg-info/PKG-INFO
+../build/trailblazerml/trailblazerml.egg-info/SOURCES.txt
+../build/trailblazerml/trailblazerml.egg-info/dependency_links.txt
+../build/trailblazerml/trailblazerml.egg-info/entry_points.txt
+../build/trailblazerml/trailblazerml.egg-info/requires.txt
+../build/trailblazerml/trailblazerml.egg-info/top_level.txt
+../build/trailblazerml/trailblazerml.egg-info/zip-safe
+resource/trailblazerml
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py
+trailblazerml/__init__.py

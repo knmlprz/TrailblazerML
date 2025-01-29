@@ -1,0 +1,12 @@
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/AutoFocusCtrl.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/HandLandmark.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/HandLandmarkArray.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/ImuWithMagneticField.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/TrackedFeature.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/TrackedFeatures.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/SpatialDetection.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/SpatialDetectionArray.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/TrackDetection2D.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:msg/TrackDetection2DArray.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:srv/TriggerNamed.idl
+/home/konrad/TrailblazerML/src/build/depthai_ros_msgs/rosidl_adapter/depthai_ros_msgs:srv/NormalizedImageCrop.idl
