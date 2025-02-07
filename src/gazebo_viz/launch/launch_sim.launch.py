@@ -50,7 +50,7 @@ def generate_launch_description():
     spawn_diff_drive_controller = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['diff_drive_controller_left', 'diff_drive_controller_right'],
+        arguments=['diff_drive_controller'],
         output='screen',
     )
 
