@@ -44,8 +44,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         rsp,
-        #gazebo,
+        gazebo,
         spawn_entity,
-        camera,
+        #camera,
         state_publisher,
     ])
