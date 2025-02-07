@@ -87,10 +87,3 @@ competition one of the tasks is autonomy
 
 - Pull requests should be descriptive and have annotation to issue
 
-# Main engineers
-
-- [Daniel Kleczyński](https://github.com/Kleczyk)
-- [Filip Walkowicz](https://github.com/FWalkowicz)
-- [Jakub Bartecki](https://github.com/kubabartecki)
-- [Mateusz Sygnator](https://github.com/Sygnator)
-- [Damian Kobylinski](https://github.com/DamianKobylinski)
