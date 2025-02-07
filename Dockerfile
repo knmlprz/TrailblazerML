@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ARG PYTHON_VERSION=3.11.9
+ARG PYTHON_VERSION=3.10.0
 
 RUN apt-get update && apt-get install -y \
     curl locales software-properties-common git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
@@ -21,12 +21,14 @@ RUN curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-instal
 
 RUN bash -l -c "pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION"
 
+RUN pip install numpy lxml
+
 RUN add-apt-repository universe && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list
+RUN sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list'
 
 RUN apt-get update && apt-get install -y \
   python3-flake8-docstrings \
@@ -39,6 +41,7 @@ RUN apt-get update && apt-get install -y \
   python3-flake8-import-order \
   python3-flake8-quotes \
   python3-pytest-repeat \
+  python3-colcon-common-extensions \
   python3-pytest-rerunfailures \
   ros-dev-tools \
   ros-humble-desktop  \
@@ -53,10 +56,11 @@ RUN apt-get update && apt-get install -y \
   jstest-gtk \
   evtest \
   ros-humble-twist-mux \
-  ros-humble-rviz2 && \
+  ros-humble-rviz2 \
+  ros-humble-gazebo-ros2-control && \
   rm -rf /var/lib/apt/lists/*
 
-COPY . /Traiblazer/
+COPY . /TrailblazerML/
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
@@ -66,6 +70,6 @@ RUN bash -c "source ~/.bashrc"
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["bash"]
