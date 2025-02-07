@@ -4,8 +4,6 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.11.9
 
-COPY . .
-
 RUN apt-get update && apt-get install -y \
     curl locales software-properties-common git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     libsqlite3-dev wget llvm libncursesw5-dev xz-utils tk-dev libxml2-dev \
@@ -43,16 +41,31 @@ RUN apt-get update && apt-get install -y \
   python3-pytest-repeat \
   python3-pytest-rerunfailures \
   ros-dev-tools \
-  ros-humble-desktop && \
+  ros-humble-desktop  \
+  python3-colcon-common-extensions \
+  ros-humble-gazebo-ros-pkgs \
+  ros-humble-ros2-control \
+  ros-humble-ros2-controllers \
+  ros-humble-gazebo-ros2-control \
+  ros-humble-position-controllers \
+  ros-humble-xacro \
+  joystick \
+  jstest-gtk \
+  evtest \
+  ros-humble-twist-mux \
+  ros-humble-rviz2 && \
   rm -rf /var/lib/apt/lists/*
 
+COPY . /Traiblazer/
+
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 RUN bash -c "source ~/.bashrc"
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["bash"]
