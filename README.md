@@ -15,6 +15,49 @@ competition one of the tasks is autonomy
 - OpenCV
 - Open3d
 
+# Docker 
+
+## How to build the docker image
+
+```bash
+ sudo docker build -t <image_name e.g: trailblazerml> .
+```
+
+## How to run the docker image
+
+### Linux 
+1. X11
+    ```bash
+        sudo docker run -it \
+                        --network=host \
+                        --ipc=host \
+                        -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
+                        --env=DISPLAY <image_name> \ 
+                        <terminal view (bash - /bin/bash)>
+    ```
+2. Wayland 
+
+    Check wayland socket
+    ```bash
+        echo $WAYLAND_DISPLAY
+    ```
+    Check user UID
+    ```bash
+        echo $XDG_RUNTIME_DIR
+    ```
+
+    ```bash
+      docker run -it \
+                 --network=host \
+                 --ipc=host \
+                 -v /run/user/<echo $XDG_RUNTIME_DIR UID>/<echo $WAYLAND_DISPLAY>:/run/user/<echo $XDG_RUNTIME_DIR UID>/<echo $WAYLAND_DISPLAY> \
+                 -e WAYLAND_DISPLAY=<echo $WAYLAND_DISPLAY> \
+                 -e XDG_RUNTIME_DIR=/run/user/<echo $XDG_RUNTIME_DIR UID> \
+                 -e GDK_BACKEND=wayland \
+                 <image_name> \
+                 <terminal view (bash - /bin/bash)>
+    ```
+    
 # Workflow
 
 ## Branches
