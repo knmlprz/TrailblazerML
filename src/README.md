@@ -46,7 +46,6 @@ Follow the official [ROS2 Humble installation guide](https://docs.ros.org/en/hum
       ros-humble-ros2-controllers \
       ros-humble-gazebo-ros2-control \
       ros-humble-position-controllers \
-      ros-humble-controller-manager-spawner \
       ros-humble-xacro \
       joystick \
       jstest-gtk \
@@ -54,7 +53,11 @@ Follow the official [ROS2 Humble installation guide](https://docs.ros.org/en/hum
       ros-humble-twist-mux \
       ros-humble-rviz2
     ```
-3. Build the workspace:
+3. To store your model create a folder in the root directory of the project:
+    ```bash
+    mkdir ~/.gazebo/models
+    ```
+4. Build the workspace:
     ```bash
     colcon build --symlink-install
     source install/setup.bash
@@ -92,6 +95,12 @@ To control the robot manually:
     ```bash
     ros2 launch rover_teleop_twist_joy teleop_twist_launch.py
     ```
+### Test gazebo wheels 
+
+   ```bash
+    ros2 topic pub /diff_drive_controller_right/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+    ros2 topic pub /diff_drive_controller_left/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+   ```
    
 ---
 
