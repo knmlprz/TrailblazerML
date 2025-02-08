@@ -11,8 +11,8 @@ controller_manager:
 
 diff_drive_controller:
   ros__parameters:
-    left_wheel_names: ["left_wheel_front_joint", "left_wheel_back_joint"]
-    right_wheel_names: ["right_wheel_front_joint", "right_wheel_back_joint"]
+    left_wheel_names: ["left_wheel_front_joint"]
+    right_wheel_names: ["right_wheel_front_joint"]
     wheel_separation: 1.17
     wheel_radius: 0.26
     odom_frame_id: "odom"
