@@ -29,12 +29,13 @@ competition one of the tasks is autonomy
 
 1. X11
     ```bash
-        sudo docker run -it --privileged\
-            --network=host \
-            --ipc=host \
-            -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-            --env=DISPLAY \
-            trb_1
+    sudo xhost +local:docker 
+    sudo docker run -it --privileged \
+    --network=host \
+    --ipc=host \
+    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
+    --env=DISPLAY \
+    trb_1
     ```
 2. Wayland
 
@@ -81,7 +82,8 @@ modifications without needing to rebuild the container from scratch.
 
 3. **Run a new container from the saved snapshot**
    ```bash
-   docker run -it --privileged \
+   sudo xhost +local:docker
+   sudo docker run -it --privileged \
        --network=host \
        --ipc=host \
        -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
