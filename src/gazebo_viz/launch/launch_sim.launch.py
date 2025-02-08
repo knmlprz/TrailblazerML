@@ -53,6 +53,11 @@ def generate_launch_description():
         arguments=['diff_drive_controller'],
         output='screen',
     )
+    joint_broad_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_broad"],
+    )
 
     return LaunchDescription([
         rsp,
@@ -60,4 +65,5 @@ def generate_launch_description():
         spawn_entity,
         load_controllers,
         spawn_diff_drive_controller,
+        joint_broad_spawner
     ])

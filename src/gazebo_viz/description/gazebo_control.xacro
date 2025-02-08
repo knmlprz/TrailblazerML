@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <gazebo>
         <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
-            <num_wheel_pairs>2</num_wheel_pairs>
+            <num_wheel_pairs>4</num_wheel_pairs>
             <left_joint>left_wheel_front_joint</left_joint>
             <left_joint>left_wheel_back_joint</left_joint>
             <right_joint>right_wheel_front_joint</right_joint>
