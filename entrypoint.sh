@@ -25,5 +25,3 @@ cd /
 mkdir -p ~/.gazebo/models/gazebo_viz
 cp -r /TrailblazerML/src/gazebo_viz/meshes ~/.gazebo/models/gazebo_viz
 exec "$@"
-
-ros2 launch gazebo_viz launch_sim.launch.py
