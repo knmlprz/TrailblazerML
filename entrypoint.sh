@@ -2,8 +2,6 @@
 
 set -e
 
-cd /TrailblazerML/scripts/
-sh dowload_rover_stl.sh
 cd /TrailblazerML
 
 SETUP_BASH="install/setup.bash"
@@ -22,8 +20,10 @@ else
     echo "$SETUP_BASH does not exist. Please build your workspace first."
     exit 1
 fi
+
 cd /
 mkdir -p ~/.gazebo/models/gazebo_viz
 cp -r /TrailblazerML/src/gazebo_viz/meshes ~/.gazebo/models/gazebo_viz
 exec "$@"
 
+ros2 launch gazebo_viz launch_sim.launch.py

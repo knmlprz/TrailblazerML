@@ -62,14 +62,15 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /TrailblazerML/
 
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
+    echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc && \
+    bash -c "source ~/.bashrc" && \
+    bash -c "source ~/.bashrc && bash /TrailblazerML/scripts/dowload_rover_stl.sh"
 
-RUN bash -c "source ~/.bashrc"
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
 
 CMD ["bash"]

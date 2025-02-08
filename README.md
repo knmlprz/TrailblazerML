@@ -20,7 +20,7 @@ competition one of the tasks is autonomy
 ## How to build the docker image
 
 ```bash
- sudo docker build -t <image_name e.g: trailblazerml> .
+ sudo docker build -t trb_1 .
 ```
 
 ## How to run the docker image
@@ -28,12 +28,12 @@ competition one of the tasks is autonomy
 ### Linux 
 1. X11
     ```bash
-        sudo docker run -it \
-                        --network=host \
-                        --ipc=host \
-                        -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-                        --env=DISPLAY <image_name> \ 
-                        <terminal view (bash - /bin/bash)>
+        sudo docker run -it --privileged\
+            --network=host \
+            --ipc=host \
+            -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
+            --env=DISPLAY \
+            trb_1
     ```
 2. Wayland 
 
