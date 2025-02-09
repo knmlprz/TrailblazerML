@@ -1,3 +1,0 @@
-[console_scripts]
-teleop_twist_node = rover_teleop_twist_joy.teleop_twist_node:main
-
