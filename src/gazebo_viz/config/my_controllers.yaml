@@ -16,4 +16,3 @@ diff_drive_controller:
     wheel_separation: 1.17
     wheel_radius: 0.26
     publish_rate: 50.0
-
