@@ -28,3 +28,16 @@ ros2 launch depthai_ros_driver camera.launch.py
 
 // publikuje stereo, rgb, pointcloud, imo można włączać w configu 
 ros2 launch depthai_ros_driver pointcloud.launch.py 
+
+
+Aby uruchomić aruco trzeba:
+sudo apt install ros-humble-aruco-opencv ros-humble-aruco-opencv-msgs
+
+wejsc do workspace i wykonać: concol build
+
+uruchamiamy:
+1 terminal) ros2 launch depthai_ros_driver aruco_camera.launch.py
+2 terminal) ros2 launch aruco_opencv aruco_tracker.launch.xml
+
+możemy w rviz obserwoawać image na topicu /aruco_tracker/debug i będziemy mieć podgląd
+
