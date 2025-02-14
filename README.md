@@ -15,6 +15,45 @@ competition one of the tasks is autonomy
 - OpenCV
 - Open3d
 
+## How to test project (tested on linux ubuntu graphic env X11)
+
+#### build the docker image
+
+```bash
+ sudo docker build -t trb_1 .
+```
+
+#### open docker with graphic env X11
+    ```bash
+    sudo xhost +local:docker 
+    sudo docker run -it --privileged \
+    --network=host \
+    --ipc=host \
+    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
+    --env=DISPLAY \
+    trb_1
+    ```
+#### In docker terminal launch the Gazebo simulator with the robot:
+    ```bash
+    ros2 launch gazebo_viz launch_sim.launch.py
+    ```
+#### in next terminal
+
+##### open docker with graphic env X11
+    ```bash
+    sudo xhost +local:docker 
+    sudo docker run -it --privileged \
+    --network=host \
+    --ipc=host \
+    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
+    --env=DISPLAY \
+    trb_1
+    ```
+#### in docker terminal test robot movement
+    ```
+    ros2 topic pub /diff_drive_controller_right/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+    ```
+
 # Docker
 
 ## How to build the docker image

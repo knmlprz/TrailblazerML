@@ -9,3 +9,6 @@ data1500/**
 __pycache__/
 src/measurement/
 src/vision/oak/sectors.npy
+.vscode/
+log/
+
