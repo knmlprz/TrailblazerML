@@ -1,7 +1,10 @@
 # TrailblazerML
-
-this is a project to create an autonomous control rover for the rover “legnedary rover PRz” the goal is to win the
+##### Description of the project
+This is a project to create an autonomous control rover for the rover “legnedary rover PRz” the goal is to win the
 competition one of the tasks is autonomy
+
+---
+
 
 # What hardware we are using
 
@@ -11,50 +14,14 @@ competition one of the tasks is autonomy
 
 # What software we are using (main libraries)
 
+- ROS2
 - DepthAI
 - OpenCV
 - Open3d
 
-## How to test project (tested on linux ubuntu graphic env X11)
-
-#### build the docker image
-
-```bash
- sudo docker build -t trb_1 .
-```
-
-#### open docker with graphic env X11
-    ```bash
-    sudo xhost +local:docker 
-    sudo docker run -it --privileged \
-    --network=host \
-    --ipc=host \
-    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-    --env=DISPLAY \
-    trb_1
-    ```
-#### In docker terminal launch the Gazebo simulator with the robot:
-    ```bash
-    ros2 launch gazebo_viz launch_sim.launch.py
-    ```
-#### in next terminal
-
-##### open docker with graphic env X11
-    ```bash
-    sudo xhost +local:docker 
-    sudo docker run -it --privileged \
-    --network=host \
-    --ipc=host \
-    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-    --env=DISPLAY \
-    trb_1
-    ```
-#### in docker terminal test robot movement
-    ```
-    ros2 topic pub /diff_drive_controller_right/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
-    ```
-
 # Docker
+
+---
 
 ## _!IMPORTANT_
 
@@ -80,7 +47,7 @@ Add xhost +local:docker to allow GUI support to bashrc file to make it permanent
 
 ### Linux
 ```bash
-    sudo docker run -it --name <GIVE YOUR OWN NAME> --privileged --network=host --ipc=host --env=DISPLAY trb_1
+    sudo docker run -it --name <GIVE YOUR OWN NAME FOR CONTAINER> --privileged --network=host --ipc=host --env=DISPLAY trb_1
 ```
 Exit after finishing the work
 ```bash
@@ -140,6 +107,8 @@ modifications without needing to rebuild the container from scratch.
   you want to test something and you don't want to rebuild the image from scratch.
 
 # Workflow
+
+---
 
 ## Branches
 
