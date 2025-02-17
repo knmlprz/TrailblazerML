@@ -20,8 +20,9 @@ else
     echo "$SETUP_BASH does not exist. Please build your workspace first."
     exit 1
 fi
-
 cd /
 mkdir -p ~/.gazebo/models/gazebo_viz
 cp -r /TrailblazerML/src/gazebo_viz/meshes ~/.gazebo/models/gazebo_viz
+cd /TrailblazerML
+terminator
 exec "$@"
