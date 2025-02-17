@@ -91,7 +91,7 @@ Exit after finishing the work
 
 Run the following command to enter your container
 ```bash
-    sudo docker start -at <GIVE YOUR OWN NAME>
+    sudo docker start -ai <GIVE YOUR OWN NAME>
 ```
 **You will be in the same state as you left the container**
 
@@ -116,19 +116,19 @@ modifications without needing to rebuild the container from scratch.
 
 1. **Check running containers**
    ```bash
-   docker ps
+   docker ps -a
    ```
    Find the `CONTAINER ID` or `NAME` of the running container you want to save.
 
-2. **Create a snapshot of the current container state**
+2. **Create a snapshot (which is just another image) of the current container state**
    ```bash
-   docker commit <container_id/container_name> trb_snapshot
+   docker commit <container_id/container_name> <IMAGE NAME YOU WANT TO CREATE>
    ```
    Replace `<container_id>` with the actual ID of your container.
 
 3. **Run a new container from the saved snapshot**
    ```bash
-   sudo docker run -it --privileged --network=host --ipc=host --env=DISPLAY trb_snapshot
+   sudo docker run -it --name <GIVE YOUR OWN NAME> --privileged --network=host --ipc=host --env=DISPLAY <IMAGE NAME YOU WANT TO CREATE>
    ```
 #### **Notes:**
 
@@ -136,6 +136,8 @@ modifications without needing to rebuild the container from scratch.
 - This method allows you to keep changes without modifying the original `Dockerfile`.
 - If you want to make the changes permanent, consider updating the `Dockerfile` and rebuilding the image
   using `docker build`.
+- creating snapshot is useful when you want to save the state of the container and use it later on, for example, when
+  you want to test something and you don't want to rebuild the image from scratch.
 
 # Workflow
 
