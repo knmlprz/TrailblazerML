@@ -29,7 +29,7 @@ Add xhost +local:docker to allow GUI support to bashrc file to make it permanent
 
 1. Bash
 ```bash
-  sudo xhost +local:docker >> ~/.bashrc
+  echo 'xhost +local:docker' >> ~/.bashrc
 ```
 2. Zsh
 ```bash
