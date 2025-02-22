@@ -1,7 +1,10 @@
 # TrailblazerML
-
-this is a project to create an autonomous control rover for the rover “legnedary rover PRz” the goal is to win the
+##### Description of the project
+This is a project to create an autonomous control rover for the rover “legnedary rover PRz” the goal is to win the
 competition one of the tasks is autonomy
+
+---
+
 
 # What hardware we are using
 
@@ -11,50 +14,28 @@ competition one of the tasks is autonomy
 
 # What software we are using (main libraries)
 
+- ROS2
 - DepthAI
 - OpenCV
 - Open3d
 
-## How to test project (tested on linux ubuntu graphic env X11)
+# Docker
 
-#### build the docker image
+---
 
+## _!IMPORTANT_
+
+Add xhost +local:docker to allow GUI support to bashrc file to make it permanent
+
+1. Bash
 ```bash
- sudo docker build -t trb_1 .
+  echo 'xhost +local:docker' >> ~/.bashrc
+```
+2. Zsh
+```bash
+  sudo xhost +local:docker >> ~/.zshrc
 ```
 
-#### open docker with graphic env X11
-    ```bash
-    sudo xhost +local:docker 
-    sudo docker run -it --privileged \
-    --network=host \
-    --ipc=host \
-    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-    --env=DISPLAY \
-    trb_1
-    ```
-#### In docker terminal launch the Gazebo simulator with the robot:
-    ```bash
-    ros2 launch gazebo_viz launch_sim.launch.py
-    ```
-#### in next terminal
-
-##### open docker with graphic env X11
-    ```bash
-    sudo xhost +local:docker 
-    sudo docker run -it --privileged \
-    --network=host \
-    --ipc=host \
-    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-    --env=DISPLAY \
-    trb_1
-    ```
-#### in docker terminal test robot movement
-    ```
-    ros2 topic pub /diff_drive_controller_right/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
-    ```
-
-# Docker
 
 ## How to build the docker image
 
@@ -62,41 +43,34 @@ competition one of the tasks is autonomy
  sudo docker build -t trb_1 .
 ```
 
-## How to run the docker image
+## How to run the docker image with GUI support
 
 ### Linux
+```bash
+    sudo docker run -it --name <GIVE YOUR OWN NAME FOR CONTAINER> --privileged --network=host --ipc=host --env=DISPLAY trb_1
+```
+Exit after finishing the work
+```bash
+    exit
+```
 
-1. X11
-    ```bash
-    sudo xhost +local:docker 
-    sudo docker run -it --privileged \
-    --network=host \
-    --ipc=host \
-    -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-    --env=DISPLAY \
-    trb_1
-    ```
-2. Wayland
+## After running the docker image
 
-   Check wayland socket
-    ```bash
-        echo $WAYLAND_DISPLAY
-    ```
-   Check user UID
-    ```bash
-        echo $XDG_RUNTIME_DIR
-    ```
+Run the following command to enter your container
+```bash
+    sudo docker start -ai <GIVE YOUR OWN NAME>
+```
+**You will be in the same state as you left the container**
 
+## What is inside the docker image
+
+- ROS2
+- Gazebo
+- Terminator
+- Visual studio code
+    To start visual studio code
     ```bash
-      docker run -it \
-                 --network=host \
-                 --ipc=host \
-                 -v /run/user/<echo $XDG_RUNTIME_DIR UID>/<echo $WAYLAND_DISPLAY>:/run/user/<echo $XDG_RUNTIME_DIR UID>/<echo $WAYLAND_DISPLAY> \
-                 -e WAYLAND_DISPLAY=<echo $WAYLAND_DISPLAY> \
-                 -e XDG_RUNTIME_DIR=/run/user/<echo $XDG_RUNTIME_DIR UID> \
-                 -e GDK_BACKEND=wayland \
-                 <image_name> \
-                 <terminal view (bash - /bin/bash)>
+      code .
     ```
 
 # Saving Docker State with `docker commit`
@@ -109,35 +83,32 @@ modifications without needing to rebuild the container from scratch.
 
 1. **Check running containers**
    ```bash
-   docker ps
+   docker ps -a
    ```
    Find the `CONTAINER ID` or `NAME` of the running container you want to save.
 
-2. **Create a snapshot of the current container state**
+2. **Create a snapshot (which is just another image) of the current container state**
    ```bash
-   docker commit <container_id> trb_snapshot
+   docker commit <container_id/container_name> <IMAGE NAME YOU WANT TO CREATE>
    ```
    Replace `<container_id>` with the actual ID of your container.
 
 3. **Run a new container from the saved snapshot**
    ```bash
-   sudo xhost +local:docker
-   sudo docker run -it --privileged \
-       --network=host \
-       --ipc=host \
-       -v /tmp/.x11-unix:/tmp/.X11-unix:rw \
-       --env=DISPLAY \
-       trb_snapshot
+   sudo docker run -it --name <GIVE YOUR OWN NAME> --privileged --network=host --ipc=host --env=DISPLAY <IMAGE NAME YOU WANT TO CREATE>
    ```
-
 #### **Notes:**
 
 - The snapshot (`trb_snapshot`) can be used as a base for further development.
 - This method allows you to keep changes without modifying the original `Dockerfile`.
 - If you want to make the changes permanent, consider updating the `Dockerfile` and rebuilding the image
   using `docker build`.
+- creating snapshot is useful when you want to save the state of the container and use it later on, for example, when
+  you want to test something and you don't want to rebuild the image from scratch.
 
 # Workflow
+
+---
 
 ## Branches
 
