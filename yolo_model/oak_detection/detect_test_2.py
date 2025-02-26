@@ -120,6 +120,12 @@ with dai.Device(pipeline) as device:
     raw_disp = None
     detections = []
 
+    # Inicjalizacja parametrów ArUco (słownik i detektor)
+    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
+
+    parameters = cv2.aruco.DetectorParameters()
+
+
     while True:
         if qDet.has():
             detections = qDet.get().detections
@@ -145,6 +151,17 @@ with dai.Device(pipeline) as device:
                 raw_disp_resized = raw_disp
 
             show("rectified right", rightFrame, raw_disp_resized, detections)
+
+        # --- Dodanie okna z detekcją ArUco ---
+        if rightFrame is not None:
+            # Tworzymy kopię ramki, aby nie nadpisywać oryginalnych wykryć
+            arucoFrame = rightFrame.copy()
+            # Detekcja markerów ArUco
+            corners, ids, rejected = cv2.aruco.detectMarkers(arucoFrame, aruco_dict, parameters=parameters)
+            if ids is not None:
+                cv2.aruco.drawDetectedMarkers(arucoFrame, corners, ids)
+            cv2.imshow("ArUco Detection", arucoFrame)
+        # --------------------------------------
 
         if cv2.waitKey(1) == ord('q'):
             break
