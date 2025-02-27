@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 30
+    update_rate: 50
     controllers:
       - diff_drive_controller
       - joint_broad
@@ -16,3 +16,22 @@ diff_drive_controller:
     wheel_separation: 1.17
     wheel_radius: 0.26
     publish_rate: 50.0
+    enable_odom_tf: true
+    use_stamped_vel: false
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 10.0
+        min_velocity: -10.0
+        has_acceleration_limits: true
+        max_acceleration: 3.0
+        min_acceleration: -3.0
+
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 3.0
+        min_velocity: -3.0
+        has_acceleration_limits: true
+        max_acceleration: 2.0
+        min_acceleration: -2.0

@@ -12,7 +12,7 @@
         <wheel_separation>1.17</wheel_separation>
         <wheel_diameter>0.52</wheel_diameter>
         <wheel_acceleration>1.0</wheel_acceleration>
-        <wheel_torque>10.0</wheel_torque>
+        <wheel_torque>20.0</wheel_torque>
         <update_rate>50</update_rate>
       </plugin>
     </gazebo>

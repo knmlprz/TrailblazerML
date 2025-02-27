@@ -9,14 +9,12 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     package_name = 'gazebo_viz'
 
-    # Include the robot_state_publisher
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory(package_name), 'launch', 'rsp.launch.py'
         )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
-    # Include Gazebo launch file
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')]),
@@ -37,7 +35,6 @@ def generate_launch_description():
     robot_description_config = Command(['xacro ', xacro_file])
     params = {'robot_description': robot_description_config}
 
-    # Load and start the controller_manager node
     load_controllers = Node(
         package='controller_manager',
         executable='ros2_control_node',
@@ -45,7 +42,6 @@ def generate_launch_description():
         parameters=[params],
     )
 
-    # Start the diff_drive_controller using the spawner
     spawn_diff_drive_controller = Node(
         package='controller_manager',
         executable='spawner',
@@ -68,17 +64,25 @@ def generate_launch_description():
         remappings=[
             ('depth', '/camera/depth/image_raw'),
             ('depth_camera_info', '/camera/depth/camera_info'),
-            ('scan', '/scan'),
+            ('scan', '/scan_camera'),
         ],
         parameters=[{
             'output_frame_id': 'base_footprint',
             'range_min': 0.1,
             'range_max': 100.0,
             'scan_height': 1,
-            'angle_min': -0.785,
-            'angle_max': 0.785,
+            'angle_min': -0.785*2,
+            'angle_max': 0.785*2,
             'use_sim_time': True,
         }]
+    )
+
+    static_tf_base_to_lidar = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'ldlidar_base']
     )
 
     return LaunchDescription([
@@ -88,5 +92,6 @@ def generate_launch_description():
         load_controllers,
         spawn_diff_drive_controller,
         joint_broad_spawner,
-        depth_to_scan
+        depth_to_scan,
+        static_tf_base_to_lidar
     ])
