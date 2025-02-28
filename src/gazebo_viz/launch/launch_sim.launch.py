@@ -56,33 +56,33 @@ def generate_launch_description():
         output="screen",
     )
 
-    depth_to_scan = Node(
-        package='depthimage_to_laserscan',
-        executable='depthimage_to_laserscan_node',
-        name='depthimage_to_laserscan',
-        output='screen',
-        remappings=[
-            ('depth', '/camera/depth/image_raw'),
-            ('depth_camera_info', '/camera/depth/camera_info'),
-            ('scan', '/scan_camera'),
-        ],
-        parameters=[{
-            'output_frame_id': 'base_footprint',
-            'range_min': 0.1,
-            'range_max': 100.0,
-            'scan_height': 1,
-            'angle_min': -0.785*2,
-            'angle_max': 0.785*2,
-            'use_sim_time': True,
-        }]
-    )
+    # depth_to_scan = Node(
+    #     package='depthimage_to_laserscan',
+    #     executable='depthimage_to_laserscan_node',
+    #     name='depthimage_to_laserscan',
+    #     output='screen',
+    #     remappings=[
+    #         ('depth', '/camera/depth/image_raw'),
+    #         ('depth_camera_info', '/camera/depth/camera_info'),
+    #         ('scan', '/scan_camera'),
+    #     ],
+    #     parameters=[{
+    #         'output_frame_id': 'base_footprint',
+    #         'range_min': 0.1,
+    #         'range_max': 100.0,
+    #         'scan_height': 1,
+    #         'angle_min': -0.785*2,
+    #         'angle_max': 0.785*2,
+    #         'use_sim_time': True,
+    #     }]
+    # )
 
     static_tf_base_to_lidar = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_transform_publisher',
         output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'ldlidar_base']
+        arguments=['0', '0', '0', '0', '0', '0', 'laser_frame', 'ldlidar_base']
     )
 
     return LaunchDescription([
@@ -92,6 +92,6 @@ def generate_launch_description():
         load_controllers,
         spawn_diff_drive_controller,
         joint_broad_spawner,
-        depth_to_scan,
+        # depth_to_scan,
         static_tf_base_to_lidar
     ])
