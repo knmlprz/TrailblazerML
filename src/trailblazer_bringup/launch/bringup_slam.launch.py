@@ -1,5 +1,4 @@
 import os
-
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
@@ -16,7 +15,7 @@ def generate_launch_description():
         get_package_share_directory('ldlidar_node'), 'params', 'slam_toolbox.yaml'
     )
     rviz_config_path = os.path.join(
-        get_package_share_directory('trailblazer_rviz'), 'config', 'urdf_model.rviz'
+        get_package_share_directory('trailblazer_rviz'), 'config', 'slam.rviz'
     )
 
     # Węzeł menedżera cyklu życia
@@ -60,7 +59,7 @@ def generate_launch_description():
     # Uruchomienie opisu robota
     description_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_description'), 'launch', 'description.launch.py')
+            os.path.join(get_package_share_directory('trailblazer_bringup'), 'launch', 'bringup_controllers.launch.py')
         )
     )
 

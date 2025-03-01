@@ -30,7 +30,7 @@ def generate_launch_description():
     # loads the robot model
     description_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([get_package_share_directory('trailblazer_description'), 'launch', 'description.launch.py'])
+            PathJoinSubstitution([get_package_share_directory('trailblazer_description'), 'launch', 'rsp.launch.py'])
         )
     )
 

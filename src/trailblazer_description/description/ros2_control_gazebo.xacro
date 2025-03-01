@@ -1,14 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-   <ros2_control name="FakeMotor" type="system">
+   <ros2_control name="GazeboSystem" type="system">
         <hardware>
-            <plugin>mock_components/GenericSystem</plugin>
-            <param name="calculate_dynamics">false</param>
-            <param name="custom_interface_with_following_offset"></param>
-            <param name="disable_commands">false</param>
-            <param name="mock_gpio_commands">false</param>
-            <param name="mock_sensor_commands">false</param>
-            <param name="position_state_following_offset">0.0</param>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
         </hardware>
         <joint name="left_wheel_front_joint">
         <command_interface name="velocity">
@@ -44,4 +38,9 @@
             <state_interface name="position" />
         </joint>
    </ros2_control>
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+            <parameters>$(find trailblazer_wheels)/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
 </robot>

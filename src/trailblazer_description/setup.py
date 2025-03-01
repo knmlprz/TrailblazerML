@@ -13,6 +13,7 @@ setup(
         ('share/' + package_name + '/description', glob.glob('description/*.xacro')),
         ('share/' + package_name + '/meshes', glob.glob('meshes/*.stl')),
         ('share/' + package_name + '/launch', glob.glob('launch/*.py')),
+        ('share/' + package_name + '/config', glob.glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
