@@ -21,6 +21,8 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'scanDouble = trailblazer_nav2.ScanDoubleNode:main'
         ],
+        # 'rover_backup_control = trailblazer_backup_scan.backup_node:main'
     },
 )

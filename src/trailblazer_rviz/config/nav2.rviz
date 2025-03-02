@@ -6,9 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /RobotModel1
-        - /RobotModel1/Status1
         - /LaserScan1/Topic1
         - /Map2
+        - /Map2/Status1
       Splitter Ratio: 0.6117647290229797
     Tree Height: 505
   - Class: rviz_common/Selection
@@ -146,9 +146,17 @@ Visualization Manager:
           Value: true
         ldlidar_link:
           Value: true
+        left_wheel_back:
+          Value: true
+        left_wheel_front:
+          Value: true
         map:
           Value: true
         odom:
+          Value: true
+        right_wheel_back:
+          Value: true
+        right_wheel_front:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -169,6 +177,14 @@ Visualization Manager:
                   ldlidar_base:
                     ldlidar_link:
                       {}
+              left_wheel_back:
+                {}
+              left_wheel_front:
+                {}
+              right_wheel_back:
+                {}
+              right_wheel_front:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -186,9 +202,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 227
+      Max Intensity: 241
       Min Color: 0; 0; 0
-      Min Intensity: 28
+      Min Intensity: 25
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -228,7 +244,7 @@ Visualization Manager:
       Value: true
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
-      Color Scheme: map
+      Color Scheme: costmap
       Draw Behind: false
       Enabled: true
       Name: Map
@@ -238,13 +254,13 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /global_costmap/costmap
+        Value: /global_costmap/global_costmap
       Update Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /global_costmap/costmap_updates
+        Value: /global_costmap/global_costmap_updates
       Use Timestamp: false
       Value: true
   Enabled: true
@@ -293,16 +309,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.694913864135742
+      Distance: 2.294431686401367
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.41392794251441956
-        Y: 0.0805758386850357
-        Z: 1.6609876155853271
+        X: -0.8762718439102173
+        Y: 0.3624064326286316
+        Z: 1.6605297327041626
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -311,7 +327,7 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.0966262817382812
+      Yaw: 3.1566271781921387
     Saved: ~
 Window Geometry:
   Displays:

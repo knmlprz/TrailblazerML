@@ -37,7 +37,7 @@ def generate_launch_description():
         name='slam_toolbox',
         output='screen',
         parameters=[slam_config_path],
-        # remappings=[('/scan', '/ldlidar_node/scan')]
+        remappings=[('/scan', '/ldlidar_node/scan')]
     )
 
     # Publikacja fałszywej odometrii
@@ -77,7 +77,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'navigation_launch.py')
         ),
-        launch_arguments={'use_sim_time': 'true', 'params_file': nav2_params}.items()
+        launch_arguments={'use_sim_time': 'false', 'params_file': nav2_params}.items()
     )
 
     # Uruchomienie RViz
