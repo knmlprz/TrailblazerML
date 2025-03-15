@@ -1,6 +1,7 @@
 from setuptools import find_packages, setup
 from glob import glob
-package_name = 'trailblazer_nav2'
+
+package_name = 'trailblazer_backup_scan'
 
 setup(
     name=package_name,
@@ -11,9 +12,6 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', glob('launch/*.py')),
-        ('share/' + package_name + '/config', glob('config/*.yaml')),
-        ('share/' + package_name + '/maps', glob('maps/*.pgm')),
-        ('share/' + package_name + '/maps', glob('maps/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -23,8 +21,7 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'scanDouble = trailblazer_nav2.ScanDoubleNode:main'
+            'rover_backup_control = trailblazer_backup_scan.backup_node:main'
         ],
-        # 'rover_backup_control = trailblazer_backup_scan.backup_node:main'
     },
 )

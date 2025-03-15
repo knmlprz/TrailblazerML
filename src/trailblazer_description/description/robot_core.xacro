@@ -70,7 +70,7 @@
         <collision>
             <origin xyz="0 0 0.1"/>
             <geometry>
-                <box size="${chassis_length/2} ${chassis_width/2} ${chassis_height/2}"/>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="20" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">

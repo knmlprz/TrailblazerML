@@ -40,7 +40,7 @@
    </ros2_control>
     <gazebo>
         <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-            <parameters>$(find trailblazer_wheels)/config/controllers.yaml</parameters>
+            <parameters>$(find trailblazer_gazebo)/config/controllers.yaml</parameters>
         </plugin>
     </gazebo>
 </robot>

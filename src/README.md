@@ -68,43 +68,87 @@ Follow the official [ROS2 Humble installation guide](https://docs.ros.org/en/hum
 1. Go to gazebo folder:
 ```bash
    cd ~/.gazebo/models
-   mkdir gazebo_viz
+   mkdir trailblazer_description
 ```
 2. Add meshes:
 ```bash
-  cp -r <Path_to_project>/TrailblazerML/src/gazebo_viz/meshes ./gazebo_viz
+  cp -r <Path_to_project>/TrailblazerML/src/trailblazer_description/meshes ./trailblazer_description
 ```
-
-### Launching Simulation
-1. Launch the Gazebo simulator with the robot:
-    ```bash
-    ros2 launch gazebo_viz launch_sim.launch.py
-    ```
-2. To visualize the robot in RViz:
-    ```bash
-    ros2 launch gazebo_viz rsp.launch.py
-    ```
-
-### Teleoperation
-To control the robot manually:
-1. Connect your joystick or set up keyboard teleoperation.
-2. Launch the teleoperation node:
-    ```bash
-    ros2 launch rover_teleop_twist_joy teleop_twist_launch.py
-    ```
-   
----
 
 ## Project Structure
 ```plaintext
 src
-├── gazebo_viz                 # Core visualization and simulation package
-│   ├── config                 # Configuration files (RViz, controllers, etc.)
-│   ├── description            # Robot URDF and XACRO files
-│   ├── launch                 # Launch files for simulation
-│   ├── meshes                 # Robot 3D models
-│   ├── worlds                 # Gazebo simulation worlds
-├── rover_teleop_twist_joy     # Teleoperation package
-│   ├── launch                 # Launch files for teleop
-│   ├── rover_teleop_twist_joy # Teleop control scripts
-├── trailblazerml              # Main robot dir
+├── ldrobot-lidar-ros2  # Pakiet sterownika LiDAR od LDROBOT
+├── trailblazer_bringup # Pakiet uruchamiania robota
+│   ├── launch
+│   │   ├── bringup_controllers.launch.py    # Uruchamia kontrolery robota
+│   │   ├── bringup_nav.launch.py            # Uruchamia nawigację z RViz
+│   │   └── bringup_slam.launch.py           # Uruchamia SLAM z RViz
+├── trailblazer_description # Opis robota w URDF
+│   ├── config
+│   │   └── controllers.yaml # Konfiguracja kontrolerów
+│   ├── description
+│   │   ├── camera.xacro
+│   │   ├── depth_camera.xacro
+│   │   ├── inertial_macros.xacro
+│   │   ├── lidar.xacro
+│   │   ├── robot_core.xacro
+│   │   ├── robot.urdf.xacro
+│   │   ├── ros2_control_gazebo.xacro
+│   │   └── ros2_control.xacro
+│   ├── launch
+│   │   ├── __pycache__
+│   │   └── rsp.launch.py # Uruchamia robot state publisher
+│   ├── meshes
+│   │   ├── body.stl
+│   │   ├── wheel_left.stl
+│   │   └── wheel_right.stl
+├── trailblazer_gazebo # Pakiet symulacji w Gazebo
+│   ├── config
+│   │   └── controllers.yaml # Konfiguracja kontrolerów w symulacji
+│   ├── launch
+│   │   └── launch_sim.launch.py  # Uruchamia symulację w Gazebo
+├── trailblazerml
+├── trailblazer_nav2 # Pakiet nawigacyjny (Nav2)
+│   ├── config
+│   │   └── nav2_params.yaml
+│   ├── launch
+│   │   └── navigation_launch.py
+│   └── trailblazer_nav2
+│       ├── __init__.py
+│       ├── __pycache__
+│       │   ├── __init__.cpython-310.pyc
+│       │   └── ScanDoubleNode.cpython-310.pyc
+│       └── ScanDoubleNode.py
+└── trailblazer_rviz # Pakiet konfiguracji RViz
+    ├── config
+    │   ├── nav2.rviz
+    │   ├── slam.rviz
+    │   └── urdf_model.rviz
+    ├── launch
+    │   └── rviz.launch.py
+    └── trailblazer_rviz
+        └── __init__.py
+
+```
+### Launching 
+#### Gazebo simulation
+Not working yet
+```shell
+ros2 launch trailblazer_gazebo launch_sim.launch.py
+```
+
+#### Nawigacja z RVIZ i SLAM
+
+Aby uruchomić autonomiczną nawigację za pomocą pakietu Nav2, wpisz:
+```shell
+ros2 launch trailblazer_bringup bringup_nav.launch.py
+```
+
+#### SLAM z RViz
+
+Aby uruchomić SLAM i obserwować mapowanie w RViz, użyj komendy:
+```shell
+ros2 launch trailblazer_bringup bringup_slam.launch.py
+```
+
