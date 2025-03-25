@@ -50,23 +50,14 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'laser_frame', 'ldlidar_base']
     )
 
-    # Publikacja fałszywej odometrii
-    fake_oak = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'camera_link', 'oak-d-base-frame']
-    )
-
     # fake odom
-    fake_odom = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link']
-    )
+    #fake_odom = Node(
+    #    package='tf2_ros',
+    #    executable='static_transform_publisher',
+    #    name='static_transform_publisher',
+    #    output='screen',
+    #    arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link']
+    #)
 
     # Uruchomienie opisu robota
     description_launch = IncludeLaunchDescription(
@@ -112,12 +103,11 @@ def generate_launch_description():
     ld.add_action(lc_mgr_node)
     ld.add_action(slam_toolbox_node)
     ld.add_action(fake_laser)
-    ld.add_action(fake_odom)
+    #ld.add_action(fake_odom)
     ld.add_action(description_launch)
     ld.add_action(ldlidar_launch)
     ld.add_action(nav2)
     ld.add_action(nav2_localization)
     ld.add_action(rviz_launch)
-    ld.add_action(fake_oak)
 
     return ld

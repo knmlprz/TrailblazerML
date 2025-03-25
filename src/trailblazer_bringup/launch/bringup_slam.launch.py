@@ -38,6 +38,7 @@ def generate_launch_description():
         remappings=[('/scan', '/ldlidar_node/scan')]
     )
 
+    # Publikacja fałszywej odometrii
     fake_laser = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
