@@ -15,15 +15,36 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    parameters=[{'frame_id':'oak-d-base-frame',
+    parameters=[{'frame_id':'base_link',
                  'subscribe_rgbd':True,
                  'subscribe_odom_info':True,
-                 'approx_sync':True,
+                 #'approx_sync':True,
                  'wait_imu_to_init':True,
                  'Reg/Force3DoF':             'true',    # 2D SLAM
                 "Rtabmap/DetectionRate": "1",
                 'Odom/ResetCountdown': '10',
                 'Mem/RehearsalSimilarity': '0.45',
+
+                'approx_sync': False,
+                'use_action_for_goal':True,
+                'Reg/Force3DoF':'true',
+                'Vis/MinDepth': '0.2',
+                'GFTT/MinDistance': '5',
+                'GFTT/QualityLevel': '0.00001',
+                'Grid/RayTracing':'true', # Fill empty space
+                'Grid/3D':'false', # Use 2D occupancy
+                'Grid/NormalsSegmentation':'false', # Use passthrough filter to detect obstacles
+                'Grid/MaxGroundHeight':'0.15', # All points above 5 cm are obstacles
+                'Grid/MaxObstacleHeight':'0.5',  # All points over 0.5 meter are ignored
+                'Grid/RangeMin':'0.2',  # Ignore invalid points close to camera
+                'Grid/NoiseFilteringMinNeighbors':'8',  # Default stereo is quite noisy, enable noise filter
+                'Grid/NoiseFilteringRadius':'0.1',  # Default stereo is quite noisy, enable noise filter
+                'Optimizer/GravitySigma':'0', # Disable imu constraints (we are already in 2D)
+                #'publish_tf': False,
+                #'odom_frame_id': 'odom',
+                # 'subscribe_odom':True,
+                # 'odom_topic': '/odom', 
+                # 'Reg/Strategy': '1'
                 }]
 
     remappings=[('imu', '/imu/data')]

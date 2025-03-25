@@ -13,3 +13,5 @@ build
 install
 log
 .vscode
+src/trailblazer_description/meshes/
+

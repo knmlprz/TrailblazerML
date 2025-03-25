@@ -21,7 +21,7 @@ void RosCommunication::initialize(){
      Serial.begin(115200);
      // set_microros_serial_transports(Serial);
      // Adding Wifi
-     IPAddress agent_ip(192, 168, 152, 64);
+     IPAddress agent_ip(192, 168, 74, 64);
      size_t agent_port = 8888;
  
      char ssid[] = "Bafau";
