@@ -10,19 +10,25 @@ def generate_launch_description():
         'frame_id': 'base_link',
         'subscribe_rgbd': True,
         'subscribe_scan': True,  # Włącz subskrypcję danych z lidaru
-        'subscribe_odom_info': True,
+        'subscribe_odom_info': False,
         'approx_sync': True,  # Zmień na True, aby synchronizować różne źródła
-        'wait_imu_to_init': True,
-        'Grid/FromDepth': 'false',  # Mapa zajętości z lidaru, nie z głębi
-        'RGBD/ProximityBySpace': 'true',  # Wykrywanie zamknięć pętli z lidarem
+        'wait_imu_to_init': False,
         'Reg/Strategy': '1',  # 1=ICP dla lidaru, 0=wizualne, 2=hybrydowe
         'Icp/VoxelSize': '0.05',  # Rozmiar woksela dla ICP
         'Icp/MaxCorrespondenceDistance': '0.1',  # Maksymalna odległość dla ICP
         'Reg/Force3DoF':'true',
-
-        "Rtabmap/DetectionRate": "1",
+        "RGBD/NeighborLinkRefining": 'true',
+        'RGBD/ProximityBySpace': 'true',  # Wykrywanie zamknięć pętli z lidarem
+        "RGBD/AngularUpdate": '0.01',
+        "RGBD/LinearUpdate": '0.01',
+        "RGBD/OptimizeFromGraphEnd": 'false',
+        'Grid/FromDepth': 'false',  # Mapa zajętości z lidaru, nie z głębi
+        "Rtabmap/DetectionRate": "3",
         'Odom/ResetCountdown': '10',
         'Mem/RehearsalSimilarity': '0.45',
+        "Grid/Sensor": "0",
+        'RGBD/ProximityPathMaxNeighbors': "10",
+
     }]
 
     remappings = [
@@ -42,7 +48,9 @@ def generate_launch_description():
             launch_arguments={
                 'depth_aligned': 'false',
                 'enableRviz': 'false',
-                'monoResolution': '400p'
+                'monoResolution': '400p',
+                'enableDotProjector': 'true',
+                'enableFloodLight': 'true'
             }.items(),
         ),
 
@@ -65,16 +73,17 @@ def generate_launch_description():
             parameters=[{
                 'use_mag': False,
                 'world_frame': 'enu',
-                'publish_tf': False
+                'publish_tf': True
             }],
             remappings=[('imu/data_raw', '/imu')]),
 
         # Visual odometry with RGBD
         Node(
             package='rtabmap_odom',
-            executable='rgbd_odometry',
+            executable='icp_odometry',
             output='screen',
-            parameters=parameters,
+            parameters=[parameters[0],{
+                'publish_tf': True}],
             remappings=remappings),
 
         # VSLAM with RGBD and lidar

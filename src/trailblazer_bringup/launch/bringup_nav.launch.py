@@ -88,7 +88,7 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': 'false', 'params_file': nav2_params}.items()
     )
 
-    #delayed_controller_manager = TimerAction(period=3.0, actions=[nav2_localization])
+    delayed_controller_manager = TimerAction(period=3.0, actions=[nav2_localization])
 
     # Uruchomienie RViz
     rviz_launch = IncludeLaunchDescription(
@@ -98,16 +98,24 @@ def generate_launch_description():
         launch_arguments={'rviz_config': rviz_config_path}.items()
     )
 
+    oak_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'depthai.launch.py')
+        )
+    )
+    
+
     # Definicja LaunchDescription
     ld = LaunchDescription()
     ld.add_action(lc_mgr_node)
     #ld.add_action(slam_toolbox_node)
     ld.add_action(fake_laser)
-    #ld.add_action(fake_odom)
+    ld.add_action(fake_odom)
     ld.add_action(description_launch)
     ld.add_action(ldlidar_launch)
-    #ld.add_action(nav2)
-    #ld.add_action(nav2_localization)
+    ld.add_action(nav2)
+    ld.add_action(nav2_localization)
     ld.add_action(rviz_launch)
+    ld.add_action(oak_launch)
 
     return ld
