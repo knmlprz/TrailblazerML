@@ -28,7 +28,7 @@ def launch_setup(context, *args, **kwargs):
             "approx_sync": True,
             "Rtabmap/DetectionRate": "3.5",
             #'Reg/Force3DoF':'true',
-            'Odom/ResetCountdown': '1',
+            'Odom/ResetCountdown': '10',
             'Mem/RehearsalSimilarity': '0.45',
             'publish_null_when_lost': True,
             'Rtabmap/LoopThr': "0.02",
