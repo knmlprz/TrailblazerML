@@ -28,6 +28,18 @@ def generate_launch_description():
         'Mem/RehearsalSimilarity': '0.45',
         "Grid/Sensor": "0",
         'RGBD/ProximityPathMaxNeighbors': "10",
+        'Vis/MinDepth': '0.2',
+          'GFTT/MinDistance': '5',
+          'GFTT/QualityLevel': '0.00001',
+          'Grid/RayTracing':'true', # Fill empty space
+          'Grid/3D':'false', # Use 2D occupancy
+          'Grid/NormalsSegmentation':'false', # Use passthrough filter to detect obstacles
+          'Grid/MaxGroundHeight':'0.15', # All points above 5 cm are obstacles
+          'Grid/MaxObstacleHeight':'0.5',  # All points over 0.5 meter are ignored
+          'Grid/RangeMin':'0.2',  # Ignore invalid points close to camera
+          'Grid/NoiseFilteringMinNeighbors':'8',  # Default stereo is quite noisy, enable noise filter
+          'Grid/NoiseFilteringRadius':'0.1',  # Default stereo is quite noisy, enable noise filter
+          'Optimizer/GravitySigma':'0' # Disable imu constraints (we are already in 2D)
 
     }]
 
