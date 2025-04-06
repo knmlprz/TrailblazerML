@@ -203,4 +203,5 @@
     <gazebo reference="left_wheel">
         <material>Gazebo/Blue</material>
     </gazebo>
+
 </robot>

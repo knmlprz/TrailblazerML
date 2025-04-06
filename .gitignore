@@ -9,6 +9,9 @@ data1500/**
 __pycache__/
 src/measurement/
 src/vision/oak/sectors.npy
-.vscode/
-log/
+build
+install
+log
+.vscode
+src/trailblazer_description/meshes/
 
