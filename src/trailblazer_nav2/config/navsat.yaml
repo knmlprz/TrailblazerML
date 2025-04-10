@@ -1,0 +1,13 @@
+navsat_transform_node:
+  ros__parameters:
+    use_odometry_yaw: false
+    publish_filtered_gps: true
+    yaw_offset: 0.0
+    broadcast_cartesian_transform: true
+    magnetic_declination_radians: 0.0
+    zero_altitude: true
+    use_sim_time: true
+
+    imu0: /imu/data
+    gps0: /gps/fix
+    odometry_topic: /odometry/filtered
