@@ -67,6 +67,7 @@ def generate_launch_description():
 
         ),
 
+        # # # NavSat
         Node(
             package='robot_localization',
             executable='navsat_transform_node',
@@ -76,7 +77,11 @@ def generate_launch_description():
                 ('imu/data', '/imu/data'),
                 ('gps/fix', '/gps/fix'),
                 ('odometry/gps', '/odometry/gps')
-            ]
+            ],
+            launch_arguments=[{
+                'use_sim_time': use_sim_time,
+                'log_level': 'WARN',
+            }]
         ),
 
         # Joystick

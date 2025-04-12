@@ -10,18 +10,33 @@ ekf_filter_node:
     base_link_frame: base_link
     world_frame: odom
     use_sim_time: true
+    print_diagnostics: true
+
+#    [ x_pos   , y_pos    , z_pos,
+#      roll    , pitch    , yaw,
+#      x_vel   , y_vel    , z_vel,
+#      roll_vel, pitch_vel, yaw_vel,
+#      x_accel , y_accel  , z_accel ]
 
     imu0: "/imu/data"
-    imu0_config: [false, false, false,  # x, y, z (position)
-                  true, true, true,     # roll, pitch, yaw
-                  false, false, false,  # x, y, z (velocity)
-                  true, true, true,     # roll, pitch, yaw velocity
-                  false, false, false]  # x, y, z (acceleration)
-    imu0_differential: false
-    imu0_relative: true
+    imu0_config: [ false, false, false,
+                   true, true, true,
+                   false, false, false,
+                   true, true, true,
+                   false, false, false ]
+                   
+    odom0: "/diff_drive_controller/odom"
+    odom0_config: [false, false, false,
+                  false, false, false,
+                  true,  true,  true,
+                  false, false, true,
+                  false, false, false]
+    odom0_queue_size: 10
+    odom0_differential: false
+    odom0_relative: false
 
-    gps0: "/gps/fix"
-    gps0_config: [true, true, false,   # x, y, z (position)
-                  false, false, false, # orientation
-                  false, false, false, # velocity
-                  false, false, false] # acceleration
+    # gps0: "/gps/fix"
+    # gps0_config: [true, true, false,
+    #               false, false, false,
+    #               false, false, false,
+    #               false, false, false]
