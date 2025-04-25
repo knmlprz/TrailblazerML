@@ -83,7 +83,7 @@ Plik integrujący robota z symulacją Gazebo. Zawiera konfigurację dla kontrole
 
 ### Frame tree 
 <div align="center">
-  <img src="images/image-1.png" width="800" height="500">
+  <img src="images/image-1.png" width="1000" height="500">
 </div>
 
 
