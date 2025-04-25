@@ -108,6 +108,7 @@ Model robota z trailblazer_description można łatwo zaimportować do innych lau
 > Plik `rsp.launch.py` zawiera 2 argumenty startowe:
 > - use_sim_time (bool) - używaj czasu symulacji
 > - use_ros2_control (bool) - używaj pliku ros2_control
+>
 > Jeżeli chcesz działać w symulacji ustaw `use_sim_time: true` a `use_ros2_control: false`.
 > Jeżeli chcesz działąć poz symlacją to ustaw `use_sim_time: false` a `use_ros2_control: true`
 ```python
