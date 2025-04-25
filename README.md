@@ -1,119 +1,200 @@
-# TrailblazerML ROS2 Project
-
-This repository contains a ROS2-based project using the `humble` distribution. The project integrates simulation, visualization, teleoperation, and machine learning for autonomous robot navigation and control.
-
----
-
-## Table of Contents
-1. [Prerequisites](#prerequisites)
-2. [Installation](#installation)
-   - [Install ROS2 Humble](#install-ros2-humble)
-   - [Setup the Workspace](#setup-the-workspace)
-3. [Running the Project](#running-the-project)
-   - [Launching Simulation](#launching-simulation)
-   - [Teleoperation](#teleoperation)
-4. [Project Structure](#project-structure)
+# TrailblazerML
+##### Description of the project
+This is a project to create an autonomous control rover for the rover “legnedary rover PRz” the goal is to win the
+competition one of the tasks is autonomy
 
 ---
 
-## Prerequisites
-Ensure the following are installed on your system:
-- Ubuntu 22.04
-- Python 3.10+
-- [ROS2 Humble](https://docs.ros.org/en/humble/index.html)
-- `colcon` build tools
-- Gazebo simulation environment
+
+# What hardware we are using
+
+- Nvidia Jetson xavier nx
+- Camera Oak-D-pro-w
+- GPS NEO-6M-0U-BLOX
+
+# What software we are using (main libraries)
+
+- ROS2
+- DepthAI
+- OpenCV
+- Open3d
+
+# Docker ARM
 
 ---
 
-## Installation
+## _!IMPORTANT_
 
-### Install ROS2 Humble
-Follow the official [ROS2 Humble installation guide](https://docs.ros.org/en/humble/Installation.html).
+Add xhost +local:docker 
 
-### Setup the Workspace
-1. Clone this repository:
-    ```bash
-    git clone https://github.com/knmlprz/TrailblazerML.git
-    cd TrailblazerML
-    ```
-2. Install dependencies:
-    ```bash
-    sudo apt update && sudo apt install -y \
-      python3-colcon-common-extensions \
-      ros-humble-gazebo-ros-pkgs \
-      ros-humble-ros2-control \
-      ros-humble-ros2-controllers \
-      ros-humble-gazebo-ros2-control \
-      ros-humble-position-controllers \
-      ros-humble-xacro \
-      joystick \
-      jstest-gtk \
-      evtest \
-      ros-humble-twist-mux \
-      ros-humble-rviz2
-    ```
-3. To store your model create a folder in the root directory of the project:
-    ```bash
-    mkdir ~/.gazebo/models
-    ```
-4. Build the workspace:
-    ```bash
-    colcon build --symlink-install
-    source install/setup.bash
-    ```
-
----
-
-## Running the Project
-
-## Add meshes to Gazebo
-1. Go to gazebo folder:
+1. Bash
 ```bash
-   cd ~/.gazebo/models
-   mkdir gazebo_viz
+  echo 'xhost +local:docker' >> ~/.bashrc
 ```
-2. Add meshes:
+2. Zsh
 ```bash
-  cp -r <Path_to_project>/TrailblazerML/src/gazebo_viz/meshes ./gazebo_viz
+  sudo xhost +local:docker >> ~/.zshrc
 ```
 
-### Launching Simulation
-1. Launch the Gazebo simulator with the robot:
-    ```bash
-    ros2 launch gazebo_viz launch_sim.launch.py
-    ```
-2. To visualize the robot in RViz:
-    ```bash
-    ros2 launch gazebo_viz rsp.launch.py
-    ```
 
-### Teleoperation
-To control the robot manually:
-1. Connect your joystick or set up keyboard teleoperation.
-2. Launch the teleoperation node:
-    ```bash
-    ros2 launch rover_teleop_twist_joy teleop_twist_launch.py
-    ```
-### Test gazebo wheels 
+## How to build the ARM docker image
 
+### On ARM base architecture
+```bash
+    sudo docker build -t trb_1 .
+```
+
+### If you want to test it on x86_64 architecture
+
+*always when starting the system*
+```bash
+    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+```
+
+*only once*
+``` bash
+    sudo docker buildx create --use
+```
+
+*building*
+```bash
+    sudo docker buildx build --platform linux/arm64 -t trb_1 --load .
+```
+
+## Run the ARM docker image
+
+In ARM base architecture
+```bash
+    sudo docker run -it --name trb_1_arm --privileged --network=host --ipc=host -v /dev:/dev trb_1
+```
+
+In x86 for tests
+```bash
+    sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -e DISPLAY=$DISPLAY -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v /run/user/$(id -u)/wayland-0:/run/user/$(id -u)/wayland-0 -v /dev:/dev trb_1
+```
+
+Exit after finishing the work
+```bash
+    exit
+```
+
+## Start the ARM docker image
+
+Run the following command to enter your container
+```bash
+    sudo docker start -ai trb_1_arm
+```
+**You will be in the same state as you left the container**
+
+## What is inside ARM docker image
+
+- ROS2
+- Terminator
+
+# Saving Docker State with `docker commit`
+
+When making modifications within a running Docker container (such as installing new dependencies or making system
+changes), you can save these changes as a new Docker image using `docker commit`. This allows you to preserve your
+modifications without needing to rebuild the container from scratch.
+
+#### **Steps to Save and Reuse a Modified Docker Container**
+
+1. **Check running containers**
    ```bash
-    ros2 topic pub /diff_drive_controller_right/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
-    ros2 topic pub /diff_drive_controller_left/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+   docker ps -a
    ```
-   
+   Find the `CONTAINER ID` or `NAME` of the running container you want to save.
+
+2. **Create a snapshot (which is just another image) of the current container state**
+   ```bash
+   docker commit <container_id/container_name> <IMAGE NAME YOU WANT TO CREATE>
+   ```
+   Replace `<container_id>` with the actual ID of your container.
+
+3. **Run a new container from the saved snapshot**
+   ```bash
+   sudo docker run -it --name <GIVE YOUR OWN NAME> --privileged --network=host --ipc=host --env=DISPLAY <IMAGE NAME YOU WANT TO CREATE>
+   ```
+#### **Notes:**
+
+- The snapshot (`trb_snapshot`) can be used as a base for further development.
+- This method allows you to keep changes without modifying the original `Dockerfile`.
+- If you want to make the changes permanent, consider updating the `Dockerfile` and rebuilding the image
+  using `docker build`.
+- creating snapshot is useful when you want to save the state of the container and use it later on, for example, when
+  you want to test something and you don't want to rebuild the image from scratch.
+
+# Workflow
+
 ---
 
-## Project Structure
-```plaintext
-src
-├── gazebo_viz                 # Core visualization and simulation package
-│   ├── config                 # Configuration files (RViz, controllers, etc.)
-│   ├── description            # Robot URDF and XACRO files
-│   ├── launch                 # Launch files for simulation
-│   ├── meshes                 # Robot 3D models
-│   ├── worlds                 # Gazebo simulation worlds
-├── rover_teleop_twist_joy     # Teleoperation package
-│   ├── launch                 # Launch files for teleop
-│   ├── rover_teleop_twist_joy # Teleop control scripts
-├── trailblazerml              # Main robot dir
+## Branches
+
+- **main**
+    - main branch, should be always stable - every pull request to this branch should be reviewed by at least 2-3
+      persons.
+    - merge to this branch can be done only by the project manager.
+    - merge to this branch can be done from **dev** branch.
+    - every merge means new version of the project.
+
+- **dev**
+    - development branch
+    - merge to this branch can be done only if all feature tests are passed.
+    - merge to this branch can be only done by feature reviewer
+    - acceptance criteria for merge to this branch:
+        - have all functionality tests passed.
+    - merge to this branch means end of milestone.
+
+- **feature**
+    - branches for specific features
+    - use to develop new features
+
+- **bug**
+    - branches for specific bugs
+    - use to fix bugs from feature branch
+
+- **test**
+    - branches for specific features
+    - use only to test specific feature - do not add new features to this branch
+
+```markdown
+├── **main**
+│ └── **dev**
+│ ├── **feature**
+│ │ ├── **bug**
+│ │ └── **test**          
+│ │
+│ ├── **feature**
+│ │ ├── **bug**
+│ │ └── **test**
+│ │
+```
+
+## Create Branches
+
+- Create a new branch for each feature or bug fix.
+- Branch names should be descriptive:
+    ```markdown
+        [feature/bug/test]/[milestone]/[short-description]
+    ```
+  Example:
+    ```markdown
+        feature/ros_introduction/start_with_ros
+    ```
+
+## Commit Messages
+
+- Commit messages should be descriptive - **obligatory use
+  of [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)**
+
+## Issues
+
+- Issues have to be created with templates provided in the repository
+    - Issue template - create issue ticket
+    - Bug report - report a bug for specific issue
+- **Every issue have to have assignees and reviewer**
+
+## Pull Requests
+
+- Pull requests should be descriptive and have annotation to issue
+
