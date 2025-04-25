@@ -12,11 +12,11 @@ def generate_launch_description():
     pkg_rviz = get_package_share_directory('trailblazer_rviz')
 
     navsat_config_path = PathJoinSubstitution([
-        pkg_nav2, 'config', 'navsat.yaml'
+        pkg_nav2, 'config', 'navsat_gazebo.yaml'
     ])
 
     ekf_config_path = PathJoinSubstitution([
-        pkg_nav2, 'config', 'ekf.yaml'
+        pkg_nav2, 'config', 'ekf_gazebo.yaml'
     ])
 
     nav2_config_path = PathJoinSubstitution([
@@ -60,28 +60,29 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # # # EKF
-        Node(
-            package='robot_localization',
-            executable='ekf_node',
-            name='ekf_filter_node',
-            output='screen',
-            parameters=[ekf_config_path],
-        ),
+        # # # # EKF
+        # Node(
+        #     package='robot_localization',
+        #     executable='ekf_node',
+        #     name='ekf_filter_node',
+        #     output='screen',
+        #     parameters=[ekf_config_path],
+        # ),
 
-        # # # NavSat
-        Node(
-            package='robot_localization',
-            executable='navsat_transform_node',
-            name='navsat_transform_node',
-            parameters=[navsat_config_path],
-            arguments=['--ros-args', '--disable-rosout-logs'],
-            remappings=[
-                ('imu/data', '/imu/data'),
-                ('gps/fix', '/gps/fix'),
-                ('odometry/gps', '/odometry/gps')
-            ]
-        ),
+        # # # # NavSat
+        # Node(
+        #     package='robot_localization',
+        #     executable='navsat_transform_node',
+        #     name='navsat_transform_node',
+        #     parameters=[navsat_config_path],
+        #     arguments=['--ros-args', '--disable-rosout-logs'],
+        #     remappings=[
+        #         ('imu/data', '/imu/data'),
+        #         ('gps/fix', '/gps/fix'),
+        #         ('odometry/gps', '/odometry/gps')
+        #     ],
+        #     output='log'
+        # ),
 
         # # # SLAM
         IncludeLaunchDescription(
@@ -107,7 +108,7 @@ def generate_launch_description():
                 ])
             ]),
             launch_arguments={
-                'cmd_vel_topic': '/cmd_vel',
+                'cmd_vel_topic': '/diff_drive_controller/cmd_vel',
                 'use_sim_time': use_sim_time
             }.items()
         ),

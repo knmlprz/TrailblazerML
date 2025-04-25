@@ -2,6 +2,9 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<gazebo>
         <plugin name="front_wheel" filename="libgazebo_ros_diff_drive.so">
+            <ros>
+              <namespace>/diff_drive_controller</namespace>
+            </ros>
             <!-- Wheel Information -->
             <left_joint>FL_wheel_joint</left_joint>
             <right_joint>FR_wheel_joint</right_joint>
@@ -16,14 +19,18 @@
             <odometry_frame>odom</odometry_frame>
             <robot_base_frame>base_link</robot_base_frame>
 
-            <publish_odom>false</publish_odom>
-            <publish_odom_tf>false</publish_odom_tf>
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>true</publish_odom_tf>
             <publish_wheel_tf>true</publish_wheel_tf>
-            <odom_topic>disabled</odom_topic>
+            <!-- <odom_topic>disabled</odom_topic> -->
         </plugin>
   	</gazebo>
 	<gazebo>
         <plugin name="rear_wheel" filename="libgazebo_ros_diff_drive.so">
+            <ros>
+              <!-- publish to /gps/data -->
+              <namespace>/diff_drive_controller</namespace>
+            </ros>
             <!-- Wheel Information -->
             <left_joint>BL_wheel_joint</left_joint>
             <right_joint>BR_wheel_joint</right_joint>
@@ -38,10 +45,10 @@
             <odometry_frame>odom</odometry_frame>
             <robot_base_frame>base_link</robot_base_frame>
 
-            <publish_odom>false</publish_odom>
-            <publish_odom_tf>false</publish_odom_tf>
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>true</publish_odom_tf>
             <publish_wheel_tf>true</publish_wheel_tf>
-            <odom_topic>disabled</odom_topic>
+            <!-- <odom_topic>disabled</odom_topic> -->
         </plugin>
   	</gazebo>
 </robot>

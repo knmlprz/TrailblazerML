@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'trailblazer_interfaces'
+package_name = 'trailblazer_master'
 
 setup(
     name=package_name,
@@ -17,6 +17,7 @@ setup(
     maintainer_email='fillio00@wp.pl',
     description='TODO: Package description',
     license='Apache-2.0',
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
         ],

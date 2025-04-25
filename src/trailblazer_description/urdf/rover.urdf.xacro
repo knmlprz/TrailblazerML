@@ -4,8 +4,9 @@
   <xacro:include filename="lidar.xacro" />
   <xacro:include filename="imu.xacro" />
   <xacro:include filename="gps.xacro" />
+  <xacro:include filename="depth_camera.xacro" />
 
-  <xacro:arg name="use_ros2_control" default="true"/>
+  <xacro:arg name="use_ros2_control" default="false"/>
   <xacro:arg name="sim_mode" default="false"/>
   <xacro:if value="$(arg use_ros2_control)">
       <xacro:include filename="ros2_control.xacro" />
@@ -39,10 +40,9 @@
 
       <!-- ******************************* OAK-D END ******************************* -->
   </xacro:if>
-  <!-- <xacro:unless value="$(arg use_ros2_control)">
+  <xacro:unless value="$(arg use_ros2_control)">
       <xacro:include filename="gazebo_control.xacro" />
-      <xacro:include filename="depth_camera.xacro" />
-  </xacro:unless> -->
+  </xacro:unless>
   <!-- ******************************* Links ******************************* -->
   <link name="base_link">
   </link>

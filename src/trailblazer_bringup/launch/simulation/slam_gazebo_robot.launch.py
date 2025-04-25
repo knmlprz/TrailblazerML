@@ -16,7 +16,7 @@ def generate_launch_description():
     ])
 
     ekf_config_path = PathJoinSubstitution([
-        pkg_nav2, 'config', 'ekf.yaml'
+        pkg_nav2, 'config', 'ekf_gazebo.yaml'
     ])
 
     rviz_config_path = PathJoinSubstitution([
@@ -72,7 +72,7 @@ def generate_launch_description():
             executable='navsat_transform_node',
             name='navsat_transform_node',
             parameters=[navsat_config_path],
-            arguments=['--ros-args', '--log_level', 'WARN'],
+            arguments=['--ros-args', '--log-level', 'WARN'],
             remappings=[
                 ('imu/data', '/imu/data'),
                 ('gps/fix', '/gps/fix'),

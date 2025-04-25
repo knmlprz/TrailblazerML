@@ -8,7 +8,7 @@ def generate_launch_description():
     config_dir = os.path.join(
         get_package_share_directory('trailblazer_slam'),
         'config',
-        'mapper_params_online_async.yaml'
+        'mapper_params_online_async_gazebo.yaml'
     )
 
     slam_node = Node(
