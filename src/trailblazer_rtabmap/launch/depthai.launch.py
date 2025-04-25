@@ -32,7 +32,9 @@ def generate_launch_description():
                 '/stereo_inertial_node.launch.py']),
                 launch_arguments={'depth_aligned': 'false',
                                   'enableRviz': 'false',
-                                  'monoResolution': '400p'}.items(),
+                                  'monoResolution': '400p',
+                                  'enableDotProjector': 'true',
+                                  'enableFloodLight': 'true'}.items(),
         ),
 
         # Sync right/depth/camera_info together
@@ -65,8 +67,8 @@ def generate_launch_description():
             arguments=['-d']),
 
         # Visualization
-        Node(
-            package='rtabmap_viz', executable='rtabmap_viz', output='screen',
-            parameters=parameters,
-            remappings=remappings)
+        # Node(
+        #     package='rtabmap_viz', executable='rtabmap_viz', output='screen',
+        #     parameters=parameters,
+        #     remappings=remappings)
     ])

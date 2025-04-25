@@ -1,10 +1,10 @@
 FROM arm64v8/ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-
-ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
+ENV ROS_PYTHON_VERSION=3
+ENV ROS_DISTRO=humble
 
 RUN apt-get update && apt-get install -y \
     curl \
@@ -57,7 +57,7 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     python3-rosdep \
     gz-fortress \
-    ros-humble-ros-base \
+    ros-humble-desktop \
     ros-dev-tools \
     ros-humble-position-controllers \
     ros-humble-xacro \
@@ -74,12 +74,11 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /TrailblazerML/
 
-RUN . /opt/ros/humble/setup.sh && \
-    rosdep install --from-paths /TrailblazerML --ignore-src -r -y
-
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc \
     && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc \
     && bash -c "source ~/.bashrc"
+
+RUN apt-get update
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
