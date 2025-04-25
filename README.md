@@ -5,7 +5,6 @@ competition one of the tasks is autonomy
 
 ---
 
-
 # What hardware we are using
 
 - Nvidia Jetson xavier nx
