@@ -33,7 +33,7 @@ URDF to format pliku XML używany w ROS do opisu budowy robota. Definiuje on str
 Każda część robota, która się porusza niezależnie, powinna być osobnym `link`, a ich relacje określamy poprzez `joint`.
 
 <div align="center">
-  <img src="images/image.png" width="300" height="300">
+  <img src="images/image.png" width="400" height="400">
 </div>
 
 ### ***XACRO*** - XML Macros
@@ -83,7 +83,7 @@ Plik integrujący robota z symulacją Gazebo. Zawiera konfigurację dla kontrole
 
 ### Frame tree 
 <div align="center">
-  <img src="images/image-1.png" width="600" height="300">
+  <img src="images/image-1.png" width="1000" height="500">
 </div>
 
 
