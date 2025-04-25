@@ -46,11 +46,18 @@ On ARM base architecture
 
 If you want to test it on x86_64 architecture
 ```bash
+    sudo docker buildx create --use && 
     sudo docker buildx build --platform linux/arm64 -t trb_1 --load .
 ```
 
 ## Run the ARM docker image
 
+In ARM base architecture
+```bash
+    sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -v /dev:/dev trb_1_arm
+```
+
+In x86 for tests
 ```bash
     sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -e DISPLAY=$DISPLAY -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v /run/user/$(id -u)/wayland-0:/run/user/$(id -u)/wayland-0 -v /dev:/dev trb_1_arm
 ```
