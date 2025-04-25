@@ -46,6 +46,7 @@ On ARM base architecture
 
 If you want to test it on x86_64 architecture
 ```bash
+    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes && 
     sudo docker buildx create --use && 
     sudo docker buildx build --platform linux/arm64 -t trb_1 --load .
 ```
