@@ -104,7 +104,12 @@ ros2 launch trailblazer_description rsp.launch.py use_sim_time:=true use_ros2_co
 
 ### 🧩 Użycie w innych plikach launch
 Model robota z trailblazer_description można łatwo zaimportować do innych launchy przy pomocy IncludeLaunchDescription.
-
+> [!NOTE]  
+> Plik `rsp.launch.py` zawiera 2 argumenty startowe:
+> - use_sim_time (bool) - używaj czasu symulacji
+> - use_ros2_control (bool) - używaj pliku ros2_control
+> Jeżeli chcesz działać w symulacji ustaw `use_sim_time: true` a `use_ros2_control: false`.
+> Jeżeli chcesz działąć poz symlacją to ustaw `use_sim_time: false` a `use_ros2_control: true`
 ```python
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
