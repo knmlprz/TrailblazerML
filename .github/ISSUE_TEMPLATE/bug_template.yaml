@@ -1,0 +1,33 @@
+name: Bug Template
+description: Template for bugs reporting
+title: "[Bug]: "
+labels: [ "Trzeba Zapierdalać" ]
+projects: [ "knmlprz/25" ]
+body:
+  - type: markdown
+    attributes:
+      value: Field all required fields and provide as much detail as possible. If you have any questions, please reach out on our [Discord](https://discord.gg/9qysMJGKym).
+  - type: textarea
+    id: linked_issue
+    attributes:
+      label: Link to an existing issue
+      description: Copy and paste the link to the related issue
+      placeholder: "[ISSUE_NUMBER](LINK_TO_ISSUE)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Context
+      description: Briefly summarize the bug you’re reporting.
+      placeholder: Provide detailed description of the bug you are reporting.
+    validations:
+      required: true
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Describe the steps to reproduce the bug, so that it can be easily identified and fixed.
+      placeholder: Provide a list of steps to reproduce the bug.
+    validations:
+      required: true
