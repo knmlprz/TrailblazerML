@@ -202,7 +202,7 @@ def generate_launch_description():
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
                 parameters=[configured_params],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', '/diff_drive_controller/cmd_vel')]),
             ComposableNode(
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
