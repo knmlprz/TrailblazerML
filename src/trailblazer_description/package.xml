@@ -7,15 +7,6 @@
   <maintainer email="fillio00@wp.pl">walkowiczf</maintainer>
   <license>Apache-2.0</license>
 
-<<<<<<< HEAD
-  <depend>robot_state_publisher</depend>
-  <depend>xacro</depend>
-
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
-  <test_depend>python3-pytest</test_depend>
-=======
   <depend>backward_ros</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
@@ -40,7 +31,6 @@
   <test_depend>liburdfdom-tools</test_depend>
   <test_depend>rclpy</test_depend>
   <test_depend>ros2_control_demo_testing</test_depend>
->>>>>>> main
 
   <export>
     <build_type>ament_python</build_type>
