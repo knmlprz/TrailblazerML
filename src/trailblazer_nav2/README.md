@@ -60,6 +60,27 @@ Do dokładniejszego połączenia tych danych (IMU, enkodery i GPS) używamy `fil
 ## 🚗 Autonomiczna jazda
 
 ## 👣 Co to base footprint?
+Base footprint to dwuwymiarowy (2D) obrys kształtu robota, rzutowany na płaszczyznę podłoża. W systemie nawigacji Nav2 w ROS 2, obrys ten służy głównie do detekcji kolizji podczas planowania tras i omijania przeszkód.
+<div align="center">
+  <img src="images/image-2.png" width="700" height="500">
+</div>
+
+```yaml
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      robot_radius: 1.3
+      footprint: "[[0.7, 0.65], [0.7, -0.65], [-0.7, -0.65], [-0.7, 0.65]]"
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      robot_radius: 1.0
+```
+
+> [!NOTE]
+> Jeśli w konfiguracji podamy oba parametry (`footprint` i `robot_radius`) Nav2 skorzysta z dokładniejszego kształtu wielokąta (footprint).
+
 
 ## 🛠️ Jak używać
 ### ✅ Zbudowanie paczki
