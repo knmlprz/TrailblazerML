@@ -57,6 +57,59 @@ Do dokładniejszego połączenia tych danych (IMU, enkodery i GPS) używamy `fil
 > 
 > map (z ekf_filter_node_map) ➡️ odom (z ekf_filter_node_odom) ➡️ base_footprint ➡️ base_link
 
+1) `ekf_filter_node_odom` oraz `ekf_filter_node_map`
+```yaml
+kf_filter_node_odom:
+  ros__parameters:
+    frequency: 30.0                     # Częstotliwość aktualizacji
+    two_d_mode: true                    # Ignoruje ruch w osi "Z" 2D tryb (dla robotów po ziemi)
+    print_diagnostics: false            # Wypisywanie informagi diagnostycznych np. WARNING
+    debug: false                        # Możliwość tworzenia plików log
+    publish_tf: true                    # Publikuj transformację odom → base_footprint
+
+    map_frame: map                      # Nazwa frame mapy
+    odom_frame: odom                    # Nazwa frame odometrii
+    base_link_frame: base_footprint     # Nazwa frame base_linku
+    world_frame: odom                   # Nazwa frame świata lokalnego
+```
+Opis źródła danych do EKF definiuje się za pomocą listy w której kolejne wartości (bool) odpowiadają za:
+
+    [   x_pos   , y_pos    , z_pos,
+        roll    , pitch    , yaw,
+        x_vel   , y_vel    , z_vel,
+        roll_vel, pitch_vel, yaw_vel,
+        x_accel , y_accel  , z_accel    ]
+
+```yaml
+odom0_queue_size: 10                            # Kolejka wiadomości oczekujących na przetworzenie
+odom0_differential: false                       # Nie traktuj odometrii jako różnicowej tylko jako absolutne pomiary
+odom0_relative: false                           # Nie przekształcaj danych na relatywne
+
+imu0_differential: true                         # Czyli traktujesz zmianę kąta yaw jako delta (dobre dla tanich IMU)
+imu0_relative: false                            # Dane nie są przekształcane na względne
+imu0_queue_size: 10
+imu0_remove_gravitational_acceleration: true    # Usuwa wpływ grawitacji z pomiarów przyspieszenia (normalne dla IMU)
+
+use_control: false                              # Nie używa żadnych danych o sterowaniu
+process_noise_covariance: [...]                 # Macierz określająca jak bardzo EKF ufa swoim przewidywaniom
+```
+
+2) `navsat_transform`
+```yaml
+navsat_transform:
+  ros__parameters:
+    frequency: 30.0                     # Częstotliwość aktualizacji
+    delay: 3.0                          # Opóźnienie działania w sekundach
+    magnetic_declination_radians: 0.0   # Korekta na lokalną deklinację magnetyczną 
+    yaw_offset: 0.0                     # Jeśli twoje "przód" GPS/IMU różni się od fizycznego przodu robota, można tu dodać korektę w radianach
+    zero_altitude: true                 # Ignoruje wysokość (Z) z GPS 
+    broadcast_utm_transform: true       # Publikuje transformację pomiędzy mapą (np. UTM) a lokalną mapą robota
+    publish_filtered_gps: true          # Publikuje filtrowane dane GPS do odczytu.
+    use_odometry_yaw: true              # Używa yaw (orientacji) z odometrii, a nie z GPS/IMU.
+    wait_for_datum: false               # Nie czeka na manualne ustawienie punktu odniesienia, tylko automatycznie używa pierwszego GPS-a.
+```
+
+
 ## 🚗 Autonomiczna jazda
 
 ## 👣 Co to base footprint?
