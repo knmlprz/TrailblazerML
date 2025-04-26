@@ -44,16 +44,8 @@
       <xacro:include filename="gazebo_control.xacro" />
   </xacro:unless>
   <!-- ******************************* Links ******************************* -->
+
   <link name="base_link">
-  </link>
-
-  <joint name="base_footprint_joint" type="fixed">
-      <parent link="base_link"/>
-      <child link="base_footprint"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <link name="base_footprint">
   </link>
 
   <joint name="chassis_joint" type="fixed">
@@ -141,6 +133,7 @@
       </geometry>
     </collision>
   </link>
+
   <joint
     name="FL_wheel_joint"
     type="continuous">
@@ -154,6 +147,7 @@
     <axis
       xyz="0.999779852268619 -0.0209820637149624 0" />
   </joint>
+
   <link
     name="BL_wheel">
     <inertial>

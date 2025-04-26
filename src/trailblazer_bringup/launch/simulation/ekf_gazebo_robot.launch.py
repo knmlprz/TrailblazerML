@@ -60,6 +60,7 @@ def generate_launch_description():
             )
         ),
 
+        # NAV2
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'navigation_launch.py')
@@ -67,6 +68,7 @@ def generate_launch_description():
             launch_arguments={'use_sim_time': 'false', 'params_file': nav2_config_path}.items()
         ),
 
+        # EKF
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'dual_ekf_navsat.launch.py')
