@@ -7,22 +7,20 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # Paczki
+    # Ścieżki do plików konfiguracyjnych
+    pkg_nav2 = get_package_share_directory('trailblazer_nav2')
     pkg_rviz = get_package_share_directory('trailblazer_rviz')
-    pkg_gazebo = get_package_share_directory('trailblazer_gazebo')
 
-    # Konfigi 
+    nav2_config_path = PathJoinSubstitution([
+        pkg_nav2, 'config', 'nav2_params.yaml'
+    ])
+
     rviz_config_path = PathJoinSubstitution([
-        pkg_rviz, 'config', 'simulation.rviz'
-    ])
-    gazebo_config_path = PathJoinSubstitution([
-        pkg_gazebo, 'config', 'gazebo_params.yaml'
+        pkg_rviz, 'config', 'nav2.rviz'
     ])
 
-    # Parametry
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-
-    # Launch
+    gazebo_params_file = os.path.join(get_package_share_directory("trailblazer_gazebo"), 'config', 'gazebo_params.yaml')
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
@@ -52,6 +50,27 @@ def generate_launch_description():
                 '-topic', 'robot_description',
             ],
             output='screen'
+        ),
+
+
+        # # # SLAM
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('trailblazer_slam'), 'launch', 'slam.launch.py')
+            )
+        ),
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'navigation_launch.py')
+            ),
+            launch_arguments={'use_sim_time': 'false', 'params_file': nav2_config_path}.items()
+        ),
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'dual_ekf_navsat.launch.py')
+            )
         ),
 
         # Joystick
