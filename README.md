@@ -5,7 +5,6 @@ competition one of the tasks is autonomy
 
 ---
 
-
 # What hardware we are using
 
 - Nvidia Jetson xavier nx
@@ -19,13 +18,13 @@ competition one of the tasks is autonomy
 - OpenCV
 - Open3d
 
-# Docker
+# Docker ARM
 
 ---
 
 ## _!IMPORTANT_
 
-Add xhost +local:docker to allow GUI support to bashrc file to make it permanent
+Add xhost +local:docker 
 
 1. Bash
 ```bash
@@ -37,41 +36,59 @@ Add xhost +local:docker to allow GUI support to bashrc file to make it permanent
 ```
 
 
-## How to build the docker image
+## How to build the ARM docker image
 
+### On ARM base architecture
 ```bash
- sudo docker build -t trb_1 .
+    sudo docker build -t trb_1 .
 ```
 
-## How to run the docker image with GUI support
+### If you want to test it on x86_64 architecture
 
-### Linux
+*always when starting the system*
 ```bash
-    sudo docker run -it --name <GIVE YOUR OWN NAME FOR CONTAINER> --privileged --network=host --ipc=host --env=DISPLAY trb_1
+    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 ```
+
+*only once*
+``` bash
+    sudo docker buildx create --use
+```
+
+*building*
+```bash
+    sudo docker buildx build --platform linux/arm64 -t trb_1 --load .
+```
+
+## Run the ARM docker image
+
+In ARM base architecture
+```bash
+    sudo docker run -it --name trb_1_arm --privileged --network=host --ipc=host -v /dev:/dev trb_1
+```
+
+In x86 for tests
+```bash
+    sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -e DISPLAY=$DISPLAY -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v /run/user/$(id -u)/wayland-0:/run/user/$(id -u)/wayland-0 -v /dev:/dev trb_1
+```
+
 Exit after finishing the work
 ```bash
     exit
 ```
 
-## After running the docker image
+## Start the ARM docker image
 
 Run the following command to enter your container
 ```bash
-    sudo docker start -ai <GIVE YOUR OWN NAME>
+    sudo docker start -ai trb_1_arm
 ```
 **You will be in the same state as you left the container**
 
-## What is inside the docker image
+## What is inside ARM docker image
 
 - ROS2
-- Gazebo
 - Terminator
-- Visual studio code
-    To start visual studio code
-    ```bash
-      code .
-    ```
 
 # Saving Docker State with `docker commit`
 

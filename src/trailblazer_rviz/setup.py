@@ -2,6 +2,7 @@ from setuptools import find_packages, setup
 from glob import glob
 
 package_name = 'trailblazer_rviz'
+
 setup(
     name=package_name,
     version='0.0.0',
@@ -12,7 +13,6 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', glob('launch/*.py')),
         ('share/' + package_name + '/config', glob('config/*.rviz')),
-
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,4 +25,3 @@ setup(
         ],
     },
 )
-
