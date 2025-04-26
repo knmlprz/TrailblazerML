@@ -25,7 +25,7 @@
                 <remapping>~/out:=data</remapping>
               </ros>
               <alwaysOn>true</alwaysOn>
-              <bodyName>base_footprint</bodyName>
+              <bodyName>base_link</bodyName>
               <topicName>imu</topicName>
               <serviceName>imu_service</serviceName>
               <gaussianNoise>0.0</gaussianNoise>
