@@ -9,9 +9,9 @@
 
   <depend>navigation2</depend>
   <depend>robot_localization</depend>
-  <depend>mapviz</depend>
+  <!-- <depend>mapviz</depend>
   <depend>mapviz_plugins</depend>
-  <depend>tile_map</depend>
+  <depend>tile_map</depend> -->
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
