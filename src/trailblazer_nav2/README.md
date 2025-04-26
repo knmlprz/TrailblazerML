@@ -10,10 +10,25 @@ TODO:
 
 - [📁 Struktura katalogów](#-struktura-katalogów)
 - [🗺️ GPS i GNNS](#-gps-i-gnss)
+    - [❔ Co to jest GPS/GNSS?](#-co-to-jest-gpsgnss)
+    - [❔ Co to UTM?](#-co-to-utm)
 - [🧭 Lokalizacja robota](#-lokalizacja-robota)
+    - [📦 Konfiguracja lokalizacji](#-konfiguracja-lokalizacji)
 - [🚗 Autonomiczna jazda](#-autonomiczna-jazda)
+    - [⚙️ Dostosowanie ustawień AMCL](#️-dostosowanie-ustawień-amcl)
+    - [⚙️ Dostosowanie ustawień bt_navigator](#️-dostosowanie-ustawień-bt_navigator)
+    - [⚙️ Dostosowanie ustawień controller_server](#️-dostosowanie-ustawień-controller_server)
+    - [⚙️ Dostosowanie ustawień local_costmap](#️-dostosowanie-ustawień-local_costmap)
+    - [⚙️ Dostosowanie ustawień global_costmap](#️-dostosowanie-ustawień-global_costmap)
+    - [⚙️ Dostosowanie ustawień map_server](#️-dostosowanie-ustawień-map_server)
+    - [⚙️ Dostosowanie ustawień planner_server](#️-dostosowanie-ustawień-planner_server)
+    - [⚙️ Dostosowanie ustawień smoother_server](#️-dostosowanie-ustawień-smoother_server)
+    - [⚙️ Dostosowanie ustawień behavior_server](#️-dostosowanie-ustawień-behavior_server)
+    - [⚙️ Dostosowanie ustawień waypoint_follower](#️-dostosowanie-ustawień-waypoint_follower)
+    - [⚙️ Dostosowanie ustawień velocity_smoother](#️-dostosowanie-ustawień-velocity_smoother)
 - [👣 Co to base footprint?](#-co-to-base-footprint?)
 - [🛠️ Jak używać](#️-jak-używać)
+- [🔗 Linki](#-linki)
 
 ## 📁 Struktura katalogów
     src/trailblazer_nav2
@@ -69,7 +84,7 @@ kf_filter_node_odom:
 
     map_frame: map                      # Nazwa frame mapy
     odom_frame: odom                    # Nazwa frame odometrii
-    base_link_frame: base_link     # Nazwa frame base_linku
+    base_link_frame: base_link          # Nazwa frame base_linku
     world_frame: odom                   # Nazwa frame świata lokalnego
 ```
 Opis źródła danych do EKF definiuje się za pomocą listy w której kolejne wartości (bool) odpowiadają za:
@@ -111,6 +126,80 @@ navsat_transform:
 
 
 ## 🚗 Autonomiczna jazda
+Celem autonomicznej jazdy jest umożliwienie robotowi Trailblazer samodzielnego przemieszczania się po zaplanowanej trasie, bazując na punktach GPS lub na wyznaczonej ścieżce na mapie.
+
+### ⚙️ Dostosowanie ustawień AMCL
+AMCL to algorytm lokalizacji robota na mapie.
+```yaml
+amcl:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień bt_navigator
+BT Navigator zarządza misją robota przy użyciu tzw. Behavior Trees (BT) – drzew zachowań.
+Dzięki temu robot wie np.:
+- jak jechać do celu,
+- jak unikać przeszkód,
+- co robić gdy coś pójdzie nie tak.
+```yaml
+bt_navigator:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień controller_server
+Controller Server odpowiada za sterowanie robotem w czasie rzeczywistym po zaplanowanej trasie.
+```yaml
+controller_server:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień local_costmap
+```yaml
+local_costmap:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień global_costmap
+```yaml
+global_costmap:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień map_server
+```yaml
+map_server:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień planner_server
+```yaml
+planner_server:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień smoother_server
+```yaml
+smoother_server:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień behavior_server
+```yaml
+behavior_server:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień waypoint_follower
+```yaml
+waypoint_follower:
+  ros__parameters:
+```
+
+### ⚙️ Dostosowanie ustawień velocity_smoother
+```yaml
+velocity_smoother:
+  ros__parameters:
+```
 
 ## 👣 Co to base footprint?
 Base footprint to dwuwymiarowy (2D) obrys kształtu robota, rzutowany na płaszczyznę podłoża. W systemie nawigacji Nav2 w ROS 2, obrys ten służy głównie do detekcji kolizji podczas planowania tras i omijania przeszkód.
@@ -151,3 +240,9 @@ source install/setup.bash
 ```python
 
 ```
+
+## 🔗 Linki
+- https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
+- https://github.com/ros-navigation/navigation2_tutorials/tree/rolling/nav2_gps_waypoint_follower_demo
+- https://docs.nav2.org/tutorials/docs/navigation2_dynamic_point_following.html
+- https://docs.nav2.org/setup_guides/footprint/setup_footprint.html
