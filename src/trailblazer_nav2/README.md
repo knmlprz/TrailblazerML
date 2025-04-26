@@ -69,7 +69,7 @@ kf_filter_node_odom:
 
     map_frame: map                      # Nazwa frame mapy
     odom_frame: odom                    # Nazwa frame odometrii
-    base_link_frame: base_link     # Nazwa frame base_linku
+    base_link_frame: base_link          # Nazwa frame base_linku
     world_frame: odom                   # Nazwa frame świata lokalnego
 ```
 Opis źródła danych do EKF definiuje się za pomocą listy w której kolejne wartości (bool) odpowiadają za:
