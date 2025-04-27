@@ -128,11 +128,19 @@ navsat_transform:
 ## 🚗 Autonomiczna jazda
 Celem autonomicznej jazdy jest umożliwienie robotowi Trailblazer samodzielnego przemieszczania się po zaplanowanej trasie, bazując na punktach GPS lub na wyznaczonej ścieżce na mapie.
 
+<div align="center">
+  <img src="images/image-3.png" width="800" height="700">
+</div>
+
 ### ⚙️ Dostosowanie ustawień AMCL
 AMCL to algorytm lokalizacji robota na mapie.
 ```yaml
 amcl:
   ros__parameters:
+    base_frame_id: "base_link"
+    global_frame_id: "map"
+    odom_frame_id: "odom"
+    scan_topic: scan
 ```
 
 ### ⚙️ Dostosowanie ustawień bt_navigator
@@ -144,6 +152,10 @@ Dzięki temu robot wie np.:
 ```yaml
 bt_navigator:
   ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
 ```
 
 ### ⚙️ Dostosowanie ustawień controller_server
@@ -151,12 +163,33 @@ Controller Server odpowiada za sterowanie robotem w czasie rzeczywistym po zapla
 ```yaml
 controller_server:
   ros__parameters:
+    min_x_velocity_threshold: 0.2       # Minimalna dopuszczalna prędkość w osi X
+    min_y_velocity_threshold: 0.2       # Minimalna dopuszczalna prędkość w osi Y
+    min_theta_velocity_threshold: 0.2   # Minimalna dopuszczalna prędkość w osi obrotu
+  progress_checker:
+    required_movement_radius: 0.8       # Minimalne przesunięcie robota (w metrach) w określonym czasie
+  general_goal_checker:
+    xy_goal_tolerance: 0.6              # Tolerancja w XY (metry) kiedy uznajemy, że osiągnęliśmy cel
+    yaw_goal_tolerance: 1.57            # Tolerancja kąta obrotu (radiany)
+  FollowPath:
+    min_vel_x: 0.0                      # Minimalna dopuszczalna prędkość robota w osi X
+    max_vel_x: 0.7                      # Maksymalna prędkość jazdy robota w osi X m/s.
+    max_vel_theta: 0.5                  # Maksymalne prędkość obrotu robota
+    min_speed_xy: 0.1                   # Minimalna prędkość wypadkowa w płaszczyźnie XY
+    max_speed_xy: 1.0                   # Maksymalna prędkość wypadkowa w płaszczyźnie XY
+    min_speed_theta: 0.2                #	Minimalna prędkość obrotowa
+    linear_granularity: 0.1             # Precyzja "kroków" w przestrzeni, im mniejsza wartość, tym dokładniejsze sterowanie
+    angular_granularity: 0.1            # Precyzja "kroków" w przestrzeni obrotowej
+    transform_tolerance: 0.2            # Tolerancja czasowa przy odczycie transformacji
+    xy_goal_tolerance: 0.6              # Tolerancja osiągnięcia celu w XY (metry)
 ```
 
 ### ⚙️ Dostosowanie ustawień local_costmap
 ```yaml
 local_costmap:
   ros__parameters:
+    width: 4
+    height: 4
 ```
 
 ### ⚙️ Dostosowanie ustawień global_costmap
@@ -246,3 +279,4 @@ source install/setup.bash
 - https://github.com/ros-navigation/navigation2_tutorials/tree/rolling/nav2_gps_waypoint_follower_demo
 - https://docs.nav2.org/tutorials/docs/navigation2_dynamic_point_following.html
 - https://docs.nav2.org/setup_guides/footprint/setup_footprint.html
+- https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/#local_costmap
