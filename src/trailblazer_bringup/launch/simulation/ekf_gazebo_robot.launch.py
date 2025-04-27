@@ -39,6 +39,13 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([os.path.join(
                 get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')]),
+                launch_arguments={
+                    'world': os.path.join(
+                        get_package_share_directory('trailblazer_gazebo'), 
+                        'worlds', 
+                        'office.world' 
+                    )
+                }.items(),
         ),
 
         # Spawn the robot in Gazebo
