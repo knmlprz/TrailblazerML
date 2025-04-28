@@ -22,6 +22,9 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'logged_waypoint_follower = trailblazer_nav2.logged_waypoint_follower:main',
+            'interactive_waypoint_follower = trailblazer_nav2.interactive_waypoint_follower:main',
+            'gps_waypoint_logger = trailblazer_nav2.gps_waypoint_logger:main'
         ],
     },
 )

@@ -201,8 +201,8 @@ Global Costmap tworzy dużą mapę świata (lub jego znanej części), którą r
 global_costmap:
   ros__parameters:
     inflation_layer:
-      cost_scaling_factor: 2.58
-      inflation_radius: 1.75
+      cost_scaling_factor: 2.58 # współczynnik spadku kosztu wokół przeszkód
+      inflation_radius: 1.75    # promień inflacji wokół przeszkody w metrach
 ```
 
 ### ⚙️ Dostosowanie ustawień map_server
