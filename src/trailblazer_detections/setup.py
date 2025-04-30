@@ -1,34 +1,33 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 package_name = 'trailblazer_detections'
 
 setup(
     name=package_name,
-    version='0.0.0',
-    packages=find_packages(exclude=['test']),
+    version='0.0.1',
+    packages=[],
+    py_modules=['launch.yolo_node'],
     data_files=[
         ('share/ament_index/resource_index/packages', [
-            'resource/trailblazer_detections'
+            'resource/' + package_name
         ]),
-        ('share/trailblazer_detections', [
-            'package.xml'
-        ]),
-        ('share/trailblazer_detections/launch', [
+        ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', [
             'launch/yolo_node.launch.py'
         ]),
-        ('share/trailblazer_detections/models', [
-            'trailblazer_detections/models/urc2024.pt'
+        ('share/' + package_name + '/models', [
+            'models/urc2024.pt'
         ]),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='walkowiczf',
     maintainer_email='fillio00@wp.pl',
-    description='TODO: Package description',
+    description='YOLO object detection node for ROS 2',
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'yolo_node = trailblazer_detections.yolo_node:main'
+            'yolo_node = launch.yolo_node:main'
         ],
     },
 )
