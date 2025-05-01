@@ -24,7 +24,7 @@ def generate_launch_description():
                 'subscribe_odom_info':True,
                 'approx_sync':False,
                 'wait_imu_to_init':True,
-                'subscribe_depth':True,
+                #'subscribe_depth':True,
                 'use_action_for_goal':True,
                 'Reg/Force3DoF':'true',
                 'Grid/RayTracing':'true', # Fill empty space
@@ -84,10 +84,10 @@ def generate_launch_description():
             arguments=['-d']),
 
         # Visualization
-        # Node(
-        #     package='rtabmap_viz', executable='rtabmap_viz', output='screen',
-        #     parameters=parameters,
-        #     remappings=remappings),
+        Node(
+            package='rtabmap_viz', executable='rtabmap_viz', output='screen',
+            parameters=parameters,
+            remappings=remappings),
             
 
             
