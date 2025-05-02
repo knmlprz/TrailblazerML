@@ -10,7 +10,7 @@ from ament_index_python.packages import get_package_share_directory
 
 
 class YoloDetectionNode(Node):
-    """ROS2 Node for object detection using YOLO and ArUco markers with pose estimation."""
+    """ROS2 Node for object detection using YOLO and ArUco markers with pose estimation"""
 
     def __init__(self):
         super().__init__("yolo_detection_node")
@@ -29,16 +29,14 @@ class YoloDetectionNode(Node):
         )
 
         # Publisher for combined detections
-        self.detection_image_pub = self.create_publisher(
-            Image, "/detections/image", 10
-        )
+        self.detection_image_pub = self.create_publisher(Image, "/detections/image", 10)
         self.get_logger().info("Publishing combined detections to /detections/image")
 
         # Load YOLO model
         model_path = os.path.join(
-            get_package_share_directory('trailblazer_detections'),
-            'models',
-            'urc2024.pt'
+            get_package_share_directory("trailblazer_detections"),
+            "models",
+            "urc2024.pt",
         )
         self.get_logger().info(f"Loading YOLO model from: {model_path}")
         try:
@@ -49,11 +47,12 @@ class YoloDetectionNode(Node):
             raise
 
         # Prepare ArUco detector
-        self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_50)
+        self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
         self.aruco_params = cv2.aruco.DetectorParameters()
 
-        # Pose estimation parameters (camera calibration will be filled from CameraInfo)
-        self.marker_length = 0.07 # 0.07 = 7 cm
+        # Pose estimation parameters
+        # Camera calibration will be filled from CameraInfo
+        self.marker_length = 0.025  # Specified ArUco tags are 2.5 cm across
         self.camera_matrix = None
         self.dist_coeffs = None
 
@@ -70,7 +69,7 @@ class YoloDetectionNode(Node):
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
             detection_image = cv_image.copy()
 
-            # === YOLO ===
+            # YOLO detection
             results = self.model(detection_image)[0]
             if results.boxes is not None and len(results.boxes) > 0:
                 yolo_detections = []
@@ -80,12 +79,23 @@ class YoloDetectionNode(Node):
                     cls = int(box.cls[0].item())
 
                     x1, y1, x2, y2 = map(int, xyxy)
-                    label = f"{self.model.names[cls]} {conf:.2f}" if hasattr(self.model, 'names') else f"{cls} {conf:.2f}"
+                    label = (
+                        f"{self.model.names[cls]} {conf:.2f}"
+                        if hasattr(self.model, "names")
+                        else f"{cls} {conf:.2f}"
+                    )
                     yolo_detections.append(label)
 
                     cv2.rectangle(detection_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                    cv2.putText(detection_image, label, (x1, max(y1 - 10, 0)),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    cv2.putText(
+                        detection_image,
+                        label,
+                        (x1, max(y1 - 10, 0)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (0, 255, 0),
+                        2,
+                    )
 
                 self.get_logger().info(
                     f"YOLO: Detected {len(yolo_detections)} object(s): {', '.join(yolo_detections)}"
@@ -93,13 +103,16 @@ class YoloDetectionNode(Node):
             else:
                 self.get_logger().info("YOLO: No objects detected.")
 
-            # === ArUco ===
+            # ArUco detection
             gray = cv2.cvtColor(detection_image, cv2.COLOR_BGR2GRAY)
             corners, ids, _ = cv2.aruco.detectMarkers(
-                gray, self.aruco_dict, parameters=self.aruco_params)
+                gray, self.aruco_dict, parameters=self.aruco_params
+            )
 
             if ids is not None:
-                self.get_logger().info(f"Detected {len(ids)} ArUco markers: {ids.flatten().tolist()}")
+                self.get_logger().info(
+                    f"Detected {len(ids)} ArUco markers: {ids.flatten().tolist()}"
+                )
                 for i, corner in enumerate(corners):
                     corner_points = corner[0]
                     x_min = int(np.min(corner_points[:, 0]))
@@ -107,23 +120,43 @@ class YoloDetectionNode(Node):
                     x_max = int(np.max(corner_points[:, 0]))
                     y_max = int(np.max(corner_points[:, 1]))
 
-                    cv2.rectangle(detection_image, (x_min, y_min), (x_max, y_max), (255, 0, 0), 2)
-                    cv2.putText(detection_image, f"Aruco {ids[i][0]}", (x_min, max(y_min - 10, 0)),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                    cv2.rectangle(
+                        detection_image, (x_min, y_min), (x_max, y_max), (255, 0, 0), 2
+                    )
+                    cv2.putText(
+                        detection_image,
+                        f"Aruco {ids[i][0]}",
+                        (x_min, max(y_min - 10, 0)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (255, 0, 0),
+                        2,
+                    )
 
-                # Pose estimation
+                # ArUco Pose estimation
                 if self.camera_info_received and self.marker_length:
                     rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
-                        corners, self.marker_length, self.camera_matrix, self.dist_coeffs
+                        corners,
+                        self.marker_length,
+                        self.camera_matrix,
+                        self.dist_coeffs,
                     )
                     for i in range(len(ids)):
-                        cv2.drawFrameAxes(detection_image, self.camera_matrix, self.dist_coeffs,
-                                          rvecs[i], tvecs[i], 0.03)
+                        cv2.drawFrameAxes(
+                            detection_image,
+                            self.camera_matrix,
+                            self.dist_coeffs,
+                            rvecs[i],
+                            tvecs[i],
+                            0.03,
+                        )
                         self.get_logger().info(
                             f"Aruco ID {ids[i][0]} pose: rvec={rvecs[i].flatten()}, tvec={tvecs[i].flatten()}"
                         )
                 else:
-                    self.get_logger().warn("Pose estimation skipped: camera info not yet received or marker length not set.")
+                    self.get_logger().warn(
+                        "Pose estimation skipped: camera info not yet received or marker length not set."
+                    )
             else:
                 self.get_logger().info("No ArUco markers detected.")
 
