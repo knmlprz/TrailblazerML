@@ -7,10 +7,12 @@
   <maintainer email="fillio00@wp.pl">walkowiczf</maintainer>
   <license>Apache-2.0</license>
 
+  <exec_depend>ros2launch</exec_depend>
   <exec_depend>python3-torch</exec_depend>
   <exec_depend>python3-ultralytics-pip</exec_depend>
   <exec_depend>python3-opencv</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-matplotlib</exec_depend>
   <exec_depend>python-opencv-contrib-pip</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
