@@ -51,13 +51,13 @@
   <joint name="chassis_joint" type="fixed">
       <parent link="base_link"/>
       <child link="chassis"/>
-      <origin xyz="0 0 0" rpy="1.5708 0 1.5708"/>
+      <origin xyz="0 0 0.365" rpy="1.5708 0 1.5708"/>
   </joint>
   <link
     name="chassis">
     <inertial>
       <origin
-        xyz="0.00322150223165306 -0.0317835441688463 0.0392262662545424"
+        xyz="0.00322150223165306 -0.0317835441688463 0.404226266"
         rpy="0 0 0" />
       <mass
         value="13.9113253461594" />

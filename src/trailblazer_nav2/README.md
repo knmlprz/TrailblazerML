@@ -293,3 +293,4 @@ source install/setup.bash
 - https://www.geoportal.gov.pl/pl/usluga/uslugi-przegladania-wms-i-wmts/
 - https://roboticsknowledgebase.com/wiki/tools/mapviz/
 - https://github.com/danielsnider/MapViz-Tile-Map-Google-Maps-Satellite
+- https://github.com/ros-navigation/navigation2_tutorials/issues/77
