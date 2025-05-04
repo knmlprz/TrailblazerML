@@ -27,10 +27,23 @@ def launch_setup(context, *args, **kwargs):
             "subscribe_odom_info": True,
             "approx_sync": True,
             "Rtabmap/DetectionRate": "3.5",
+            'wait_imu_to_init': True,
+            'use_action_for_goal':True,
+            'Reg/Force3DoF':'true',
+            'Grid/RayTracing':'true', # Fill empty space
+            'Grid/3D':'false', # Use 2D occupancy
+            'Grid/RangeMax':'3',
+            'Grid/NormalsSegmentation':'false', # Use passthrough filter to detect obstacles
+            'Grid/MaxGroundHeight':'0.05', # All points above 5 cm are obstacles
+            'Grid/MaxObstacleHeight':'0.4',  # All points over 1 meter are ignored
+            'Optimizer/GravitySigma':'0', # Disable imu constraints (we are already in 2D)
+            
+            'Odom/ResetCountdown': '10',
         }
     ]
 
     remappings = [
+        ('imu', '/imu/data'),
         ("rgb/image", name + "/rgb/image_rect"),
         ("rgb/camera_info", name + "/rgb/camera_info"),
         ("depth/image", name + "/stereo/image_raw"),
@@ -54,6 +67,19 @@ def launch_setup(context, *args, **kwargs):
                     remappings=remappings,
                 ),
             ],
+        ),
+        Node(
+            package='imu_filter_madgwick',
+            executable='imu_filter_madgwick_node',
+            output='screen',
+            parameters=[{
+                'use_mag': False,
+                'world_frame': 'enu',
+                'publish_tf': False
+            }],
+            remappings=[
+                ('imu/data_raw', '/' + name + '/imu/data'),  # Subskrybuje /oak/imu/data
+            ]
         ),
         LoadComposableNodes(
             target_container=name + "_container",
