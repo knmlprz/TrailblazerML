@@ -67,7 +67,7 @@ def generate_launch_description():
                     'manualExposure': 'false',
                     'mode': 'depth',
                     'monoResolution': '400p',
-                    'mxId': 'x',
+                    'mxId': '1944301041FCD22600',
                     'nnName': 'x',
                     'poeMode': 'false',
                     'previewHeight': '416',
@@ -121,4 +121,12 @@ def generate_launch_description():
             package='rtabmap_viz', executable='rtabmap_viz', output='screen',
             parameters=parameters,
             remappings=remappings),
+
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_transform_publisher',
+            output='screen',
+            arguments=['0', '0', '0', '0', '0', '0', 'oak-d-base-frame', 'oak_imu_frame']
+        ),
     ])

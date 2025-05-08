@@ -100,16 +100,23 @@ def launch_setup(context, *args, **kwargs):
             parameters=parameters,
             remappings=remappings,
         ),
+        Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'oak', 'oak_imu_frame']
+        ),
     ]
 
 
 def generate_launch_description():
-    depthai_prefix = get_package_share_directory("depthai_ros_driver")
+    depthai_prefix = get_package_share_directory("trailblazer_rtabmap")
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
         DeclareLaunchArgument(
             "params_file",
-            default_value=os.path.join(depthai_prefix, "config", "rgbd.yaml"),
+            default_value=os.path.join(depthai_prefix, "config", "rtabmap_default_set.yaml"),
         ),
     ]
 

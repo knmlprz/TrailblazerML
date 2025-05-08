@@ -48,6 +48,8 @@
     imu.i_message_type: IMU
     imu.i_sync_method: LINEAR_INTERPOLATE_ACCEL
     imu.i_update_ros_base_time_on_ros_msg: false
+    imu.i_rot_cov: -1.0
+    imu.i_mag_cov: 0.0
     left.i_add_exposure_offset: false
     left.i_board_socket_id: 1
     left.i_calibration_file: ''
@@ -70,7 +72,7 @@
     left.i_max_q_size: 30
     left.i_publish_compressed: false
     left.i_publish_topic: false
-    left.i_resolution: 480P
+    left.i_resolution: 400P # default 480P
     left.i_reverse_stereo_socket_order: false
     left.i_sensor_img_orientation: AUTO
     left.i_set_isp3a_fps: false
@@ -208,7 +210,7 @@
     right.i_max_q_size: 30
     right.i_publish_compressed: false
     right.i_publish_topic: false
-    right.i_resolution: 480P
+    right.i_resolution: 400P # default 480P
     right.i_reverse_stereo_socket_order: false
     right.i_sensor_img_orientation: AUTO
     right.i_set_isp3a_fps: false

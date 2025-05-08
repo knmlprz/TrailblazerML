@@ -7,7 +7,7 @@
   <maintainer email="fillio00@wp.pl">walkowiczf</maintainer>
   <license>Apache-2.0</license>
 
-  <depend>depthai-ros</depend>
+  <!-- <depend>depthai-ros</depend> -->
   <!-- <depend>rtabmap-ros</depend> -->
 
   <test_depend>ament_copyright</test_depend>
