@@ -1,0 +1,7 @@
+/oak:
+  ros__parameters:
+    camera:
+      i_nn_type: none
+      i_usb_speed: SUPER
+    stereo:
+      i_subpixel: true
