@@ -73,7 +73,7 @@ def generate_launch_description():
                     'previewHeight': '416',
                     'previewWidth': '416',
                     'rectify': 'true',
-                    'resourceBaseFolder': '/opt/ros/humble/share/depthai_examples/resources',
+                    'resourceBaseFolder': 'x',
                     'rgbResolution': '1080p',
                     'rgbScaleDinominator': '3',
                     'rgbScaleNumerator': '2',
