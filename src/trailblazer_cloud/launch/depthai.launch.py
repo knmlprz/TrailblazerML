@@ -34,17 +34,19 @@ def generate_launch_description():
         'Grid/NormalsSegmentation': 'false',  # Use passthrough filter to detect obstacles
         'Grid/MaxGroundHeight': '0.05',  # All points above 5 cm are obstacles
         'Grid/MaxObstacleHeight': '0.4',  # All points over 1 meter are ignored
-        'Optimizer/GravitySigma': '0',  # Disable imu constraints (we are already in 2D)
+        #'Optimizer/GravitySigma': '0',  # Disable imu constraints (we are already in 2D)
         'Odom/ResetCountdown': '1', #def 0
         'Rtabmap/StartNewMapOnLoopClosure': 'true', #def false (set to true for navigating)
         'Odom/Strategy': '1', #def 0
         'Vis/CorType': '1', #def 0
         'OdomF2M/MaxSize': '1000', #def 2000
-        'Vis/MaxFeatures': '600', #def 1000
+        'Vis/MaxFeatures': '1000', #def 1000
         'GFTT/MinDistance': '10', #def 7
         'Grid/NoiseFilteringMinNeighbors': '2', #def 5
         'Grid/NoiseFilteringRadius': '0.05', #def 0
         'Grid/MinClusterSize': '20', #def 10
+        #'Mem/IncrementalMemory':'False',
+        #'Mem/InitWMWithAllNodes':'True',
 
     }]
 
@@ -88,7 +90,7 @@ def generate_launch_description():
                     'rgbScaleDinominator': '3',
                     'rgbScaleNumerator': '2',
                     'sensIso': '800',
-                    'stereo_fps': '60', #def 30
+                    'stereo_fps': '30', #def 30
                     'subpixel': 'true',
                     'syncNN': 'true',
                     'tf_prefix': 'oak',
