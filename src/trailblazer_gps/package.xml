@@ -7,6 +7,11 @@
   <maintainer email="fillio00@wp.pl">walkowiczf</maintainer>
   <license>Apache-2.0</license>
 
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>python3-pynmea2</depend>
+  <depend>python3-pyserial</depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
