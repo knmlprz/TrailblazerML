@@ -21,12 +21,11 @@ TODO:
     - [⚙️ Dostosowanie ustawień local_costmap](#️-dostosowanie-ustawień-local_costmap)
     - [⚙️ Dostosowanie ustawień global_costmap](#️-dostosowanie-ustawień-global_costmap)
     - [⚙️ Dostosowanie ustawień map_server](#️-dostosowanie-ustawień-map_server)
-    - [⚙️ Dostosowanie ustawień planner_server](#️-dostosowanie-ustawień-planner_server)
-    - [⚙️ Dostosowanie ustawień smoother_server](#️-dostosowanie-ustawień-smoother_server)
     - [⚙️ Dostosowanie ustawień behavior_server](#️-dostosowanie-ustawień-behavior_server)
-    - [⚙️ Dostosowanie ustawień waypoint_follower](#️-dostosowanie-ustawień-waypoint_follower)
-    - [⚙️ Dostosowanie ustawień velocity_smoother](#️-dostosowanie-ustawień-velocity_smoother)
 - [👣 Co to base footprint?](#-co-to-base-footprint?)
+- [📍 Mapviz - wizualizacja map](#-mapviz---wizualizacja-map)
+  - [🌍 MapViz i Google Maps](#-mapviz-i-google-maps)
+  - [🎯 GPS Waypoint Follower](#-gps-waypoint-follower)
 - [🛠️ Jak używać](#️-jak-używać)
 - [🔗 Linki](#-linki)
 
@@ -128,11 +127,19 @@ navsat_transform:
 ## 🚗 Autonomiczna jazda
 Celem autonomicznej jazdy jest umożliwienie robotowi Trailblazer samodzielnego przemieszczania się po zaplanowanej trasie, bazując na punktach GPS lub na wyznaczonej ścieżce na mapie.
 
+<div align="center">
+  <img src="images/image-3.png" width="800" height="700">
+</div>
+
 ### ⚙️ Dostosowanie ustawień AMCL
 AMCL to algorytm lokalizacji robota na mapie.
 ```yaml
 amcl:
   ros__parameters:
+    base_frame_id: "base_link"
+    global_frame_id: "map"
+    odom_frame_id: "odom"
+    scan_topic: scan
 ```
 
 ### ⚙️ Dostosowanie ustawień bt_navigator
@@ -144,6 +151,10 @@ Dzięki temu robot wie np.:
 ```yaml
 bt_navigator:
   ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
 ```
 
 ### ⚙️ Dostosowanie ustawień controller_server
@@ -151,54 +162,61 @@ Controller Server odpowiada za sterowanie robotem w czasie rzeczywistym po zapla
 ```yaml
 controller_server:
   ros__parameters:
+    min_x_velocity_threshold: 0.2       # Minimalna dopuszczalna prędkość w osi X
+    min_y_velocity_threshold: 0.2       # Minimalna dopuszczalna prędkość w osi Y
+    min_theta_velocity_threshold: 0.2   # Minimalna dopuszczalna prędkość w osi obrotu
+  progress_checker:
+    required_movement_radius: 0.8       # Minimalne przesunięcie robota (w metrach) w określonym czasie
+  general_goal_checker:
+    xy_goal_tolerance: 0.6              # Tolerancja w XY (metry) kiedy uznajemy, że osiągnęliśmy cel
+    yaw_goal_tolerance: 1.57            # Tolerancja kąta obrotu (radiany)
+  FollowPath:
+    min_vel_x: 0.0                      # Minimalna dopuszczalna prędkość robota w osi X
+    max_vel_x: 0.7                      # Maksymalna prędkość jazdy robota w osi X m/s.
+    max_vel_theta: 0.5                  # Maksymalne prędkość obrotu robota
+    min_speed_xy: 0.1                   # Minimalna prędkość wypadkowa w płaszczyźnie XY
+    max_speed_xy: 1.0                   # Maksymalna prędkość wypadkowa w płaszczyźnie XY
+    min_speed_theta: 0.2                #	Minimalna prędkość obrotowa
+    linear_granularity: 0.1             # Precyzja "kroków" w przestrzeni, im mniejsza wartość, tym dokładniejsze sterowanie
+    angular_granularity: 0.1            # Precyzja "kroków" w przestrzeni obrotowej
+    transform_tolerance: 0.2            # Tolerancja czasowa przy odczycie transformacji
+    xy_goal_tolerance: 0.6              # Tolerancja osiągnięcia celu w XY (metry)
 ```
 
 ### ⚙️ Dostosowanie ustawień local_costmap
+Local Costmap to lokalna mapa wokół robota, która jest dynamicznie aktualizowana podczas ruchu i służy do unikania przeszkód oraz krótkoterminowego planowania trajektorii.
 ```yaml
 local_costmap:
   ros__parameters:
+    width: 4                      # szerokość lokalnej mapy w metrach (Robot "widzi" przeszkody na 2 metry w każdą stronę)
+    height: 4                     # wysokość lokalnej mapy w metrach (Robot "widzi" przeszkody na 2 metry w każdą stronę)
+    inflation_layer:
+      cost_scaling_factor:  2.58  # współczynnik spadku kosztu wokół przeszkód
+      inflation_radius: 1.75      # promień inflacji wokół przeszkody w metrach
 ```
 
 ### ⚙️ Dostosowanie ustawień global_costmap
+Global Costmap tworzy dużą mapę świata (lub jego znanej części), którą robot wykorzystuje do wyznaczania długoterminowych ścieżek.
 ```yaml
 global_costmap:
   ros__parameters:
+    inflation_layer:
+      cost_scaling_factor: 2.58 # współczynnik spadku kosztu wokół przeszkód
+      inflation_radius: 1.75    # promień inflacji wokół przeszkody w metrach
 ```
 
 ### ⚙️ Dostosowanie ustawień map_server
 ```yaml
 map_server:
   ros__parameters:
-```
-
-### ⚙️ Dostosowanie ustawień planner_server
-```yaml
-planner_server:
-  ros__parameters:
-```
-
-### ⚙️ Dostosowanie ustawień smoother_server
-```yaml
-smoother_server:
-  ros__parameters:
+    # TODO
 ```
 
 ### ⚙️ Dostosowanie ustawień behavior_server
 ```yaml
 behavior_server:
   ros__parameters:
-```
-
-### ⚙️ Dostosowanie ustawień waypoint_follower
-```yaml
-waypoint_follower:
-  ros__parameters:
-```
-
-### ⚙️ Dostosowanie ustawień velocity_smoother
-```yaml
-velocity_smoother:
-  ros__parameters:
+    # TODO
 ```
 
 ## 👣 Co to base footprint?
@@ -223,6 +241,30 @@ global_costmap:
 > [!NOTE]
 > Jeśli w konfiguracji podamy oba parametry (`footprint` i `robot_radius`) Nav2 skorzysta z dokładniejszego kształtu wielokąta (footprint).
 
+## 📍 Mapviz - wizualizacja map
+Mapviz to narzędzie wizualizacyjne stworzone z myślą o wyświetlaniu danych 2D na dużą skalę — takich jak mapy, trajektorie, pozycje GPS, sensory lokalizacji i wszelkie dane związane z ruchem w przestrzeni płaskiej.
+W przeciwieństwie do RViz, które obsługuje pełne 3D i dużą liczbę czujników, Mapviz skupia się wyłącznie na płaskiej powierzchni.
+
+### 🌍 MapViz i Google Maps
+MapViz posiada wtyczkę Tile_Map, która umożliwia wyświetlanie map kafelkowych (np. satelitarnych lub drogowych). Żeby w MapViz korzystać z danych z Google Maps (szczególnie tryb satelitarny), potrzebne jest pośrednictwo serwera kafelków, ponieważ Google Maps nie oferuje bezpośredniego dostępu do swoich warstw przez standardowy WMTS.
+
+Rozwiązaniem jest MapProxy — serwer kafelków, który w tym przypadku działa jako pośrednik między Google Maps a MapViz. W naszym przypadku wystarczy że odpalimy poniższą komendę i uruchomimy kontener docker'a:
+
+```bash
+sudo docker run -p 8080:8080 -d -t -v ~/mapproxy:/mapproxy danielsnider/mapproxy
+```
+
+Następnie w samym MapViz wystarczy że w wtyczce `Tile_Map` z dostępnych opcji wybierzemy `Custom WMTS Sourcze` i dodamy poniższy URL:
+
+```
+http://localhost:8080/wmts/gm_layer/gm_grid/{level}/{x}/{y}.png
+```
+
+### 🎯 GPS Waypoint Follower
+Interactive GPS Waypoint Follower to rozszerzenie funkcjonalności nawigacji robota na podstawie waypointów (punktów GPS) ustawianych interaktywnie na mapie w Mapviz. Nav2 dostarcza nam dwie opcje wyznaczania waypointów:
+- Interactive GPS Waypoint Follower - ręczne dodawanie punktu klikając w interfejsie MapViz
+- Logged GPS Waypoint Follower - punkty są zczytywane zpliku `yaml`
+
 
 ## 🛠️ Jak używać
 ### ✅ Zbudowanie paczki
@@ -246,3 +288,9 @@ source install/setup.bash
 - https://github.com/ros-navigation/navigation2_tutorials/tree/rolling/nav2_gps_waypoint_follower_demo
 - https://docs.nav2.org/tutorials/docs/navigation2_dynamic_point_following.html
 - https://docs.nav2.org/setup_guides/footprint/setup_footprint.html
+- https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/#local_costmap
+- https://docs.nav2.org/configuration/packages/configuring-costmaps.html#plugin-parameters
+- https://www.geoportal.gov.pl/pl/usluga/uslugi-przegladania-wms-i-wmts/
+- https://roboticsknowledgebase.com/wiki/tools/mapviz/
+- https://github.com/danielsnider/MapViz-Tile-Map-Google-Maps-Satellite
+- https://github.com/ros-navigation/navigation2_tutorials/issues/77
