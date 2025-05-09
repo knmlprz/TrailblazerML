@@ -4,6 +4,7 @@ Paczka ROS 2 do obsługi rzeczywistego modułu GPS (np. RTK lub zwykłego) podł
 ## 📚 Spis treści
 
 - [📁 Struktura katalogów](#-struktura-katalogów)
+- [⚙️ Używany sprzęt](#️-używany-sprzęt)
 - [📄 Opis działania](#-opis-działania)
 - [🛠️ Jak używać](#️-jak-używać)
     - [✅ Zbudowanie paczki](#-zbudowanie-paczki)
