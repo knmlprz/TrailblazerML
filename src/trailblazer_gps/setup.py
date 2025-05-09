@@ -20,6 +20,7 @@ setup(
     entry_points={
         'console_scripts': [
             "rtk_gps = trailblazer_gps.rtk_gps:main",
+            "basic_gps = trailblazer_gps.basic_gps:main",
         ],
     },
 )
