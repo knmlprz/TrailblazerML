@@ -26,8 +26,8 @@ Paczka ROS 2 do obsługi rzeczywistego modułu GPS (np. RTK lub zwykłego) podł
 
 
 <div align="center">
-    <img src="images/image-1.png" width="300" height="300" style="padding-right:50px">
-    <img src="images/image-2.png" width="300" height="300">
+    <img src="images/image-1.png" width="400" height="300" style="padding-right:50px">
+    <img src="images/image-2.png" width="400" height="300">
 </div>
 
 ## 📄 Opis działania
@@ -36,7 +36,9 @@ Paczka trailblazer_gps odczytuje dane z rzeczywistego modułu GPS przez port sze
 ## 🛠️ Jak używać
 ### ✅ Zbudowanie paczki
 ```bash
-
+cd ~/TrailblazerML
+colcon build --packages-select trailblazer_gps
+source install/setup.bash
 ```
 ### 🚀 Uruchomienie gps samodzielnie
 ```bash
