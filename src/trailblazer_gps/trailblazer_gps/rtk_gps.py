@@ -9,8 +9,9 @@ class GPSPublisher(Node):
     def __init__(self):
         super().__init__('gps_publisher')
         self.publisher = self.create_publisher(NavSatFix, '/gps/fix', 10)
+        self.port = self.declare_parameter("port", "/dev/ttyUSB1").get_parameter_value().string_value
         self.ser = serial.Serial(
-            port="/dev/ttyUSB1",
+            port=self.port,
             baudrate=115200,
             timeout=1.0,
             parity=serial.PARITY_NONE,
