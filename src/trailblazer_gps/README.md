@@ -24,7 +24,9 @@ Paczka ROS 2 do obsługi rzeczywistego modułu GPS (np. RTK lub zwykłego) podł
     └── trailblazer_nav2    # Moduł paczki
 
 ## ⚙️ Używany sprzęt
-
+Podczas pracy z GPS używamy:
+- LC29H GPS/RTK
+- nie wiem 
 
 <div align="center">
     <img src="images/image-1.png" width="400" height="300" style="padding-right:50px">
