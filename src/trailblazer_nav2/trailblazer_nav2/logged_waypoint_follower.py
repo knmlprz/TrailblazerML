@@ -49,7 +49,7 @@ class GpsWpCommander(Node):
         """
         Function to start the waypoint following
         """
-        self.navigator.waitUntilNav2Active(localizer='controller_server')
+        # self.navigator.waitUntilNav2Active(localizer='controller_server')
         wps = self.wp_parser.get_wps()
 
         wpl = []
