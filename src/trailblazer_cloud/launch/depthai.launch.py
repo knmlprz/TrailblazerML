@@ -45,8 +45,10 @@ def generate_launch_description():
         'Grid/NoiseFilteringMinNeighbors': '2', #def 5
         'Grid/NoiseFilteringRadius': '0.05', #def 0
         'Grid/MinClusterSize': '20', #def 10
-        #'Mem/IncrementalMemory':'False',
+        'Mem/IncrementalMemory':'False',
         #'Mem/InitWMWithAllNodes':'True',
+        #'RGBD/StartAtOrigin': 'true', #def false
+        'Odom/FilteringStrategy': '0', #def 0 (1=kalman)
 
     }]
 
@@ -79,7 +81,7 @@ def generate_launch_description():
                     'manualExposure': 'false',
                     'mode': 'depth',
                     'monoResolution': '400p',
-                    'mxId': '1944301041FCD22600',
+                    'mxId': 'x',
                     'nnName': 'x',
                     'poeMode': 'false',
                     'previewHeight': '416',
