@@ -9,19 +9,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     rviz_config_path = os.path.join(
-        get_package_share_directory('trailblazer_rviz'), 'config', 'slam.rviz'
-    )
-    lc_mgr_config_path = os.path.join(
-        get_package_share_directory('ldlidar_node'),
-        'params',
-        'lifecycle_mgr.yaml'
-    )
-    laser_to_link_transform = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'laser_frame', 'ldlidar_base']
+        get_package_share_directory('trailblazer_rviz'), 'config', 'controller.rviz'
     )
 
     rsp = IncludeLaunchDescription(
@@ -42,35 +30,38 @@ def generate_launch_description():
         )
     )
 
-    # Lifecycle manager node
-    lc_mgr_node = Node(
-        package='nav2_lifecycle_manager',
-        executable='lifecycle_manager',
-        name='lifecycle_manager',
-        output='screen',
-        parameters=[
-            # YAML files
-            lc_mgr_config_path  # Parameters
-        ]
-    )
-
-    # Include LDLidar launch
-    ldlidar_launch = IncludeLaunchDescription(
-        launch_description_source=PythonLaunchDescriptionSource([
-            get_package_share_directory('ldlidar_node'),
-            '/launch/ldlidar_bringup.launch.py'
-        ]),
-        launch_arguments={
-            'node_name': 'ldlidar_node'
-        }.items()
-    )
-
-    
-    slam_launch = IncludeLaunchDescription(
+    # GPS
+    gps_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_slam'), 'launch', 'slam.launch.py')
-        )
+            os.path.join(get_package_share_directory('trailblazer_gps'), 'launch', 'gps.launch.py')
+        ), 
+        launch_arguments={'port': '/dev/ttyUSB0', 'gps_type': 'rtk_gps'}.items()
     )
+
+    # EKF
+    gps_wpf_dir = get_package_share_directory(
+        "trailblazer_nav2")
+    rl_params_file = os.path.join(
+        gps_wpf_dir, "config", "dual_ekf_navsat_params.yaml")
+    # ekf_launch = Node(
+    #     package="robot_localization",
+    #     executable="navsat_transform_node",
+    #     name="navsat_transform",
+    #     output="screen",
+    #     parameters=[rl_params_file, {"use_sim_time": False}],
+    #     remappings=[
+    #         ("imu/data", "imu/data"),
+    #         ("gps/fix", "gps/fix"),
+    #         ("gps/filtered", "gps/filtered"),
+    #         ("odometry/gps", "odometry/gps"),
+    #         ("odometry/filtered", "odometry/global"),
+    #     ],
+    # )
+    ekf_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'dual_ekf_navsat.launch.py')
+            )
+        )
 
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -82,10 +73,8 @@ def generate_launch_description():
     return LaunchDescription([
         rsp,
         controller_launch,
-        # oak_camera_launch,
-        laser_to_link_transform,
-        lc_mgr_node,
-        ldlidar_launch,
-        slam_launch,
-        rviz_launch,
+        oak_camera_launch,
+        gps_launch,
+        ekf_launch,
+        rviz_launch
     ])

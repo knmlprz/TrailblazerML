@@ -30,19 +30,6 @@ def generate_launch_description():
         )
     )
 
-    pkg_nav2 = get_package_share_directory('trailblazer_nav2')
-    ekf_config_path = PathJoinSubstitution([
-        pkg_nav2, 'config', 'ekf.yaml'
-    ])
-
-    ekf_node = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[ekf_config_path],
-    )
-
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('trailblazer_rviz'), 'launch', 'rviz.launch.py')
@@ -54,6 +41,5 @@ def generate_launch_description():
         rsp,
         controller_launch,
         oak_camera_launch,
-        ekf_node,
         rviz_launch
     ])
