@@ -38,7 +38,7 @@ def generate_launch_description():
 
     oak_camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_oak'), 'launch', 'depthai.launch.py')
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'depthai.launch.py')
         )
     )
 

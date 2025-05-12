@@ -26,10 +26,30 @@ def generate_launch_description():
 
     oak_camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_oak'), 'launch', 'depthai.launch.py')
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'depthai.launch.py')
         )
     )
-
+    rtab_camera_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('depthai_ros_driver'), 'launch', 'rtabmap.launch.py')
+        )
+    )
+    inertial_camera_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'stereo_inertial_node.launch.py')
+        )
+    )
+    pkg_nav2 = get_package_share_directory('trailblazer_nav2')
+    nav2_config_path = PathJoinSubstitution([
+        pkg_nav2, 'config', 'nav2_params.yaml'
+    ])
+    nav2_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('trailblazer_nav2'), 'launch', 'navigation_launch.py')
+        ),
+        launch_arguments={'use_sim_time': 'false', 'params_file': nav2_config_path}.items()
+    )
+    
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('trailblazer_rviz'), 'launch', 'rviz.launch.py')
@@ -41,5 +61,8 @@ def generate_launch_description():
         rsp,
         controller_launch,
         oak_camera_launch,
-        rviz_launch
+        #nav2_launch,
+        #rtab_camera_launch,
+        #inertial_camera_launch,
+        #rviz_launch
     ])
