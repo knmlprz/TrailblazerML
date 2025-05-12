@@ -22,24 +22,24 @@ def generate_launch_description():
                                 'rviz', 'stereoInertial.rviz')
     default_resources_path = os.path.join(trailblazer_cloud_path,
                                 'resources')
-
-    mxId         = LaunchConfiguration('mxId',      default = 'x')
+    name = LaunchConfiguration('name',      default = 'oak')
+    mxId         = LaunchConfiguration('mxId',      default = '18443010814D3AF500')
     usb2Mode     = LaunchConfiguration('usb2Mode',  default = False)
     poeMode      = LaunchConfiguration('poeMode',   default = False)
 
-    camera_model = LaunchConfiguration('camera_model',  default = 'OAK-D-LITE')
+    camera_model = LaunchConfiguration('camera_model',  default = 'OAK-D-PRO-W')
     tf_prefix    = LaunchConfiguration('tf_prefix',     default = 'oak')
     mode         = LaunchConfiguration('mode', default = 'depth')
     base_frame   = LaunchConfiguration('base_frame',    default = 'oak-d_frame')
-    parent_frame = LaunchConfiguration('parent_frame',  default = 'chassis')
+    parent_frame = LaunchConfiguration('parent_frame',  default = 'base_link')
     imuMode      = LaunchConfiguration('imuMode', default = '1')
 
     cam_pos_x    = LaunchConfiguration('cam_pos_x',     default = '-0.0475')
     cam_pos_y    = LaunchConfiguration('cam_pos_y',     default = '0.13')
     cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '0.4465')
-    cam_roll     = LaunchConfiguration('cam_roll',      default = '0.0')
-    cam_pitch    = LaunchConfiguration('cam_pitch',     default = '-1.5708')
-    cam_yaw      = LaunchConfiguration('cam_yaw',       default = '-1.5708')
+    cam_roll     = LaunchConfiguration('cam_roll',      default = '0.0 ')  #1.5708 for 'Reg/Force3DoF': 'false', #0.0 for 'Reg/Force3DoF': 'true', #-1.5708 for robot aligned
+    cam_pitch    = LaunchConfiguration('cam_pitch',     default = '0.0 ')  #-1.5708 for 'Reg/Force3DoF': 'false', #0.0 for 'Reg/Force3DoF': 'true', #-1.5708 for robot aligned
+    cam_yaw      = LaunchConfiguration('cam_yaw',       default = '0.0 ') #-1.5708 for 'Reg/Force3DoF': 'false', #3.1416 for 'Reg/Force3DoF': 'true', #0.0 for robot aligned
 
     lrcheck        = LaunchConfiguration('lrcheck', default = True)
     extended       = LaunchConfiguration('extended', default = False)
@@ -80,6 +80,11 @@ def generate_launch_description():
     enableRviz         = LaunchConfiguration('enableRviz', default = True)
 
 
+    declare_name_cmd = DeclareLaunchArgument(
+        'name',
+        default_value=name,  # Domyślna wartość, np. "oak"
+        description='Prefix for topic names'
+    )
     declare_mxId_cmd = DeclareLaunchArgument(
         'mxId',
         default_value=mxId,
@@ -327,7 +332,8 @@ def generate_launch_description():
     stereo_node = launch_ros.actions.Node(
             package='trailblazer_cloud', executable='stereo_inertial_node',
             output='screen',
-            parameters=[{'mxId':                    mxId},
+            parameters=[{'name':            name},
+                        {'mxId':                    mxId},
                         {'usb2Mode':                usb2Mode},
                         {'poeMode':                 poeMode},
                         {'resourceBaseFolder':      resourceBaseFolder},
@@ -449,7 +455,7 @@ def generate_launch_description():
             condition=IfCondition(enableRviz))
 
     
-
+    ld.add_action(declare_name_cmd)
     ld.add_action(declare_mxId_cmd)
     ld.add_action(declare_usb2Mode_cmd)
     ld.add_action(declare_poeMode_cmd)

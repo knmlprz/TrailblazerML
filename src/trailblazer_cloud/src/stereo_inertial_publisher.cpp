@@ -300,6 +300,8 @@ int main(int argc, char** argv) {
     bool enableRosBaseTimeUpdate;
     std::string nnName(BLOB_NAME);  // Set your blob name for the model here
 
+    std::string name;
+    node->declare_parameter("name", "oak"); // Domyślna wartość, np. "oak" //dodalem prefix by laczyc wiele kamer
     node->declare_parameter("mxId", "");
     node->declare_parameter("usb2Mode", false);
     node->declare_parameter("poeMode", false);
@@ -343,7 +345,7 @@ int main(int argc, char** argv) {
     node->declare_parameter("enableRosBaseTimeUpdate", false);
 
     // updating parameters if defined in launch file.
-
+    node->get_parameter("name", name); //dodalem prefix by laczyc wiele kamer
     node->get_parameter("mxId", mxId);
     node->get_parameter("usb2Mode", usb2Mode);
     node->get_parameter("poeMode", poeMode);
@@ -512,7 +514,7 @@ int main(int argc, char** argv) {
     dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
         imuQueue,
         node,
-        std::string("imu"),
+        name + "/imu",
         std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
         30,
         "",
@@ -555,7 +557,7 @@ int main(int argc, char** argv) {
             dai::rosBridge::BridgePublisher<sensor_msgs::msg::Image, dai::ImgFrame> rgbPublish(
                 imgQueue,
                 node,
-                std::string("color/image"),
+                std::string("color/image"),//name + "/color/image", //
                 std::bind(&dai::rosBridge::ImageConverter::toRosMsg, &rgbConverter, std::placeholders::_1, std::placeholders::_2),
                 30,
                 rgbCameraInfo,
@@ -639,7 +641,7 @@ int main(int argc, char** argv) {
             dai::rosBridge::BridgePublisher<sensor_msgs::msg::Image, dai::ImgFrame> rgbPublish(
                 imgQueue,
                 node,
-                std::string("color/image"),
+                name + "/color/image", //std::string("color/image"),
                 std::bind(&dai::rosBridge::ImageConverter::toRosMsg, &rgbConverter, std::placeholders::_1, std::placeholders::_2),
                 30,
                 rgbCameraInfo,
