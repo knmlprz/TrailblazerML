@@ -10,15 +10,15 @@
   <xacro:if value="$(arg use_ros2_control)">
     <xacro:include filename="ros2_control.xacro" />
     <!-- ******************************* OAK-D START ******************************* -->
-    <xacro:arg name="camera_name" default="oak" />
+    <!-- <xacro:arg name="camera_name" default="oak" />
     <xacro:arg name="camera_model" default="OAK-D-PRO-W" />
     <xacro:arg name="base_frame" default="oak-d_frame" />
     <xacro:arg name="parent_frame" default="oak-d-base-frame" />
     <xacro:arg name="cam_pos_x" default="-0.0475" />
     <xacro:arg name="cam_pos_y" default="0.13" />
     <xacro:arg name="cam_pos_z" default="0.4465" />
-    <xacro:arg name="cam_roll" default="-1.5708" />
-    <xacro:arg name="cam_pitch" default="0.0" />
+    <xacro:arg name="cam_roll" default="0.0" />
+    <xacro:arg name="cam_pitch" default="-1.5708" />
     <xacro:arg name="cam_yaw" default="-1.5708" />
     <xacro:arg name="rs_compat" default="false" />
 
@@ -30,12 +30,12 @@
       cam_pos_x="$(arg cam_pos_x)" cam_pos_y="$(arg cam_pos_y)" cam_pos_z="$(arg cam_pos_z)"
       cam_roll="$(arg cam_roll)" cam_pitch="$(arg cam_pitch)" cam_yaw="$(arg cam_yaw)"
       rs_compat="$(arg rs_compat)" />
-
-    <joint name="oakd_joint" type="fixed">
+      <joint name="oakd_joint" type="fixed">
         <parent link="chassis"/>
         <child link="oak-d-base-frame"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-    </joint>
+      </joint>
+      -->
 
     <!-- ******************************* OAK-D END ******************************* -->
   </xacro:if>

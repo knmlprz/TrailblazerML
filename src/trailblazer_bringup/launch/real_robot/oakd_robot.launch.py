@@ -26,7 +26,17 @@ def generate_launch_description():
 
     oak_camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_oak'), 'launch', 'depthai.launch.py')
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'depthai.launch.py')
+        )
+    )
+    rtab_camera_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('depthai_ros_driver'), 'launch', 'rtabmap.launch.py')
+        )
+    )
+    inertial_camera_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'stereo_inertial_node.launch.py')
         )
     )
 
@@ -39,7 +49,9 @@ def generate_launch_description():
 
     return LaunchDescription([
         rsp,
-        controller_launch,
+        #controller_launch,
         oak_camera_launch,
-        rviz_launch
+        #rtab_camera_launch,
+        #inertial_camera_launch,
+        #rviz_launch
     ])

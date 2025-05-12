@@ -4,10 +4,11 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription, launch_description_sources
 from launch.actions import IncludeLaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition, LaunchConfigurationEquals, LaunchConfigurationNotEquals
+from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.conditions import IfCondition, UnlessCondition, LaunchConfigurationEquals, LaunchConfigurationNotEquals
 import launch_ros.actions
 import launch_ros.descriptions
+from launch.actions import LogInfo
 
 
 def generate_launch_description():
@@ -26,19 +27,19 @@ def generate_launch_description():
     usb2Mode     = LaunchConfiguration('usb2Mode',  default = False)
     poeMode      = LaunchConfiguration('poeMode',   default = False)
 
-    camera_model = LaunchConfiguration('camera_model',  default = 'OAK-D')
+    camera_model = LaunchConfiguration('camera_model',  default = 'OAK-D-LITE')
     tf_prefix    = LaunchConfiguration('tf_prefix',     default = 'oak')
     mode         = LaunchConfiguration('mode', default = 'depth')
     base_frame   = LaunchConfiguration('base_frame',    default = 'oak-d_frame')
-    parent_frame = LaunchConfiguration('parent_frame',  default = 'oak-d-base-frame')
+    parent_frame = LaunchConfiguration('parent_frame',  default = 'chassis')
     imuMode      = LaunchConfiguration('imuMode', default = '1')
 
-    cam_pos_x    = LaunchConfiguration('cam_pos_x',     default = '0.0')
-    cam_pos_y    = LaunchConfiguration('cam_pos_y',     default = '0.0')
-    cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '0.0')
+    cam_pos_x    = LaunchConfiguration('cam_pos_x',     default = '-0.0475')
+    cam_pos_y    = LaunchConfiguration('cam_pos_y',     default = '0.13')
+    cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '0.4465')
     cam_roll     = LaunchConfiguration('cam_roll',      default = '0.0')
-    cam_pitch    = LaunchConfiguration('cam_pitch',     default = '0.0')
-    cam_yaw      = LaunchConfiguration('cam_yaw',       default = '0.0')
+    cam_pitch    = LaunchConfiguration('cam_pitch',     default = '-1.5708')
+    cam_yaw      = LaunchConfiguration('cam_yaw',       default = '-1.5708')
 
     lrcheck        = LaunchConfiguration('lrcheck', default = True)
     extended       = LaunchConfiguration('extended', default = False)
@@ -378,62 +379,76 @@ def generate_launch_description():
                                             ('image', 'stereo/converted_depth')]
                                 )
     pointcloud_topic = '/stereo/points'
-    point_cloud_creator = None
-    rviz_node = None
-    if LaunchConfigurationEquals('depth_aligned', 'True'): 
-        point_cloud_creator = launch_ros.descriptions.ComposableNode(
-                    package='depth_image_proc',
-                    plugin='depth_image_proc::PointCloudXyzrgbNode',
-                    name='point_cloud_xyzrgb_node',
-                    remappings=[('depth_registered/image_rect', 'stereo/converted_depth'),
-                                ('rgb/image_rect_color', 'color/image'),
-                                ('rgb/camera_info', 'color/camera_info'),
-                                ('points', pointcloud_topic )]
-                )
 
-        rviz_node = launch_ros.actions.Node(
-            package='rviz2', executable='rviz2', output='screen',
-            arguments=['--display-config', rectify_rviz],
-            condition=IfCondition(enableRviz))
+    ld = LaunchDescription()
+    ld.add_action(LogInfo(msg=["Actual depth_aligned value: ", depth_aligned]))
+    
+    # Dla aligned
+    point_cloud_xyzrgb_node = launch_ros.descriptions.ComposableNode(
+        condition=IfCondition(LaunchConfiguration('depth_aligned')),
+        package='depth_image_proc',
+        plugin='depth_image_proc::PointCloudXyzrgbNode',
+        name='point_cloud_xyzrgb_node',
+        remappings=[
+            ('depth_registered/image_rect', 'stereo/converted_depth'),
+            ('rgb/image_rect_color', 'color/image'),
+            ('rgb/camera_info', 'color/camera_info'),
+            ('points', pointcloud_topic)
+        ]
+    )
 
-    else:
-        point_cloud_creator = launch_ros.descriptions.ComposableNode(
-                    package='depth_image_proc',
-                    plugin='depth_image_proc::PointCloudXyziNode',
-                    name='point_cloud_xyzi',
+    # Dla nie-aligned
+    point_cloud_xyzi_node = launch_ros.descriptions.ComposableNode(
+        condition=UnlessCondition(LaunchConfiguration('depth_aligned')),
+        package='depth_image_proc',
+        plugin='depth_image_proc::PointCloudXyziNode',
+        name='point_cloud_xyzi_node',
+        remappings=[
+            ('depth/image_rect', 'stereo/converted_depth'),
+            ('intensity/image_rect', 'right/image_rect'),
+            ('intensity/camera_info', 'right/camera_info'),
+            ('points', pointcloud_topic)
+        ]
+    )
 
-                    remappings=[('depth/image_rect', 'stereo/converted_depth'),
-                                ('intensity/image_rect', 'right/image_rect'),
-                                ('intensity/camera_info', 'right/camera_info'),
-                                ('points', pointcloud_topic)]
-                )
+    # RViz dla aligned
+    rviz_aligned = launch_ros.actions.Node(
+        condition=IfCondition(LaunchConfiguration('depth_aligned')),
+        package='rviz2',
+        executable='rviz2',
+        output='screen',
+        arguments=['--display-config', aligned_rviz]
+    )
 
+    # RViz dla nie-aligned
+    rviz_rectify = launch_ros.actions.Node(
+        condition=UnlessCondition(LaunchConfiguration('depth_aligned')),
+        package='rviz2',
+        executable='rviz2',
+        output='screen',
+        arguments=['--display-config', rectify_rviz]
+    )
 
-        rviz_node = launch_ros.actions.Node(
-            package='rviz2', executable='rviz2', output='screen',
-            arguments=['--display-config', rectify_rviz],
-            condition=IfCondition(enableRviz))
+    
+    point_cloud_container = launch_ros.actions.ComposableNodeContainer(
+            name='container',
+            namespace='',
+            package='rclcpp_components',
+            executable='component_container',
+            composable_node_descriptions=[
+                # Driver itselfd
+                depth_metric_converter,
+                point_cloud_xyzrgb_node,
+                point_cloud_xyzi_node,
 
-
-
-    if point_cloud_creator is not None:
-        point_cloud_container = launch_ros.actions.ComposableNodeContainer(
-                name='container',
-                namespace='',
-                package='rclcpp_components',
-                executable='component_container',
-                composable_node_descriptions=[
-                    # Driver itself
-                    depth_metric_converter,
-                    point_cloud_creator
-                ],
-                output='screen',)
+            ],
+            output='screen',)
     marker_node = launch_ros.actions.Node(
             package='trailblazer_cloud', executable='rviz2', output='screen',
             arguments=['--display-config', rectify_rviz],
             condition=IfCondition(enableRviz))
 
-    ld = LaunchDescription()
+    
 
     ld.add_action(declare_mxId_cmd)
     ld.add_action(declare_usb2Mode_cmd)
@@ -491,12 +506,12 @@ def generate_launch_description():
 
     ld.add_action(urdf_launch)
     ld.add_action(stereo_node)
-
-    if LaunchConfigurationEquals('depth_aligned', 'True') and LaunchConfigurationEquals('rectify', 'True'):
-        ld.add_action(point_cloud_container)
     
-    # ld.add_action(point_cloud_node)
-    if LaunchConfigurationEquals('enableRviz', 'True') and rviz_node is not None:
-        ld.add_action(rviz_node)
+    ld.add_action(rviz_aligned)
+    ld.add_action(rviz_rectify)
+    
+    ld.add_action(point_cloud_container)
+    
+    
     return ld
 
