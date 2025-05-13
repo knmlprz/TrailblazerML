@@ -23,7 +23,7 @@ def generate_launch_description():
     default_resources_path = os.path.join(trailblazer_cloud_path,
                                 'resources')
     name = LaunchConfiguration('name',      default = 'oak')
-    mxId         = LaunchConfiguration('mxId',      default = '18443010814D3AF500')
+    mxId         = LaunchConfiguration('mxId',      default = 'x')
     usb2Mode     = LaunchConfiguration('usb2Mode',  default = False)
     poeMode      = LaunchConfiguration('poeMode',   default = False)
 
