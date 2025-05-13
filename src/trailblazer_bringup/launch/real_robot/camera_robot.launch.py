@@ -67,7 +67,7 @@ def launch_setup(context, *args, **kwargs):
     return [
         # Nodes to launch
         nav2,
-        rviz,
+        #rviz,
         rtabmap,
         rsp,
         controller_launch
