@@ -42,10 +42,10 @@ def launch_setup(context, *args, **kwargs):
 
         'Grid/RayTracing': 'true',  # Fill empty space
         'Grid/NormalsSegmentation': 'false',  # Use passthrough filter to detect obstacles
-        'Grid/MaxGroundHeight': '0.2',  # All points above 5 cm are obstacles
-        'Grid/MaxObstacleHeight': '2.0',  # All points over 1 meter are ignored
-        'Optimizer/GravitySigma': '0.1',  # Disable imu constraints (we are already in 2D)
-        'Rtabmap/StartNewMapOnLoopClosure': 'true', #def false (set to true for navigating)
+        'Grid/MaxGroundHeight': '0.05',  # All points above 5 cm are obstacles
+        'Grid/MaxObstacleHeight': '0.4',  # All points over 1 meter are ignored
+        'Optimizer/GravitySigma': '0',  # Disable imu constraints (we are already in 2D)
+        #'Rtabmap/StartNewMapOnLoopClosure': 'true', #def false (set to true for navigating)
         'Odom/Strategy': '1', #def 0
         'Vis/MaxFeatures': '3000', #def 1000
         'GFTT/MinDistance': '5', #def 7
@@ -57,7 +57,7 @@ def launch_setup(context, *args, **kwargs):
         #'Mem/IncrementalMemory':'False',
         #'Mem/InitWMWithAllNodes':'True',
         
-        #'Grid/3D': 'false',  # Use 2D occupancy
+        'Grid/3D': 'false',  # Use 2D occupancy
         # 'Grid/RangeMax': '3',
         # 'Vis/CorType': '1', #def 0
         #'OdomF2M/MaxSize': '3000', #def 2000
@@ -169,13 +169,6 @@ def launch_setup(context, *args, **kwargs):
         parameters=parameters,
         remappings=remappings),
 
-    # Node(
-    #     package='tf2_ros',
-    #     executable='static_transform_publisher',
-    #     name='static_transform_publisher',
-    #     output='screen',
-    #     arguments=['0', '0', '0', '0', '0', '0', 'oak_imu_frame', 'oak-d-base-frame']
-    # ),
     Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -183,4 +176,18 @@ def launch_setup(context, *args, **kwargs):
         output='screen',
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'oak_imu_frame']
     ),
+    Node(
+            package='rtabmap_util', executable='point_cloud_xyz', output='screen',
+            parameters=[{'decimation': 2,
+                         'max_depth': 3.0,
+                         'voxel_size': 0.02}],
+            remappings=[('depth/image', '/stereo/depth'),
+                        ('depth/camera_info', '/stereo/camera_info'),
+                        ('cloud', '/camera/cloud')]),
+    Node(
+            package='rtabmap_util', executable='obstacles_detection', output='screen',
+            parameters=parameters,
+            remappings=[('cloud', '/camera/cloud'),
+                        ('obstacles', '/camera/obstacles'),
+                        ('ground', '/camera/ground')]),
     ]

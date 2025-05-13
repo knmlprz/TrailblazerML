@@ -1,4 +1,3 @@
-
 # rtabmap_demos: We add segmented ground and obstacles to voxel_layer of the local costmap and removed scan source.
 bt_navigator:
   ros__parameters:
@@ -170,7 +169,7 @@ local_costmap:
         mark_threshold: 0
         observation_sources: ground obstacles
         ground:
-          topic: /cloud_ground #/camera/ground
+          topic: /camera/ground
           max_obstacle_height: 0.4
           clearing: True
           marking: False
@@ -180,7 +179,7 @@ local_costmap:
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
         obstacles:
-          topic: /cloud_obstacles
+          topic: /camera/obstacles
           max_obstacle_height: 0.4
           clearing: True
           marking: True
