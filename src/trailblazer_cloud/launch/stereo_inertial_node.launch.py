@@ -513,8 +513,8 @@ def generate_launch_description():
     ld.add_action(urdf_launch)
     ld.add_action(stereo_node)
     
-    #ld.add_action(rviz_aligned)
-    #ld.add_action(rviz_rectify)
+    ld.add_action(rviz_aligned)
+    ld.add_action(rviz_rectify)
     
     ld.add_action(point_cloud_container)
     

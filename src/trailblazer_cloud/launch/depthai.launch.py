@@ -48,9 +48,9 @@ def launch_setup(context, *args, **kwargs):
         #'Rtabmap/StartNewMapOnLoopClosure': 'true', #def false (set to true for navigating)
         'Odom/Strategy': '1', #def 0
         'Vis/MaxFeatures': '3000', #def 1000
-        'GFTT/MinDistance': '5', #def 7
-        'Grid/NoiseFilteringMinNeighbors': '2', #def 5
-        'Grid/NoiseFilteringRadius': '0.05', #def 0
+        'GFTT/MinDistance': '7', #def 7
+        'Grid/NoiseFilteringMinNeighbors': '5', #def 5
+        'Grid/NoiseFilteringRadius': '0.1', #def 0
         'Grid/MinClusterSize': '20', #def 10
 
 
@@ -96,7 +96,7 @@ def launch_setup(context, *args, **kwargs):
                 # 'manualExposure': 'false',
                 # 'mode': 'depth',
                 # 'mxId': 'x',
-                # 'nnName': 'x',
+                #'nnName': 'yolov4_tiny_coco_416x416_openvino_2021.4_6shave_bgr.blob',
                 # 'poeMode': 'false',
                 # 'previewHeight': '416',
                 # 'previewWidth': '416',
@@ -153,7 +153,11 @@ def launch_setup(context, *args, **kwargs):
     # Visual odometry
     Node(
         package='rtabmap_odom', executable='rgbd_odometry', output='screen',
-        parameters=parameters + [{'publish_tf': True}],
+        parameters=parameters + [{
+            'publish_tf': True,
+            'guess_frame_id': 'odom',
+            'odom_frame_id': 'vo',
+            }],
         remappings=remappings),
 
     # VSLAM
@@ -164,10 +168,10 @@ def launch_setup(context, *args, **kwargs):
         arguments=['-d']),
 
     # Visualization
-    # Node(
-    #     package='rtabmap_viz', executable='rtabmap_viz', output='screen',
-    #     parameters=parameters,
-    #     remappings=remappings),
+    Node(
+        package='rtabmap_viz', executable='rtabmap_viz', output='screen',
+        parameters=parameters,
+        remappings=remappings),
 
     Node(
         package='tf2_ros',
