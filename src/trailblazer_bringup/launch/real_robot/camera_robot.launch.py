@@ -19,9 +19,13 @@ def launch_setup(context, *args, **kwargs):
     nav2_params_file = PathJoinSubstitution(
         [FindPackageShare('trailblazer_cloud'), 'params', 'trailblazer_rgbd_nav2_params.yaml']
     )
+    gps_params_file = PathJoinSubstitution(
+        [FindPackageShare('trailblazer_nav2'), 'config', 'dual_ekf_navsat_params.yaml']
+    )
 
     pkg_trailblazer_description = get_package_share_directory('trailblazer_description')
     pkg_trailblazer_controller = get_package_share_directory('trailblazer_controller')
+    pkg_trailblazer_nav2 = get_package_share_directory('trailblazer_nav2')
 
     # Paths
     nav2_launch = PathJoinSubstitution(
@@ -34,6 +38,8 @@ def launch_setup(context, *args, **kwargs):
         [pkg_trailblazer_description, 'launch', 'rsp.launch.py'])
     controller_launch_path = PathJoinSubstitution(
         [pkg_trailblazer_controller, 'launch', 'controller.launch.py'])
+    gps_launch_path = PathJoinSubstitution(
+        [pkg_trailblazer_nav2, 'launch', 'dual_ekf_navsat.launch.py'])
     
     # Includes
     nav2 = IncludeLaunchDescription(
@@ -64,13 +70,17 @@ def launch_setup(context, *args, **kwargs):
     controller_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([controller_launch_path]))
     
+    gps_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([gps_launch_path]))
+    
     return [
         # Nodes to launch
         nav2,
         rviz,
         rtabmap,
         rsp,
-        controller_launch
+        controller_launch,
+        #gps_launch,
     ]
 
 def generate_launch_description():

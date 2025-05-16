@@ -283,6 +283,23 @@ source install/setup.bash
 
 ```
 
+### Usefull command
+```bash
+# testowanie navsat
+ros2 launch trailblazer_nav2 dual_ekf_navsat.launch.py 
+
+## podaj początkowe współrzędne
+ros2 topic pub --rate 10 /gps/fix sensor_msgs/NavSatFix "{                                                               header: { stamp: { sec: $(date +%s), nanosec: 0 }, frame_id: 'base_link' },
+  latitude: 0.0411,
+  longitude: 0.0001,
+  altitude: 0.0,
+  status: { status: 1, service: 1 }
+}"
+## następna komenda oblicza ile punktów do docelowego miejsca
+ros2 service call /fromLL robot_localization/srv/FromLL "{ll_point: {latitude: 50.0411, longitude: 22.0001, altitude: 0.0}}"
+
+```
+
 ## 🔗 Linki
 - https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
 - https://github.com/ros-navigation/navigation2_tutorials/tree/rolling/nav2_gps_waypoint_follower_demo
