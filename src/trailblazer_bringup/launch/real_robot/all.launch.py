@@ -11,36 +11,25 @@ import os
 
 def launch_setup(context, *args, **kwargs):
 
-    # Directories
-    pkg_nav2_bringup = get_package_share_directory(
-        'nav2_bringup')
-    pkg_trailblazer_cloud = get_package_share_directory(
-        'trailblazer_cloud')
-    
-    nav2_params_file = PathJoinSubstitution(
-        [FindPackageShare('trailblazer_cloud'), 'params', 'trailblazer_rgbd_nav2_params.yaml']
-    )
-    
-
+    #Directories
+    pkg_trailblazer_cloud = get_package_share_directory('trailblazer_cloud')
     pkg_trailblazer_description = get_package_share_directory('trailblazer_description')
     pkg_trailblazer_controller = get_package_share_directory('trailblazer_controller')
     pkg_trailblazer_nav2 = get_package_share_directory('trailblazer_nav2')
+    pkg_nav2_bringup = get_package_share_directory('nav2_bringup')
 
-    # Paths
+    # nav2
+
+    # nav2_launch = PathJoinSubstitution(
+    #     [pkg_nav2_bringup, 'launch', 'navigation_launch.py'])
     nav2_launch = PathJoinSubstitution(
-        [pkg_nav2_bringup, 'launch', 'navigation_launch.py'])
-    rviz_launch = PathJoinSubstitution(
-        [pkg_nav2_bringup, 'launch', 'rviz_launch.py'])
-    rtabmap_launch = PathJoinSubstitution(
-        [pkg_trailblazer_cloud, 'launch', 'depthai.launch.py'])
-    rsp_launch = PathJoinSubstitution(
-        [pkg_trailblazer_description, 'launch', 'rsp.launch.py'])
-    controller_launch_path = PathJoinSubstitution(
-        [pkg_trailblazer_controller, 'launch', 'controller.launch.py'])
-    gps_launch_path = PathJoinSubstitution(
-        [pkg_trailblazer_nav2, 'launch', 'dual_ekf_navsat.launch.py'])
-    
-    # Includes
+        [pkg_trailblazer_nav2, 'launch', 'navigation_launch.py'])
+    # nav2_params_file = PathJoinSubstitution(
+    #     [FindPackageShare('trailblazer_cloud'), 'params', 'trailblazer_rgbd_nav2_params.yaml']
+    # )
+    nav2_params_file = PathJoinSubstitution(
+        [FindPackageShare('trailblazer_nav2'), 'config', 'nav2_params.yaml']
+    )
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_launch]),
         launch_arguments=[
@@ -48,9 +37,10 @@ def launch_setup(context, *args, **kwargs):
             ('params_file', nav2_params_file)
         ]
     )
-    rviz = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([rviz_launch])
-    )
+
+    # rtabmap
+    rtabmap_launch = PathJoinSubstitution(
+        [pkg_trailblazer_cloud, 'launch', 'depthai.launch.py'])
     rtabmap = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([rtabmap_launch]),
         launch_arguments=[
@@ -59,27 +49,47 @@ def launch_setup(context, *args, **kwargs):
             ('use_ros2_control', 'true')
         ]
     )
+
+    # navsat
+    navsat_launch_path = PathJoinSubstitution(
+        [pkg_trailblazer_nav2, 'launch', 'dual_ekf_navsat.launch.py'])
+    navsat_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([navsat_launch_path]))
+    
+    # gps
+    gps_node = Node(
+        package='trailblazer_gps',
+        executable="rtk_gps",
+        name='gps_node',
+        parameters=[{
+            'port': "/dev/ttyUSB0",
+        }]
+    )
+    
+    # rsp
+    rsp_launch = PathJoinSubstitution(
+        [pkg_trailblazer_description, 'launch', 'rsp.launch.py'])
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([rsp_launch]),
         launch_arguments=[
             ('use_sim_time', 'false'),
             ('use_ros2_control', 'true')
         ])
-
+    
+    # controllers
+    controller_launch_path = PathJoinSubstitution(
+        [pkg_trailblazer_controller, 'launch', 'controller.launch.py'])
     controller_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([controller_launch_path]))
     
-    gps_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([gps_launch_path]))
-    
-    gps_node = Node(
-        package='trailblazer_gps',
-        executable="rtk_gps",
-        name='gps_node',
-        parameters=[{
-            'port': "/dev/ttyUSB1",
-        }]
+    # rviz2
+    rviz_launch = PathJoinSubstitution(
+        [pkg_nav2_bringup, 'launch', 'rviz_launch.py'])
+    rviz = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([rviz_launch])
     )
+    
+    
     return [
         # Nodes to launch
         nav2,
@@ -87,8 +97,8 @@ def launch_setup(context, *args, **kwargs):
         rtabmap,
         rsp,
         controller_launch,
-        gps_launch,
-        gps_node
+        navsat_launch,
+        #gps_node
     ]
 
 def generate_launch_description():
