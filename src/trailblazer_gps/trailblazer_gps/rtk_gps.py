@@ -23,7 +23,7 @@ class GPSPublisher(Node):
     def publish_data(self):
         msg = NavSatFix()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "gps"
+        msg.header.frame_id = "base_link"
         msg.status.status = NavSatStatus.STATUS_NO_FIX  # Default to no fix
 
         try:
