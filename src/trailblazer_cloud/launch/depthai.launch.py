@@ -63,10 +63,12 @@ def launch_setup(context, *args, **kwargs):
         #'OdomF2M/MaxSize': '3000', #def 2000
         #'RGBD/StartAtOrigin': 'true', #def false
         #'Odom/FilteringStrategy': '0', #def 0 (1=kalman)
-
+        #'guess_frame_id': 'odom',
     }]
 
-    remappings = [('imu', '/imu/data')]
+    remappings = [('imu', '/imu/data'),
+                  #('odom', 'vo')
+                  ]
 
     return [
     IncludeLaunchDescription(
@@ -155,8 +157,8 @@ def launch_setup(context, *args, **kwargs):
         package='rtabmap_odom', executable='rgbd_odometry', output='screen',
         parameters=parameters + [{
             'publish_tf': True,
-            'guess_frame_id': 'odom',
-            'odom_frame_id': 'vo',
+            #'guess_frame_id': 'odom',
+            #'odom_frame_id': 'vo',
             }],
         remappings=remappings),
 
