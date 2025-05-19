@@ -11,3 +11,14 @@ ros2 topic pub --rate 10 /gps/fix sensor_msgs/NavSatFix "{
 ros2 run trailblazer_nav2 logged_waypoint_follower 
 
 ```
+
+# new version
+```bash
+ros2 launch trailblazer_bringup camera_robot.launch.py 
+ros2 launch trailblazer_nav2 dual_ekf_navsat.launch.py 
+ros2 run trailblazer_gps rtk_gps --ros-args --param port:=/dev/ttyUSB1
+ros2 launch trailblazer_nav2 mapviz.launch.py
+ros2 topic echo /diff_drive_controller/cmd_vel 
+ros2 run trailblazer_nav2 interactive_waypoint_follower 
+
+```
