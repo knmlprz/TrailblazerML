@@ -11,6 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/config', glob('config/*.yaml')),
+        ('share/' + package_name + '/config', glob('config/*.mvc')),
         ('share/' + package_name + '/launch', glob('launch/*.py')),
     ],
     install_requires=['setuptools'],
@@ -21,6 +22,9 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'logged_waypoint_follower = trailblazer_nav2.logged_waypoint_follower:main',
+            'interactive_waypoint_follower = trailblazer_nav2.interactive_waypoint_follower:main',
+            'gps_waypoint_logger = trailblazer_nav2.gps_waypoint_logger:main'
         ],
     },
 )

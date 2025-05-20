@@ -12,7 +12,9 @@ def generate_launch_description():
         get_package_share_directory('trailblazer_rviz'), 'config', 'slam.rviz'
     )
     lc_mgr_config_path = os.path.join(
-        get_package_share_directory('ldlidar_node'), 'params', 'lifecycle_mgr.yaml'
+        get_package_share_directory('ldlidar_node'),
+        'params',
+        'lifecycle_mgr.yaml'
     )
     laser_to_link_transform = Node(
         package='tf2_ros',
@@ -36,23 +38,11 @@ def generate_launch_description():
 
     oak_camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_oak'), 'launch', 'depthai.launch.py')
+            os.path.join(get_package_share_directory('trailblazer_cloud'), 'launch', 'depthai.launch.py')
         )
     )
 
-    pkg_nav2 = get_package_share_directory('trailblazer_nav2')
-    ekf_config_path = PathJoinSubstitution([
-        pkg_nav2, 'config', 'ekf.yaml'
-    ])
-
-    ekf_node = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[ekf_config_path],
-    )
-
+    # Lifecycle manager node
     lc_mgr_node = Node(
         package='nav2_lifecycle_manager',
         executable='lifecycle_manager',
@@ -64,6 +54,7 @@ def generate_launch_description():
         ]
     )
 
+    # Include LDLidar launch
     ldlidar_launch = IncludeLaunchDescription(
         launch_description_source=PythonLaunchDescriptionSource([
             get_package_share_directory('ldlidar_node'),
@@ -91,8 +82,7 @@ def generate_launch_description():
     return LaunchDescription([
         rsp,
         controller_launch,
-        oak_camera_launch,
-        ekf_node,
+        # oak_camera_launch,
         laser_to_link_transform,
         lc_mgr_node,
         ldlidar_launch,

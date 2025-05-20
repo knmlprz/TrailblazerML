@@ -4,68 +4,60 @@
   <xacro:include filename="lidar.xacro" />
   <xacro:include filename="imu.xacro" />
   <xacro:include filename="gps.xacro" />
-  <xacro:include filename="depth_camera.xacro" />
 
-  <xacro:arg name="use_ros2_control" default="false"/>
+  <xacro:arg name="use_ros2_control" default="True"/>
   <xacro:arg name="sim_mode" default="false"/>
   <xacro:if value="$(arg use_ros2_control)">
-      <xacro:include filename="ros2_control.xacro" />
-      <!-- ******************************* OAK-D START ******************************* -->
-      <xacro:arg name="camera_name" default="oak" />
-      <xacro:arg name="camera_model" default="OAK-D-PRO-W" />
-      <xacro:arg name="base_frame" default="oak-d_frame" />
-      <xacro:arg name="parent_frame" default="oak-d-base-frame" />
-      <xacro:arg name="cam_pos_x" default="-0.0475" />
-      <xacro:arg name="cam_pos_y" default="0.13" />
-      <xacro:arg name="cam_pos_z" default="0.4465" />
-      <xacro:arg name="cam_roll" default="0.0" />
-      <xacro:arg name="cam_pitch" default="-1.5708" />
-      <xacro:arg name="cam_yaw" default="-1.5708" />
-      <xacro:arg name="rs_compat" default="false" />
+    <xacro:include filename="ros2_control.xacro" />
+    <!-- ******************************* OAK-D START ******************************* -->
+    <!-- <xacro:arg name="camera_name" default="oak" />
+    <xacro:arg name="camera_model" default="OAK-D-PRO-W" />
+    <xacro:arg name="base_frame" default="oak-d_frame" />
+    <xacro:arg name="parent_frame" default="oak-d-base-frame" />
+    <xacro:arg name="cam_pos_x" default="-0.0475" />
+    <xacro:arg name="cam_pos_y" default="0.13" />
+    <xacro:arg name="cam_pos_z" default="0.4465" />
+    <xacro:arg name="cam_roll" default="0.0" />
+    <xacro:arg name="cam_pitch" default="-1.5708" />
+    <xacro:arg name="cam_yaw" default="-1.5708" />
+    <xacro:arg name="rs_compat" default="false" />
 
-      <xacro:include filename="$(find trailblazer_description)/urdf/include/depthai_macro.xacro" />
+    <xacro:include filename="$(find trailblazer_description)/urdf/include/depthai_macro.xacro" />
 
-      <link name="$(arg parent_frame)" />
-      <xacro:depthai_camera camera_name="$(arg camera_name)" parent="$(arg parent_frame)"
-        camera_model="$(arg camera_model)" base_frame="$(arg base_frame)"
-        cam_pos_x="$(arg cam_pos_x)" cam_pos_y="$(arg cam_pos_y)" cam_pos_z="$(arg cam_pos_z)"
-        cam_roll="$(arg cam_roll)" cam_pitch="$(arg cam_pitch)" cam_yaw="$(arg cam_yaw)"
-        rs_compat="$(arg rs_compat)" />
-
+    <link name="$(arg parent_frame)" />
+    <xacro:depthai_camera camera_name="$(arg camera_name)" parent="$(arg parent_frame)"
+      camera_model="$(arg camera_model)" base_frame="$(arg base_frame)"
+      cam_pos_x="$(arg cam_pos_x)" cam_pos_y="$(arg cam_pos_y)" cam_pos_z="$(arg cam_pos_z)"
+      cam_roll="$(arg cam_roll)" cam_pitch="$(arg cam_pitch)" cam_yaw="$(arg cam_yaw)"
+      rs_compat="$(arg rs_compat)" />
       <joint name="oakd_joint" type="fixed">
-          <parent link="chassis"/>
-          <child link="oak-d-base-frame"/>
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="chassis"/>
+        <child link="oak-d-base-frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
       </joint>
+      -->
 
-      <!-- ******************************* OAK-D END ******************************* -->
+    <!-- ******************************* OAK-D END ******************************* -->
   </xacro:if>
   <xacro:unless value="$(arg use_ros2_control)">
-      <xacro:include filename="gazebo_control.xacro" />
+    <xacro:include filename="depth_camera.xacro" />
+    <xacro:include filename="gazebo_control.xacro" />
   </xacro:unless>
   <!-- ******************************* Links ******************************* -->
+
   <link name="base_link">
-  </link>
-
-  <joint name="base_footprint_joint" type="fixed">
-      <parent link="base_link"/>
-      <child link="base_footprint"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <link name="base_footprint">
   </link>
 
   <joint name="chassis_joint" type="fixed">
       <parent link="base_link"/>
       <child link="chassis"/>
-      <origin xyz="0 0 0" rpy="1.5708 0 1.5708"/>
+      <origin xyz="0 0 0.365" rpy="1.5708 0 1.5708"/>
   </joint>
   <link
     name="chassis">
     <inertial>
       <origin
-        xyz="0.00322150223165306 -0.0317835441688463 0.0392262662545424"
+        xyz="0.00322150223165306 -0.0317835441688463 0.404226266"
         rpy="0 0 0" />
       <mass
         value="13.9113253461594" />
@@ -141,6 +133,7 @@
       </geometry>
     </collision>
   </link>
+
   <joint
     name="FL_wheel_joint"
     type="continuous">
@@ -154,6 +147,7 @@
     <axis
       xyz="0.999779852268619 -0.0209820637149624 0" />
   </joint>
+
   <link
     name="BL_wheel">
     <inertial>

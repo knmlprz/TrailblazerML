@@ -12,7 +12,7 @@ def generate_launch_description():
         executable='static_transform_publisher',
         name='static_transform_publisher',
         output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_footprint']
+        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link']
     )
 
     rviz_config_path = os.path.join(
@@ -31,14 +31,6 @@ def generate_launch_description():
         )
     )
 
-    joy_control_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_joystick'), 'launch', 'joy_control.launch.py')
-        ),launch_arguments={
-            'cmd_vel_topic': '/diff_drive_controller/cmd_vel'
-        }.items()
-    )
-
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('trailblazer_rviz'), 'launch', 'rviz.launch.py')
@@ -50,6 +42,5 @@ def generate_launch_description():
         fake_odom,
         rsp,
         controller_launch,
-        joy_control_launch,
         rviz_launch
     ])
