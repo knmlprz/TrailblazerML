@@ -161,7 +161,7 @@ class YoloDetectionNode(Node):
                 self.get_logger().info("No ArUco markers detected.")
 
             # Publish final image
-            detection_msg = self.bridge.cv2_to_imgmsg(detection_image, encoding="bgr8")
+            detection_msg = self.bridge.cv2_to_imgmsg(cv2.cvtColor(detection_image, cv2.COLOR_BGR2RGB), encoding="rgb8")
             detection_msg.header = msg.header
             self.detection_image_pub.publish(detection_msg)
 
