@@ -28,7 +28,7 @@ def launch_setup(context, *args, **kwargs):
     #     [FindPackageShare('trailblazer_cloud'), 'params', 'trailblazer_rgbd_nav2_params.yaml']
     # )
     nav2_params_file = PathJoinSubstitution(
-        [FindPackageShare('trailblazer_nav2'), 'config', 'nav2_params.yaml']
+        [FindPackageShare('trailblazer_nav2'), 'config', 'trailblazer_rgbd_nav2_params.yaml']
     )
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_launch]),
