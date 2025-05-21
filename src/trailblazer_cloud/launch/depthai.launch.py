@@ -20,6 +20,7 @@ def generate_launch_description():
     # Definiowanie argumentu launch dla pliku parametrów
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
+        DeclareLaunchArgument("mxId", default_value="x"),
     ]
 
     return LaunchDescription(

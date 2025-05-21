@@ -17,9 +17,9 @@ def launch_setup(context, *args, **kwargs):
     pkg_trailblazer_controller = get_package_share_directory('trailblazer_controller')
     pkg_trailblazer_nav2 = get_package_share_directory('trailblazer_nav2')
     pkg_nav2_bringup = get_package_share_directory('nav2_bringup')
+    depthai_prefix = get_package_share_directory("depthai_ros_driver")
 
     # nav2
-
     # nav2_launch = PathJoinSubstitution(
     #     [pkg_nav2_bringup, 'launch', 'navigation_launch.py'])
     nav2_launch = PathJoinSubstitution(
@@ -49,10 +49,35 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments=[
             ('localization', LaunchConfiguration('localization')),
             ('use_sim_time', 'false'),
-            ('use_ros2_control', 'true')
+            ('use_ros2_control', 'true'),
+            ('mxId', '18443010814D3AF500'),
         ]
     )
 
+    #detection
+    depthai_prefix = get_package_share_directory("depthai_ros_driver")
+    params_file = os.path.join(pkg_trailblazer_cloud, "params", "multicam_example.yaml")
+    cams = ["oak_d_lite",
+            #"oak_d_w"
+            ]
+    nodes = []
+    i = 0.0
+    for cam_name in cams:
+        node = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(depthai_prefix, "launch", "camera.launch.py")
+            ),
+            launch_arguments={
+                "name": cam_name,
+                "parent_frame": "base_link",
+                "params_file": params_file,
+                "cam_pos_y": str(i),
+            }.items(),
+        )
+        nodes.append(node)
+        i = i + 0.1
+    
+    params_file = os.path.join(depthai_prefix, "config", "multicam_example.yaml")
     # navsat
     navsat_launch_path = PathJoinSubstitution(
         [pkg_trailblazer_nav2, 'launch', 'dual_ekf_navsat.launch.py'])
@@ -98,9 +123,10 @@ def launch_setup(context, *args, **kwargs):
         nav2,
         rviz,
         rtabmap,
-        # rsp,
-        # controller_launch,
+        rsp,
+        controller_launch,
         navsat_launch,
+        node
         #gps_node
     ]
 
