@@ -29,6 +29,10 @@ ros2 run trailblazer_nav2 logged_waypoint_follower
 
 # actual version
 ```bash
+ros2 topic pub /gps/fix sensor_msgs/msg/NavSatFix '{header: {frame_id: "map"}, latitude: 51.1079, longitude: 17.0385, altitude: 120.0, position_covariance_type: 0}' 
+
+```
+```bash
 ros2 launch trailblazer_bringup all.launch.py 
 ros2 run trailblazer_gps rtk_gps --ros-args --param port:=/dev/ttyUSB0
 sudo docker run -p 8080:8080 -d -t -v ~/mapproxy:/mapproxy danielsnider/mapproxy

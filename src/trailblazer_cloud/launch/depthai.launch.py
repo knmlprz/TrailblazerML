@@ -20,6 +20,7 @@ def generate_launch_description():
     # Definiowanie argumentu launch dla pliku parametrów
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
+        DeclareLaunchArgument("mxId", default_value="x"),
     ]
 
     return LaunchDescription(
@@ -34,7 +35,8 @@ def launch_setup(context, *args, **kwargs):
         'frame_id': 'base_link', #base_link
         'subscribe_rgbd': True,
         'subscribe_odom_info': True,
-        'approx_sync': True,
+        #'approx_sync': True,
+        #'approx_sync_max_interval': "0.1",
         'wait_imu_to_init': True,
         'use_action_for_goal': True,
         'Reg/Force3DoF': 'true',
@@ -77,7 +79,7 @@ def launch_setup(context, *args, **kwargs):
             '/stereo_inertial_node.launch.py']),
             launch_arguments={
                 'name': name,
-                #'depth_aligned': 'false',
+                'depth_aligned': 'false',
                 'enableDotProjector': 'true',
                 'enableFloodLight': 'true',
                 'monoResolution': '400p',
@@ -157,8 +159,8 @@ def launch_setup(context, *args, **kwargs):
         package='rtabmap_odom', executable='rgbd_odometry', output='screen',
         parameters=parameters + [{
             'publish_tf': True,
-            #'guess_frame_id': 'odom',
-            #'odom_frame_id': 'vo',
+            # 'guess_frame_id': 'vo',
+            # 'odom_frame_id': 'odom',
             }],
         remappings=remappings),
 
