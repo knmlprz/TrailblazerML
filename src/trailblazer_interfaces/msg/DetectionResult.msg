@@ -5,6 +5,5 @@ geometry_msgs/Point center     # Środek wykrytego obiektu w obrazie
 float32 width
 float32 height
 
-# ArUco-specific fields
 geometry_msgs/Pose pose        # Szacowana pozycja znacznika względem kamery
 float32 distance               # Odległość od kamery (dla znaczników ArUco)
