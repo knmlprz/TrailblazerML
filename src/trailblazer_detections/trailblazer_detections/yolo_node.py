@@ -44,7 +44,7 @@ class YoloDetectionNode(Node):
             self.get_logger().info("YOLO model loaded.")
 
             device = self.model.device
-            self.model.to("cuda") # Force the model to run on cuda
+            # self.model.to("cuda") # Force the model to run on cuda
             self.get_logger().info(f"YOLO is running on device: {device}")
         except Exception as e:
             self.get_logger().error(f"Failed to load YOLO model: {e}")
@@ -56,7 +56,7 @@ class YoloDetectionNode(Node):
 
         # Pose estimation parameters
         # Camera calibration will be filled from CameraInfo
-        self.marker_length = 0.025  # Specified ArUco tags are 2.5 cm across
+        self.marker_length = 0.2  # Specified ArUco tags: 20x20cm
         self.camera_matrix = None
         self.dist_coeffs = None
 
@@ -67,6 +67,7 @@ class YoloDetectionNode(Node):
         self.dist_coeffs = np.array(msg.d, dtype=np.float32)
         self.camera_info_received = True
         self.get_logger().info("Camera calibration parameters received and set.")
+
 
     def image_callback(self, msg):
         try:
@@ -101,13 +102,33 @@ class YoloDetectionNode(Node):
                         2,
                     )
 
+                    # Estimate distance based on known object height
+                    box_height_pixels = y2 - y1
+                    real_object_height = 0.25  # e.g., bottle is 25 cm tall
+
+                    if self.camera_matrix is not None and box_height_pixels > 0:
+                        focal_length_px = self.camera_matrix[1, 1]  # fy
+                        yolo_distance = (real_object_height * focal_length_px) / box_height_pixels
+
+                        cv2.putText(
+                            detection_image,
+                            f"{yolo_distance:.2f} m",
+                            (x1, y2 + 20),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.6,
+                            (255, 255, 0),
+                            2,
+                        )
+
+                        self.get_logger().info(f"YOLO est. distance: {yolo_distance:.2f} m")
+
                 self.get_logger().info(
                     f"YOLO: Detected {len(yolo_detections)} object(s): {', '.join(yolo_detections)}"
                 )
             else:
                 self.get_logger().info("YOLO: No objects detected.")
 
-            # ArUco detection
+            # ArUco marker detection
             gray = cv2.cvtColor(detection_image, cv2.COLOR_BGR2GRAY)
             corners, ids, _ = cv2.aruco.detectMarkers(
                 gray, self.aruco_dict, parameters=self.aruco_params
@@ -137,7 +158,7 @@ class YoloDetectionNode(Node):
                         2,
                     )
 
-                # ArUco Pose estimation
+                # ArUco pose estimation
                 if self.camera_info_received and self.marker_length:
                     rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
                         corners,
@@ -146,6 +167,7 @@ class YoloDetectionNode(Node):
                         self.dist_coeffs,
                     )
                     for i in range(len(ids)):
+                        # Draw 3D axes on the marker
                         cv2.drawFrameAxes(
                             detection_image,
                             self.camera_matrix,
@@ -154,8 +176,25 @@ class YoloDetectionNode(Node):
                             tvecs[i],
                             0.03,
                         )
+                        distance = np.linalg.norm(tvecs[i][0])
                         self.get_logger().info(
-                            f"Aruco ID {ids[i][0]} pose: rvec={rvecs[i].flatten()}, tvec={tvecs[i].flatten()}"
+                            f"Aruco ID {ids[i][0]}: rvec={rvecs[i].flatten()}, tvec={tvecs[i].flatten()}, distance={distance:.3f} m"
+                        )
+
+                        # Draw distance text near marker
+                        distance_text = f"{distance:.2f} m"
+                        corner_points = corners[i][0]
+                        text_x = int(np.min(corner_points[:, 0]))
+                        text_y = int(np.min(corner_points[:, 1])) - 25
+
+                        cv2.putText(
+                            detection_image,
+                            distance_text,
+                            (text_x, max(text_y, 0)),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.6,
+                            (0, 0, 255),
+                            2,
                         )
                 else:
                     self.get_logger().warn(
@@ -171,6 +210,7 @@ class YoloDetectionNode(Node):
 
         except Exception as e:
             self.get_logger().error(f"Error processing image: {e}")
+
 
 
 def main(args=None):
