@@ -82,18 +82,10 @@ def launch_setup(context, *args, **kwargs):
     controller_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([controller_launch_path]))
     
-    # rviz2
-    rviz_launch = PathJoinSubstitution(
-        [pkg_nav2_bringup, 'launch', 'rviz_launch.py'])
-    rviz = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([rviz_launch])
-    )
-    
     
     return [
         # Nodes to launch
         nav2,
-        rviz,
         rtabmap,
         rsp,
         controller_launch,

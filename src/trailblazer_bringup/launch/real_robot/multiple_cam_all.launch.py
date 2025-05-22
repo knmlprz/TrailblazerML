@@ -19,7 +19,6 @@ def launch_setup(context, *args, **kwargs):
     pkg_nav2_bringup = get_package_share_directory('nav2_bringup')
     depthai_prefix = get_package_share_directory("depthai_ros_driver")
 
-    # nav2
     # nav2_launch = PathJoinSubstitution(
     #     [pkg_nav2_bringup, 'launch', 'navigation_launch.py'])
     nav2_launch = PathJoinSubstitution(
@@ -27,11 +26,8 @@ def launch_setup(context, *args, **kwargs):
     # nav2_params_file = PathJoinSubstitution(
     #     [FindPackageShare('trailblazer_cloud'), 'params', 'trailblazer_rgbd_nav2_params.yaml']
     # )
-    # nav2_params_file = PathJoinSubstitution(
-    #     [FindPackageShare('trailblazer_nav2'), 'config', 'nav2_params.yaml']
-    # )
     nav2_params_file = PathJoinSubstitution(
-        [FindPackageShare('trailblazer_nav2'), 'config', 'rgbd_nav2_params.yaml']
+        [FindPackageShare('trailblazer_nav2'), 'config', 'trailblazer_rgbd_nav2_params.yaml']
     )
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_launch]),
@@ -121,7 +117,6 @@ def launch_setup(context, *args, **kwargs):
     return [
         # Nodes to launch
         nav2,
-        rviz,
         rtabmap,
         rsp,
         controller_launch,
