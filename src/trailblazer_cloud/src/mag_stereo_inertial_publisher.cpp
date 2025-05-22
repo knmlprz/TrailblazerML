@@ -27,6 +27,7 @@
 #include "depthai_bridge/ImuConverter.hpp"
 #include "depthai_bridge/SpatialDetectionConverter.hpp"
 #include "depthai_bridge/depthaiUtility.hpp"
+#include "depthai_ros_msgs/msg/imu_with_magnetic_field.hpp"
 
 std::vector<std::string> usbStrings = {"UNKNOWN", "LOW", "FULL", "HIGH", "SUPER", "SUPER_PLUS"};
 
@@ -507,15 +508,37 @@ int main(int argc, char** argv) {
     const std::string leftPubName = rectify ? std::string("left/image_rect") : std::string("left/image_raw");
     const std::string rightPubName = rectify ? std::string("right/image_rect") : std::string("right/image_raw");
 
-    dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", imuMode, linearAccelCovariance, angularVelCovariance);
+    double rotation_cov = 0.0;          // Wartość kowariancji orientacji, jeśli nie używana
+    double magnetic_field_cov = 0.0001; // Przykładowa wartość kowariancji magnetometru
+    bool enable_rotation = true;       // Włącz, jeśli chcesz używać danych orientacji
+    bool enable_magn = true;            // Włączenie magnetometru
+
+    // dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", imuMode, linearAccelCovariance, angularVelCovariance);
+    dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", 
+                                         imuMode, 
+                                         linearAccelCovariance, 
+                                         angularVelCovariance,
+                                         rotation_cov, 
+                                         magnetic_field_cov, 
+                                         enable_rotation, 
+                                         enable_magn);
+
     if(enableRosBaseTimeUpdate) {
         imuConverter.setUpdateRosBaseTimeOnToRosMsg();
     }
-    dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
+    // dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
+    //     imuQueue,
+    //     node,
+    //     name + "/imu",
+    //     std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
+    //     30,
+    //     "",
+    //     "imu");
+    dai::rosBridge::BridgePublisher<depthai_ros_msgs::msg::ImuWithMagneticField, dai::IMUData> imuPublish(
         imuQueue,
         node,
         name + "/imu",
-        std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&dai::rosBridge::ImuConverter::toRosDaiMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
         30,
         "",
         "imu");
