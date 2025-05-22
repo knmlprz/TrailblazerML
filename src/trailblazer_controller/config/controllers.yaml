@@ -20,13 +20,13 @@ diff_drive_controller:
     right_wheel_radius_multiplier: 1.0
 
     publish_rate: 50.0
-    odom_frame_id: odom
+    odom_frame_id: vo
     base_frame_id: base_link
     pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
     open_loop: true
-    enable_odom_tf: false
+    enable_odom_tf: true
     use_stamped_vel: true
     cmd_vel_timeout: 0.5
 

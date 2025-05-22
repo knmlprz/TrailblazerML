@@ -95,8 +95,8 @@ def launch_setup(context, *args, **kwargs):
         nav2,
         rviz,
         rtabmap,
-        # rsp,
-        # controller_launch,
+        rsp,
+        controller_launch,
         navsat_launch,
         #gps_node
     ]
