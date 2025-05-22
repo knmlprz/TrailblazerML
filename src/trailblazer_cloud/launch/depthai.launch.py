@@ -37,7 +37,7 @@ def launch_setup(context, *args, **kwargs):
         'subscribe_odom_info': True,
         #'approx_sync': True,
         #'approx_sync_max_interval': "0.1",
-        'wait_imu_to_init': True,
+        'wait_imu_to_init': False,
         'use_action_for_goal': True,
         'Reg/Force3DoF': 'true',
         'Odom/ResetCountdown': '1', #def 0
@@ -149,10 +149,13 @@ def launch_setup(context, *args, **kwargs):
     # Compute quaternion of the IMU
     Node(
         package='imu_filter_madgwick', executable='imu_filter_madgwick_node', output='screen',
-        parameters=[{'use_mag': False,
+        parameters=[{'use_mag': True,
                         'world_frame': 'enu',
                         'publish_tf': False}],
-        remappings=[('imu/data_raw', name + '/imu')]),
+        remappings=[
+            ('imu/data_raw', name + '/imu'),
+            ('imu/mag', name + '/magnetic_field')
+            ]),
 
     # Visual odometry
     Node(

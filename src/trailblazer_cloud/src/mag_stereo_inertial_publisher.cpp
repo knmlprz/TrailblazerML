@@ -513,7 +513,23 @@ int main(int argc, char** argv) {
     bool enable_rotation = true;       // Włącz, jeśli chcesz używać danych orientacji
     bool enable_magn = true;            // Włączenie magnetometru
 
+    // oryginalna wersja
+
     // dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", imuMode, linearAccelCovariance, angularVelCovariance);
+    // if(enableRosBaseTimeUpdate) {
+    //     imuConverter.setUpdateRosBaseTimeOnToRosMsg();
+    // }
+    // dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
+    //     imuQueue,
+    //     node,
+    //     name + "/imu",
+    //     std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
+    //     30,
+    //     "",
+    //     "imu");
+
+    // wersja z magnetometrem
+    
     dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", 
                                          imuMode, 
                                          linearAccelCovariance, 
@@ -526,14 +542,6 @@ int main(int argc, char** argv) {
     if(enableRosBaseTimeUpdate) {
         imuConverter.setUpdateRosBaseTimeOnToRosMsg();
     }
-    // dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
-    //     imuQueue,
-    //     node,
-    //     name + "/imu",
-    //     std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
-    //     30,
-    //     "",
-    //     "imu");
     dai::rosBridge::BridgePublisher<depthai_ros_msgs::msg::ImuWithMagneticField, dai::IMUData> imuPublish(
         imuQueue,
         node,
