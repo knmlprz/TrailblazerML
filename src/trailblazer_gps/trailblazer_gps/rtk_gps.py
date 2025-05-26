@@ -23,7 +23,7 @@ class GPSPublisher(Node):
     def publish_data(self):
         msg = NavSatFix()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "base_link"
+        msg.header.frame_id = "map"
         msg.status.status = NavSatStatus.STATUS_NO_FIX  # Default to no fix
 
         try:
@@ -43,7 +43,7 @@ class GPSPublisher(Node):
                                 msg.latitude = parsed.latitude
                                 msg.longitude = parsed.longitude
                                 msg.altitude = parsed.altitude if hasattr(parsed, 'altitude') else 0.0
-                                self.get_logger().info(f"GGA Position: Lat: {parsed.latitude}, Lon: {parsed.longitude}, Alt: {msg.altitude}")
+                                self.get_logger().info(f"ID: {msg.header.frame_id}, GGA Position: Lat: {parsed.latitude}, Lon: {parsed.longitude}, Alt: {msg.altitude}")
 
                         # Process GNRMC message (secondary position source and velocity)
                         elif line.startswith('$GNRMC'):

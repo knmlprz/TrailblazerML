@@ -163,7 +163,7 @@ def launch_setup(context, *args, **kwargs):
         parameters=parameters + [{
             'publish_tf': True,
             'guess_frame_id': 'vo',
-            #'odom_frame_id': 'odom',
+            'odom_frame_id': 'odom',
             }],
         remappings=remappings),
 
