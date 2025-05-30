@@ -51,14 +51,11 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
         output="both",
+        remappings=[
+            ('/diff_drive_controller/cmd_vel', 'cmd_vel_nav'),
+            ('/diff_drive_controller/cmd_vel_unstamped', 'cmd_vel_nav'),
+            ('/diff_drive_controller/odom', 'odom'),]
     )
-
-    # robot_state_pub_node = Node(
-    #     package="robot_state_publisher",
-    #     executable="robot_state_publisher",
-    #     output="both",
-    #     parameters=[robot_description],
-    # )
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
@@ -82,7 +79,6 @@ def generate_launch_description():
 
     nodes = [
         control_node,
-        # robot_state_pub_node,
         joint_state_broadcaster_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster,
     ]
