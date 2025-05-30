@@ -44,7 +44,7 @@ def launch_setup(context, *args, **kwargs):
 
     vslam_remappings = [
         ('imu', 'imu/data'),
-        ('odom', '/odom')  # <- dodanie remappingu na odometrię zewnętrzną
+        ('odom', '/diff_drive_controller/odom')
     ]
 
     nodes = []

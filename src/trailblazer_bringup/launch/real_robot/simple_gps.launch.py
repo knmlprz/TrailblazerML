@@ -47,6 +47,18 @@ def launch_setup(context, *args, **kwargs):
         }]
     )
 
+    cmd_vel_cap_node = Node(
+        package='trailblazer_nav2',
+        executable="cmd_vel_cap",
+        name='cmd_vel_cap_node'
+    )
+
+    goal_led_publisher_node = Node(
+        package='trailblazer_nav2',
+        executable="goal_led_publisher",
+        name='goal_led_publisher_node'
+    )
+
     interactive_waypoint_follower_node = Node(
         package='trailblazer_nav2',
         executable="interactive_waypoint_follower",
@@ -90,6 +102,8 @@ def launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource([controller_launch_path]))
 
     return [
+        cmd_vel_cap_node,
+        goal_led_publisher_node,
         nav2_launch,
         rtabmap_launch,
         rsp_launch,
