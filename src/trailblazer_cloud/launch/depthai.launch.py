@@ -55,10 +55,6 @@ def launch_setup(context, *args, **kwargs):
         'Grid/NoiseFilteringRadius': '0.1', #def 0
         'Grid/MinClusterSize': '20', #def 10
 
-
-        #'Mem/IncrementalMemory':'False',
-        #'Mem/InitWMWithAllNodes':'True',
-        
         'Grid/3D': 'false',  # Use 2D occupancy
         # 'Grid/RangeMax': '3',
         # 'Vis/CorType': '1', #def 0
