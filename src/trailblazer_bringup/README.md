@@ -39,4 +39,11 @@ sudo docker run -p 8080:8080 -d -t -v ~/mapproxy:/mapproxy danielsnider/mapproxy
 ros2 launch trailblazer_nav2 mapviz.launch.py
 ros2 topic echo /diff_drive_controller/cmd_vel geometry_msgs/msg/Twist 
 ros2 run trailblazer_nav2 interactive_waypoint_follower 
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/diff_drive_controller/cmd_vel --param stamped:=true
+```
+
+# to install additionally
+```bash
+sudo apt install ros-humble-rqt-tf-tree 
+sudo apt install ros-humble-nav2-bringup
 ```

@@ -44,8 +44,8 @@ def launch_setup(context, *args, **kwargs):
 
         'Grid/RayTracing': 'true',  # Fill empty space
         'Grid/NormalsSegmentation': 'false',  # Use passthrough filter to detect obstacles
-        'Grid/MaxGroundHeight': '0.9',  # All points above 5 cm are obstacles
-        'Grid/MaxObstacleHeight': '1.0',  # All points over 1 meter are ignored
+        'Grid/MaxGroundHeight': '0.05',  # All points above 5 cm are obstacles
+        'Grid/MaxObstacleHeight': '0.4',  # All points over 1 meter are ignored
         'Optimizer/GravitySigma': '0',  # Disable imu constraints (we are already in 2D)
         #'Rtabmap/StartNewMapOnLoopClosure': 'true', #def false (set to true for navigating)
         'Odom/Strategy': '0', #def 0
@@ -66,7 +66,6 @@ def launch_setup(context, *args, **kwargs):
         #'RGBD/StartAtOrigin': 'true', #def false
         #'Odom/FilteringStrategy': '0', #def 0 (1=kalman)
         #'guess_frame_id': 'odom',
-        #'Kp/RoiRatios': '0.0 0.0 0.4 0.0',
     }]
 
     remappings = [('imu', '/imu/data'),
@@ -81,7 +80,7 @@ def launch_setup(context, *args, **kwargs):
             launch_arguments={
                 'name': name,
                 'depth_aligned': 'false',
-                'enableDotProjector': 'false',
+                'enableDotProjector': 'true',
                 'enableFloodLight': 'true',
                 'monoResolution': '400p',
                 #'mxId': '18443010814D3AF500',
@@ -165,8 +164,6 @@ def launch_setup(context, *args, **kwargs):
             'publish_tf': True,
             'guess_frame_id': 'vo',
             #'odom_frame_id': 'odom',
-            #'approx_sync': True,
-            #'approx_sync_max_interval': 0.1,  # Maksymalny odstęp czasowy: 0.1 sekundy
             }],
         remappings=remappings),
 
@@ -209,8 +206,7 @@ def launch_setup(context, *args, **kwargs):
             package='rtabmap_util', executable='point_cloud_xyz', output='screen',
             parameters=[{'decimation': 2,
                          'max_depth': 3.0,
-                         'voxel_size': 0.02,
-                         'roi_ratios': "0.0 0.0 0.4 0.0"}],
+                         'voxel_size': 0.02}],
             remappings=[('depth/image', '/stereo/depth'),
                         ('depth/camera_info', '/stereo/camera_info'),
                         ('cloud', '/camera/cloud')]),
