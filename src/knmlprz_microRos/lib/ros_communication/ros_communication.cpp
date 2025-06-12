@@ -21,11 +21,11 @@ void RosCommunication::initialize(){
      Serial.begin(115200);
      // set_microros_serial_transports(Serial);
      // Adding Wifi
-     IPAddress agent_ip(192, 168, 4, 64);
+     IPAddress agent_ip(192, 168, 223, 64);
      size_t agent_port = 8888;
  
-     char ssid[] = "Bafau";
-     char psk[]= "bafaubafau";
+     char ssid[] = "ssid";
+     char psk[]= "psk";
  
      set_microros_wifi_transports(ssid, psk, agent_ip, agent_port);
      delay(2000);

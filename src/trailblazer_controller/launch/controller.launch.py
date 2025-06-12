@@ -61,6 +61,7 @@ def generate_launch_description():
         remappings=[
             ('/diff_drive_controller/cmd_vel', 'cmd_vel_nav'),
             ('/diff_drive_controller/cmd_vel_unstamped', 'cmd_vel_nav'),
+            ('/diff_drive_controller/odom', 'odom'),
         ]
     )
 
