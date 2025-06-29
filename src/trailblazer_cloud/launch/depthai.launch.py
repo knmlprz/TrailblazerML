@@ -35,55 +35,41 @@ def launch_setup(context, *args, **kwargs):
         'frame_id': 'base_link', #base_link
         'subscribe_rgbd': True,
         'subscribe_odom_info': True,
-        #'approx_sync': False,
+        'approx_sync': False,
         #'approx_sync_max_interval': "0.1",
-        'wait_imu_to_init': True,
+        'wait_imu_to_init': False,
         'use_action_for_goal': True,
         'Reg/Force3DoF': 'true',
         'Odom/ResetCountdown': '1', #def 0
-        'guess_frame_id': 'odom',
 
-        # 'Grid/RayTracing': 'true',  # Fill empty space
-        # 'Grid/NormalsSegmentation': 'false',  # Use passthrough filter to detect obstacles
-        # 'Grid/MaxGroundHeight': '0.5',  # All points above 5 cm are obstacles
-        # 'Grid/MaxObstacleHeight': '2.0',  # All points over 1 meter are ignored
-        # 'Optimizer/GravitySigma': '0',  # Disable imu constraints (we are already in 2D)
-        # 'Odom/Strategy': '0', #def 0
-        # 'Vis/MaxFeatures': '3000', #def 1000
-        # 'GFTT/MinDistance': '7', #def 7
-        # 'Grid/NoiseFilteringMinNeighbors': '5', #def 5
-        # 'Grid/NoiseFilteringRadius': '0.1', #def 0
-        #'Grid/MinClusterSize': '20', #def 10
-
-        'Grid/3D': 'false',  # Use 2D occupancy
-
-        'wait_for_transform': 0.5,
-        # RTAB-Map's parameters should be strings
-        'Grid/DepthDecimation': '1',
-        'Grid/RangeMax': '2',
-        'GridGlobal/MinSize': '20',
-        'Grid/MinClusterSize': '20',
-        'Grid/MaxObstacleHeight': '5',
-        'Grid/MaxGroundHeight': '0.9',
         'Grid/RayTracing': 'true',  # Fill empty space
-        'Grid/NormalsSegmentation': 'true',  # Use passthrough filter to detect obstacles
-        'Grid/NoiseFilteringMinNeighbors': '5', #def 5
-        'Optimizer/GravitySigma':'0',
-        #'Grid/NormalK': '200',
-        #'Grid/NoiseFilteringRadius': '0.1', #def 0
-
+        'Grid/NormalsSegmentation': 'false',  # Use passthrough filter to detect obstacles
+        'Grid/MaxGroundHeight': '0.05',  # All points above 5 cm are obstacles
+        'Grid/MaxObstacleHeight': '0.4',  # All points over 1 meter are ignored
+        'Optimizer/GravitySigma': '0',  # Disable imu constraints (we are already in 2D)
         #'Rtabmap/StartNewMapOnLoopClosure': 'true', #def false (set to true for navigating)
+        'Odom/Strategy': '1', #def 0
+        'Vis/MaxFeatures': '3000', #def 1000
+        'GFTT/MinDistance': '7', #def 7
+        'Grid/NoiseFilteringMinNeighbors': '5', #def 5
+        'Grid/NoiseFilteringRadius': '0.1', #def 0
+        'Grid/MinClusterSize': '20', #def 10
+
+
+        #'Mem/IncrementalMemory':'False',
+        #'Mem/InitWMWithAllNodes':'True',
+        
+        'Grid/3D': 'false',  # Use 2D occupancy
         # 'Grid/RangeMax': '3',
         # 'Vis/CorType': '1', #def 0
         #'OdomF2M/MaxSize': '3000', #def 2000
         #'RGBD/StartAtOrigin': 'true', #def false
         #'Odom/FilteringStrategy': '0', #def 0 (1=kalman)
         #'guess_frame_id': 'odom',
-        #'Kp/RoiRatios': '0.0 0.0 0.4 0.0',
     }]
 
     remappings = [('imu', '/imu/data'),
-                  ('odom', 'vo')
+                  #('odom', 'vo')
                   ]
 
     return [
@@ -165,9 +151,7 @@ def launch_setup(context, *args, **kwargs):
         package='imu_filter_madgwick', executable='imu_filter_madgwick_node', output='screen',
         parameters=[{'use_mag': True,
                         'world_frame': 'enu',
-                        'publish_tf': False,
-                        #'fixed_frame': 'vo',
-                        }],
+                        'publish_tf': False}],
         remappings=[
             ('imu/data_raw', name + '/imu'),
             ('imu/mag', name + '/magnetic_field')
@@ -178,10 +162,8 @@ def launch_setup(context, *args, **kwargs):
         package='rtabmap_odom', executable='rgbd_odometry', output='screen',
         parameters=parameters + [{
             'publish_tf': True,
-            #'guess_frame_id': 'odom',
-            'odom_frame_id': 'vo',
-            #'approx_sync': True,
-            #'approx_sync_max_interval': 0.1,  # Maksymalny odstęp czasowy: 0.1 sekundy
+            'guess_frame_id': 'vo',
+            #'odom_frame_id': 'odom',
             }],
         remappings=remappings),
 
@@ -189,26 +171,14 @@ def launch_setup(context, *args, **kwargs):
     Node(
         package='rtabmap_slam', executable='rtabmap', output='screen',
         parameters=parameters,
-        remappings=remappings + [
-                        # ('cloud_obstacles', '/camera/obstacles'),
-                        # ('cloud_ground', '/camera/ground')
-                        ],
-        arguments=['-d'],
-        
-        ),
-
-    # Node(
-    #     package='rtabmap_slam', executable='rtabmap', output='screen',
-    #     parameters=parameters + [ 
-    #         {'Mem/IncrementalMemory':'False',
-    #         'Mem/InitWMWithAllNodes':'True'}],
-    #     remappings=remappings),
+        remappings=remappings,
+        arguments=['-d']),
 
     # Visualization
-    Node(
-        package='rtabmap_viz', executable='rtabmap_viz', output='screen',
-        parameters=parameters,
-        remappings=remappings),
+    # Node(
+    #     package='rtabmap_viz', executable='rtabmap_viz', output='screen',
+    #     parameters=parameters,
+    #     remappings=remappings),
 
     Node(
         package='tf2_ros',
@@ -218,19 +188,10 @@ def launch_setup(context, *args, **kwargs):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'oak_imu_frame']
     ),
     Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'vo', 'base_link']
-    ),
-    Node(
             package='rtabmap_util', executable='point_cloud_xyz', output='screen',
             parameters=[{'decimation': 2,
                          'max_depth': 3.0,
-                         'voxel_size': 0.02,
-                         #'roi_ratios': "0.0 0.0 0.4 0.0"
-                         }],
+                         'voxel_size': 0.02}],
             remappings=[('depth/image', '/stereo/depth'),
                         ('depth/camera_info', '/stereo/camera_info'),
                         ('cloud', '/camera/cloud')]),

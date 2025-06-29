@@ -22,6 +22,8 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'goal_led_publisher = trailblazer_nav2.goal_led_publisher_node:main',
+            'cmd_vel_cap = trailblazer_nav2.cmd_vel_cap:main',
             'logged_waypoint_follower = trailblazer_nav2.logged_waypoint_follower:main',
             'interactive_waypoint_follower = trailblazer_nav2.interactive_waypoint_follower:main',
             'gps_waypoint_logger = trailblazer_nav2.gps_waypoint_logger:main'

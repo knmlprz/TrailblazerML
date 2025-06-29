@@ -98,7 +98,7 @@
     <inertial>
       <origin
         xyz="-0.0657932903439138 0.00142869200681425 9.9374601122415E-06"
-        rpy="0 0 0" />
+        rpy="0 0 1.5708" />
       <mass
         value="1.6444086136415" />
       <inertia
@@ -112,7 +112,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
           filename="package://trailblazer_description/meshes/FL_wheel.STL" />
@@ -133,15 +133,16 @@
       </geometry>
     </collision>
   </link>
-
+<!-- xyz="0.578691303668632 -0.237965989839832 0.501750000756599"  -->
+<!-- xyz="0.507691304 -0.540965989839832 0.121750000756599"  -->
   <joint
     name="FL_wheel_joint"
     type="continuous">
     <origin
-      xyz="0.578691303668632 -0.237965989839832 0.501750000756599"
-      rpy="0 0 0" />
+      xyz="0.501750000756599 -0.578691303668632 0.121750000756599"
+      rpy="0 0 1.5708" />
     <parent
-      link="chassis" />
+      link="base_link" />
     <child
       link="FL_wheel" />
     <axis
@@ -181,7 +182,7 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
           filename="package://trailblazer_description/meshes/BL_wheel.STL" />
@@ -192,10 +193,10 @@
     name="BL_wheel_joint"
     type="continuous">
     <origin
-      xyz="0.578691303668647 -0.237965989839099 -0.401750000000183"
-      rpy="0 0 0" />
+      xyz="-0.401750000756599 0.578691303668632 0.121750000756599"
+      rpy="0 0 1.5708" />
     <parent
-      link="chassis" />
+      link="base_link" />
     <child
       link="BL_wheel" />
     <axis
@@ -220,7 +221,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
           filename="package://trailblazer_description/meshes/FR_wheel.STL" />
@@ -245,10 +246,10 @@
     name="FR_wheel_joint"
     type="continuous">
     <origin
-      xyz="-0.578691303668549 -0.237965989839575 0.50175"
-      rpy="0 0 0" />
+      xyz="0.501750000756599 0.578691303668632 0.121750000756599"
+      rpy="0 0 1.57" />
     <parent
-      link="chassis" />
+      link="base_link" />
     <child
       link="FR_wheel" />
     <axis
@@ -286,7 +287,7 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="0 0 3.14"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -298,10 +299,10 @@
     name="BR_wheel_joint"
     type="continuous">
     <origin
-      xyz="-0.578691303668548 -0.237965989839575 -0.401750000756777"
-      rpy="0 0 0" />
+      xyz="-0.401750000756599 -0.578691303668632 0.121750000756599"
+      rpy="0 0 1.57" />
     <parent
-      link="chassis" />
+      link="base_link" />
     <child
       link="BR_wheel" />
     <axis
