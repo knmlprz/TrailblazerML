@@ -90,7 +90,7 @@ def launch_setup(context, *args, **kwargs):
     return [
         # Nodes to launch
         nav2,
-        #rtabmap,
+        rtabmap,
         rsp,
         controller_launch,
         #navsat_launch,
