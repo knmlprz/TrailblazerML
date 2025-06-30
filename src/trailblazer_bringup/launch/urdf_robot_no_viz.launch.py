@@ -7,28 +7,21 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    fake_odom = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link']
-    )
-
     rviz_config_path = os.path.join(
-        get_package_share_directory('trailblazer_rviz'), 'config', 'controller.rviz'
+        get_package_share_directory('trailblazer_rviz'), 'config', 'urdf_model.rviz'
     )
 
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('trailblazer_description'), 'launch', 'rsp.launch.py'
-        )]), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'true'}.items()
+        )]), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'false'}.items()
     )
 
-    controller_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('trailblazer_controller'), 'launch', 'controller.launch.py')
-        )
+    node_joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen',
     )
 
     rviz_launch = IncludeLaunchDescription(
@@ -39,8 +32,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        fake_odom,
         rsp,
-        controller_launch,
-        rviz_launch
+        node_joint_state_publisher,
+        #rviz_launch
     ])

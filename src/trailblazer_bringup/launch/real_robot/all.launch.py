@@ -27,11 +27,12 @@ def launch_setup(context, *args, **kwargs):
     # nav2_params_file = PathJoinSubstitution(
     #     [FindPackageShare('trailblazer_cloud'), 'params', 'trailblazer_rgbd_nav2_params.yaml']
     # )
+
     # nav2_params_file = PathJoinSubstitution(
-    #     [FindPackageShare('trailblazer_nav2'), 'config', 'nav2_params.yaml']
+    #     [FindPackageShare('trailblazer_nav2'), 'config', 'trailblazer_rgbd_nav2_params.yaml']
     # )
     nav2_params_file = PathJoinSubstitution(
-        [FindPackageShare('trailblazer_nav2'), 'config', 'rgbd_nav2_params.yaml']
+        [FindPackageShare('trailblazer_cloud'), 'params', 'champ_nav2_params.yaml']
     )
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_launch]),
@@ -85,22 +86,14 @@ def launch_setup(context, *args, **kwargs):
     controller_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([controller_launch_path]))
     
-    # rviz2
-    rviz_launch = PathJoinSubstitution(
-        [pkg_nav2_bringup, 'launch', 'rviz_launch.py'])
-    rviz = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([rviz_launch])
-    )
-    
     
     return [
         # Nodes to launch
         nav2,
-        rviz,
         rtabmap,
-        # rsp,
-        # controller_launch,
-        navsat_launch,
+        rsp,
+        controller_launch,
+        #navsat_launch,
         #gps_node
     ]
 

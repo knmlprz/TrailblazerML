@@ -27,7 +27,6 @@
 #include "depthai_bridge/ImuConverter.hpp"
 #include "depthai_bridge/SpatialDetectionConverter.hpp"
 #include "depthai_bridge/depthaiUtility.hpp"
-#include "depthai_ros_msgs/msg/imu_with_magnetic_field.hpp"
 
 std::vector<std::string> usbStrings = {"UNKNOWN", "LOW", "FULL", "HIGH", "SUPER", "SUPER_PLUS"};
 
@@ -508,82 +507,19 @@ int main(int argc, char** argv) {
     const std::string leftPubName = rectify ? std::string("left/image_rect") : std::string("left/image_raw");
     const std::string rightPubName = rectify ? std::string("right/image_rect") : std::string("right/image_raw");
 
-    double rotation_cov = 0.0;          // Wartość kowariancji orientacji, jeśli nie używana
-    double magnetic_field_cov = 0.0001; // Przykładowa wartość kowariancji magnetometru
-    bool enable_rotation = true;       // Włącz, jeśli chcesz używać danych orientacji
-    bool enable_magn = true;            // Włączenie magnetometru
-
-    // oryginalna wersja
-
-    // dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", imuMode, linearAccelCovariance, angularVelCovariance);
-    // if(enableRosBaseTimeUpdate) {
-    //     imuConverter.setUpdateRosBaseTimeOnToRosMsg();
-    // }
-    // dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
-    //     imuQueue,
-    //     node,
-    //     name + "/imu",
-    //     std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
-    //     30,
-    //     "",
-    //     "imu");
-
-    // wersja z magnetometrem
-
-    // Tworzenie publisherów dla IMU i magnetometru
-    auto imuPublisher = node->create_publisher<sensor_msgs::msg::Imu>(name + "/imu", 30);
-    auto magneticFieldPublisher = node->create_publisher<sensor_msgs::msg::MagneticField>(name + "/magnetic_field", 30);
-
-    // Tworzenie subskrybenta dla ImuWithMagneticField
-    auto imuSub = node->create_subscription<depthai_ros_msgs::msg::ImuWithMagneticField>(
-        name + "/imu_with_magnetic_field",
-        30,
-        [&](const depthai_ros_msgs::msg::ImuWithMagneticField::SharedPtr msg) {
-            // Publikacja danych IMU
-            sensor_msgs::msg::Imu imuMsg;
-            imuMsg.header = msg->header;  // Nagłówek z czasem i frame_id
-            imuMsg.orientation = msg->imu.orientation;  // Orientacja
-            imuMsg.angular_velocity = msg->imu.angular_velocity;  // Prędkość kątowa
-            imuMsg.linear_acceleration = msg->imu.linear_acceleration;  // Przyspieszenie liniowe
-            imuMsg.orientation_covariance = msg->imu.orientation_covariance;  // Kowariancja orientacji
-            imuMsg.angular_velocity_covariance = msg->imu.angular_velocity_covariance;  // Kowariancja prędkości kątowej
-            imuMsg.linear_acceleration_covariance = msg->imu.linear_acceleration_covariance;  // Kowariancja przyspieszenia
-            imuPublisher->publish(imuMsg);
-
-            // Publikacja danych magnetometru
-            sensor_msgs::msg::MagneticField magMsg;
-            magMsg.header = msg->header;  // Nagłówek z czasem i frame_id
-            magMsg.magnetic_field = msg->field.magnetic_field;  // Dane magnetometru
-            magMsg.magnetic_field_covariance = msg->field.magnetic_field_covariance;  // Kowariancja
-            magneticFieldPublisher->publish(magMsg);
-        }
-    );
-
-    // Konfiguracja ImuConverter
-    dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", 
-                                            imuMode, 
-                                            linearAccelCovariance, 
-                                            angularVelCovariance,
-                                            rotation_cov, 
-                                            magnetic_field_cov, 
-                                            enable_rotation, 
-                                            enable_magn);
-
+    dai::rosBridge::ImuConverter imuConverter(tfPrefix + "_imu_frame", imuMode, linearAccelCovariance, angularVelCovariance);
     if(enableRosBaseTimeUpdate) {
         imuConverter.setUpdateRosBaseTimeOnToRosMsg();
     }
-
-    // BridgePublisher dla ImuWithMagneticField
-    dai::rosBridge::BridgePublisher<depthai_ros_msgs::msg::ImuWithMagneticField, dai::IMUData> imuPublish(
+    dai::rosBridge::BridgePublisher<sensor_msgs::msg::Imu, dai::IMUData> imuPublish(
         imuQueue,
         node,
-        name + "/imu_with_magnetic_field",
-        std::bind(&dai::rosBridge::ImuConverter::toRosDaiMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
+        name + "/imu",
+        std::bind(&dai::rosBridge::ImuConverter::toRosMsg, &imuConverter, std::placeholders::_1, std::placeholders::_2),
         30,
         "",
-        "imu_with_magnetic_field");
+        "imu");
 
-    // Użycie domyślnego callbacka
     imuPublish.addPublisherCallback();
 
     // auto leftCameraInfo = converter.calibrationToCameraInfo(calibrationHandler, dai::CameraBoardSocket::CAM_B, monoWidth, monoHeight);

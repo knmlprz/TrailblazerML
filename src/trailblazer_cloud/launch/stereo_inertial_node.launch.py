@@ -34,9 +34,9 @@ def generate_launch_description():
     parent_frame = LaunchConfiguration('parent_frame',  default = 'base_link')
     imuMode      = LaunchConfiguration('imuMode', default = '1')
 
-    cam_pos_x    = LaunchConfiguration('cam_pos_x',     default = '-0.0475')
-    cam_pos_y    = LaunchConfiguration('cam_pos_y',     default = '0.13')
-    cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '0.4465')
+    cam_pos_x    = LaunchConfiguration('cam_pos_x',     default = '0.0') #0.0475
+    cam_pos_y    = LaunchConfiguration('cam_pos_y',     default = '0.0') #0.13
+    cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '0.0') #0.4465
     cam_roll     = LaunchConfiguration('cam_roll',      default = '0.0 ')  #1.5708 for 'Reg/Force3DoF': 'false', #0.0 for 'Reg/Force3DoF': 'true', #-1.5708 for robot aligned
     cam_pitch    = LaunchConfiguration('cam_pitch',     default = '0.0 ')  #-1.5708 for 'Reg/Force3DoF': 'false', #0.0 for 'Reg/Force3DoF': 'true', #-1.5708 for robot aligned
     cam_yaw      = LaunchConfiguration('cam_yaw',       default = '0.0 ') #-1.5708 for 'Reg/Force3DoF': 'false', #3.1416 for 'Reg/Force3DoF': 'true', #0.0 for robot aligned
@@ -513,8 +513,8 @@ def generate_launch_description():
     ld.add_action(urdf_launch)
     ld.add_action(stereo_node)
     
-    ld.add_action(rviz_aligned)
-    ld.add_action(rviz_rectify)
+    # ld.add_action(rviz_aligned)
+    # ld.add_action(rviz_rectify)
     
     ld.add_action(point_cloud_container)
     
