@@ -58,3 +58,16 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/cm
 ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
 
 ```
+
+# test urdf
+
+### with gui
+
+```bash
+ros2 launch trailblazer_bringup urdf_robot.launch.py
+```
+
+### without gui
+```bash
+ros2 launch trailblazer_bringup urdf_robot_no_viz.launch.py
+```
