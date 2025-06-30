@@ -205,10 +205,10 @@ def launch_setup(context, *args, **kwargs):
     #     remappings=remappings),
 
     # Visualization
-    Node(
-        package='rtabmap_viz', executable='rtabmap_viz', output='screen',
-        parameters=parameters,
-        remappings=remappings),
+    # Node(
+    #     package='rtabmap_viz', executable='rtabmap_viz', output='screen',
+    #     parameters=parameters,
+    #     remappings=remappings),
 
     Node(
         package='tf2_ros',
