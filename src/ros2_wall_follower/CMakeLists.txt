@@ -40,6 +40,7 @@ install(PROGRAMS
 install(DIRECTORY 
   launch
   rviz
+  params
   DESTINATION share/${PROJECT_NAME}
 )
 

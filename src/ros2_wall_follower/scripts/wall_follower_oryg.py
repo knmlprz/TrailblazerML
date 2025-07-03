@@ -92,7 +92,7 @@ class WallFollower(Node):
         return None
 
     # define and initialize class variables
-    robot_radius = 1.0                      # 10 cm
+    robot_radius = 0.10                      # 10 cm
     side_threshold_min = robot_radius + 0.05 #  5 cm gap
     side_threshold_max = robot_radius + 0.10 # 10 cm gap
     front_threshold = robot_radius + 0.40    # 40 cm gap
@@ -372,74 +372,104 @@ class WallFollower(Node):
 
     def control_callback(self):
         if (self.iterations_count >= self.ignore_iterations):
-            # Ustawienie prędkości liniowej na stałą wartość
-            self.twist_cmd.linear.x = self.lin_vel_fast
-            
-            # Obliczenie prędkości kątowej na podstawie odległości do przeszkód
-            if (self.scan_left_range > self.side_threshold_max and
-                self.scan_right_range > self.side_threshold_max):
-                # Jeśli obie strony są daleko, nie skręcaj
-                self.twist_cmd.angular.z = self.ang_vel_zero
+            # fix for delayed laser scanner startup
+            if (self.wall_found):
+                # now the robot is either facing the wall after finding the wall
+                # or running the wall follower process and facing a wall or obstacle
+                if (self.scan_front_range < self.front_threshold):
+                    # turn towards the side opposite to the wall while moving forward
+                    self.twist_cmd.linear.x = self.lin_vel_slow
+                    if (self.side_chosen == "right"):
+                        # turn the robot to the left
+                        self.twist_cmd.angular.z = (self.ang_vel_fast * self.ang_vel_mult)
+                    elif (self.side_chosen == "left"):
+                        # turn the robot to the right
+                        self.twist_cmd.angular.z = (-self.ang_vel_fast * self.ang_vel_mult)
+                    else:
+                        # otherwise do nothing
+                        # this choice will never happen
+                        pass
+                else:
+                    # otherwise keep going straight
+                    # until either onstacle or wall is detected
+                    self.twist_cmd.linear.x = self.lin_vel_fast
+                    # check the closeness to the wall
+                    if (self.side_chosen == "right"):
+                        # wall is on the right
+                        if (self.scan_right_range < self.side_threshold_min):
+                            # turn left to move away from the wall
+                            self.twist_cmd.angular.z = self.ang_vel_slow
+                        elif (self.scan_right_range > self.side_threshold_max):
+                            # turn right to move close to the wall
+                            self.twist_cmd.angular.z = -self.ang_vel_slow
+                        else:
+                            # do not turn and keep going straight
+                            self.twist_cmd.angular.z = self.ang_vel_zero
+                    elif (self.side_chosen == "left"):
+                        # wall is on the left
+                        if (self.scan_left_range < self.side_threshold_min):
+                            # turn right to move away from the wall
+                            self.twist_cmd.angular.z = -self.ang_vel_slow
+                        elif (self.scan_left_range > self.side_threshold_max):
+                            # turn left to move close to the wall
+                            self.twist_cmd.angular.z = self.ang_vel_slow
+                        else:
+                            # do not turn and keep going straight
+                            self.twist_cmd.angular.z = self.ang_vel_zero
+                    else:
+                        # otherwise do nothing
+                        # this choice will never happen
+                        pass
             else:
-                # Obliczenie błędu
-                error = 1 / self.scan_left_range - 1 / self.scan_right_range
-                # Normalizacja błędu do zakresu od -1 do 1
-                max_error = 1 / self.scan_range_min - 1 / self.scan_range_max
-                normalized_error = error / max_error if max_error != 0 else 0
-                # Skalowanie do zakresu od 0 do 1
-                scaled_error = (normalized_error + 1) / 2
-                # Obliczenie prędkości kątowej z zachowaniem znaku
-                self.twist_cmd.angular.z = -self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
+                # find the wall closest to the robot
+                # keep moving forward until the robot detects
+                # an obstacle or wall in its front
+                if (self.scan_front_range < self.front_threshold):
+                    # immediately set the wall_found flag to true
+                    # to break out of this subprocess
+                    self.wall_found = True
+                    self.get_logger().info("Wall Found!")
+                    # stop the robot
+                    self.twist_cmd.linear.x = self.lin_vel_zero
+                    self.twist_cmd.angular.z = self.ang_vel_zero
+                    self.get_logger().info("Robot Stopped!")
+                    # choose a side to turn if side_choice is set to none
+                    if ((side_choice != "right") and
+                        (side_choice != "left")):
+                        # choose the side that has closer range value
+                        # closer range value indicates that the wall is on that side
+                        if (self.scan_right_range < self.scan_left_range):
+                            # wall is on the right
+                            self.side_chosen = "right"
+                        elif (self.scan_right_range > self.scan_left_range):
+                            # wall is on the left
+                            self.side_chosen = "left"
+                        else:
+                            # otherwise do nothing
+                            # this choice will never happen
+                            pass
+                        self.get_logger().info("Side Chosen: %s" % (self.side_chosen))
+                    else:
+                        # otherwise do nothing
+                        # side is already set by the user
+                        pass
+                else:
+                    # otherwise keep going straight slowly
+                    # until either onstacle or wall is detected
+                    self.twist_cmd.linear.x = self.lin_vel_slow
+                    self.twist_cmd.angular.z = self.ang_vel_zero
         else:
+            # just increment the iterations count
             self.iterations_count += 1
+            # keep the robot stopped
             self.twist_cmd.linear.x = self.lin_vel_zero
             self.twist_cmd.angular.z = self.ang_vel_zero
-        # Opublikuj komendę twist
+        # publish the twist command
         self.publish_twist_cmd()
-        # Wydrukuj informacje o bieżącej iteracji
+        # print the current iteration information
         self.print_info()
         return None
 
-    # def control_callback(self):
-    #     if (self.iterations_count >= self.ignore_iterations):
-    #         # Ustawienie prędkości liniowej na stałą wartość
-    #         self.twist_cmd.linear.x = self.lin_vel_fast
-            
-    #         # Obliczenie prędkości kątowej na podstawie odległości do przeszkód
-    #         if (self.scan_left_range > self.side_threshold_max and
-    #             self.scan_right_range > self.side_threshold_max):
-    #             # Jeśli obie strony są daleko, nie skręcaj
-    #             self.twist_cmd.angular.z = self.ang_vel_zero
-    #         elif(self.scan_left_range > self.scan_right_range):
-    #             # Obliczenie błędu
-    #             error = 1 / self.scan_left_range - 1 / self.scan_right_range
-    #             # Normalizacja błędu do zakresu od -1 do 1
-    #             max_error = 1 / self.scan_range_min - 1 / self.scan_range_max
-    #             normalized_error = error / max_error if max_error != 0 else 0
-    #             # Skalowanie do zakresu od 0 do 1
-    #             scaled_error = (normalized_error + 1) / 2
-    #             # Obliczenie prędkości kątowej z zachowaniem znaku
-    #             self.twist_cmd.angular.z = -self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
-    #         else:
-    #             # Obliczenie błędu
-    #             error = 1 / self.scan_right_range - 1 / self.scan_left_range
-    #             # Normalizacja błędu do zakresu od -1 do 1
-    #             max_error = 1 / self.scan_range_min - 1 / self.scan_range_max
-    #             normalized_error = error / max_error if max_error != 0 else 0
-    #             # Skalowanie do zakresu od 0 do 1
-    #             scaled_error = (normalized_error + 1) / 2
-    #             # Obliczenie prędkości kątowej z zachowaniem znaku
-    #             self.twist_cmd.angular.z = self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
-    #     else:
-    #         self.iterations_count += 1
-    #         self.twist_cmd.linear.x = self.lin_vel_zero
-    #         self.twist_cmd.angular.z = self.ang_vel_zero
-    #     # Opublikuj komendę twist
-    #     self.publish_twist_cmd()
-    #     # Wydrukuj informacje o bieżącej iteracji
-    #     self.print_info()
-    #     return None
-    
     def publish_twist_cmd(self):
         # linear speed control
         if (self.twist_cmd.linear.x >= 0.150):
