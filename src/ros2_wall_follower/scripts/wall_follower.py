@@ -402,33 +402,31 @@ class WallFollower(Node):
     #     return None
 
     def control_callback(self):
-        if self.iterations_count >= self.ignore_iterations:
-            # Ustaw stałą prędkość jazdy do przodu
+        if (self.iterations_count >= self.ignore_iterations):
+            # Ustawienie prędkości liniowej na stałą wartość
             self.twist_cmd.linear.x = self.lin_vel_fast
-
-            # Oblicz różnicę średnich odległości
-            error = self.scan_right_range - self.scan_left_range
-
-            # Normalizacja względem maksymalnego możliwego zakresu
-            max_error = self.scan_range_max - self.scan_range_min
-            normalized_error = error / max_error if max_error != 0 else 0.0
             
-            print("error",error,"max_error",max_error,"self.scan_range_max",self.scan_range_max,"self.scan_range_min",self.scan_range_min,"normalized_error",normalized_error)
-
-            # Skalowanie prędkości kątowej (ujemna = skręt w lewo, dodatnia = skręt w prawo)
-            self.twist_cmd.angular.z = self.ang_vel_fast * normalized_error * twisting_multiplier
-
+            # Obliczenie różnicy między średnimi odczytami
+            error = self.scan_left_range - self.scan_right_range
+            
+            # Normalizacja błędu do zakresu od -1 do 1
+            max_error = self.scan_range_max - self.scan_range_min
+            normalized_error = error / max_error if max_error != 0 else 0
+            
+            # Obliczenie prędkości kątowej proporcjonalnie do błędu
+            self.twist_cmd.angular.z = self.ang_vel_fast * normalized_error * self.twisting_multiplier
+            
+            # Ograniczenie prędkości kątowej do zakresu [-0.3, 0.3]
+            self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, 0.3), -0.3)
         else:
             self.iterations_count += 1
             self.twist_cmd.linear.x = self.lin_vel_zero
             self.twist_cmd.angular.z = self.ang_vel_zero
-
-        # Publikuj komendę twist
+            
+        # Opublikuj komendę twist
         self.publish_twist_cmd()
-
-        # Debug/info
+        # Wydrukuj informacje o bieżącej iteracji
         self.print_info()
-
         return None
     
     def publish_twist_cmd(self):

@@ -93,7 +93,7 @@ def launch_setup(context, *args, **kwargs):
         laser_to_link_transform,
         lc_mgr_node,
         ldlidar_launch,
-        rviz_launch_wall_follower,
+        #rviz_launch_wall_follower,
         #slam_launch,
     ]
 
