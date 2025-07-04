@@ -118,7 +118,7 @@ class WallFollower(Node):
     side_chosen = "none"
     lin_vel_zero = 0.000
     lin_vel_slow = 0.100
-    lin_vel_fast = 0.250
+    lin_vel_fast = 0.550
     ang_vel_zero = 0.000
     ang_vel_slow = 0.050
     ang_vel_fast = 0.500
