@@ -87,6 +87,18 @@ def launch_setup(context, *args, **kwargs):
         )
     )
 
+    wall_follower = Node(
+        package="ros2_wall_follower",
+        executable="wall_follower.py", # py version
+        name="wall_follower",
+        output="screen",
+        emulate_tty=True,
+        remappings=[
+            ('/scan', '/ldlidar_node/scan'),
+            ('/cmd_vel', '/cmd_vel_nav')
+        ]
+    )
+
     return [
         rsp,
         controller_launch,
@@ -95,6 +107,7 @@ def launch_setup(context, *args, **kwargs):
         ldlidar_launch,
         #rviz_launch_wall_follower,
         #slam_launch,
+        wall_follower,
     ]
 
 def generate_launch_description():

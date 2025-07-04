@@ -1,7 +1,7 @@
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, ExecuteProcess, TimerAction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
@@ -11,22 +11,19 @@ import os
 
 def launch_setup(context, *args, **kwargs):
 
-    
-    
-    wall_follower = Node(
-        package="ros2_wall_follower",
-        executable="wall_follower.py", # py version
-        name="wall_follower",
-        output="screen",
-        emulate_tty=True,
-        remappings=[
-            ('/scan', '/ldlidar_node/scan'),
-            ('/cmd_vel', '/cmd_vel_nav')
-        ]
+    start_autonomy_service = ExecuteProcess(
+        cmd=['ros2', 'service', 'call', '/start_autonomy', 'std_srvs/srv/Trigger', '{}'],
+        output='screen'
+    )
+
+    # Dodajemy opóźnienie, aby upewnić się, że węzeł wall_follower jest gotowy
+    delayed_start_autonomy = TimerAction(
+        period=1.0,  # Opóźnienie 5 sekund
+        actions=[start_autonomy_service]
     )
 
     return [
-        wall_follower,
+        delayed_start_autonomy
     ]
 
 def generate_launch_description():

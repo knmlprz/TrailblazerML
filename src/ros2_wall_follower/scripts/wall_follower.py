@@ -13,6 +13,7 @@ from rclpy.callback_groups import ReentrantCallbackGroup  # reentrant callback g
 from geometry_msgs.msg import Twist   # twist message
 from nav_msgs.msg import Odometry     # odometry message
 from sensor_msgs.msg import LaserScan # laser scan message
+from std_srvs.srv import Trigger  # Dodajemy import dla usługi Trigger
 # standard imports
 import math
 
@@ -85,6 +86,13 @@ class WallFollower(Node):
 
         self.get_logger().info("Wall Follower Initialized !")
 
+        # Inicjalizacja usługi do uruchamiania autonomii
+        self.srv = self.create_service(Trigger, 'start_autonomy', self.start_autonomy_callback)
+        self.get_logger().info("Initialized start_autonomy Service")
+
+        # Flaga kontrolująca autonomię
+        self.autonomy_enabled = False
+
         return None
 
     # class destructor
@@ -152,6 +160,13 @@ class WallFollower(Node):
     odom_ang_vel = 0.0
     angles = dict()
 
+    def start_autonomy_callback(self, request, response):
+        self.autonomy_enabled = True
+        self.get_logger().info('Autonomy enabled by operator')
+        response.success = True
+        response.message = 'Autonomy started'
+        return response
+    
     # private class methods and callbacks
 
     def scan_callback(self, scan_msg):
@@ -402,31 +417,39 @@ class WallFollower(Node):
     #     return None
 
     def control_callback(self):
-        if (self.iterations_count >= self.ignore_iterations):
-            # Ustawienie prędkości liniowej na stałą wartość
+        if self.autonomy_enabled == True and self.iterations_count >= self.ignore_iterations:
+            # Ustaw stałą prędkość jazdy do przodu
             self.twist_cmd.linear.x = self.lin_vel_fast
-            
-            # Obliczenie różnicy między średnimi odczytami
-            error = self.scan_left_range - self.scan_right_range
-            
-            # Normalizacja błędu do zakresu od -1 do 1
-            max_error = self.scan_range_max - self.scan_range_min
-            normalized_error = error / max_error if max_error != 0 else 0
-            
-            # Obliczenie prędkości kątowej proporcjonalnie do błędu
-            self.twist_cmd.angular.z = self.ang_vel_fast * normalized_error * self.twisting_multiplier
-            
-            # Ograniczenie prędkości kątowej do zakresu [-0.3, 0.3]
-            self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, 0.3), -0.3)
+
+            if (self.scan_left_range > self.side_threshold_max and
+                self.scan_right_range > self.side_threshold_max):
+                # Jeśli obie strony są daleko, nie skręcaj
+                self.twist_cmd.angular.z = self.ang_vel_zero
+            else:
+                # Oblicz różnicę średnich odległości
+                error = self.scan_right_range - self.scan_left_range
+
+                # Normalizacja względem maksymalnego możliwego zakresu
+                max_error = self.scan_range_max - self.scan_range_min
+                normalized_error = error / max_error if max_error != 0 else 0.0
+                
+                print("error",error,"max_error",max_error,"self.scan_range_max",self.scan_range_max,"self.scan_range_min",self.scan_range_min,"normalized_error",normalized_error)
+
+                # Skalowanie prędkości kątowej (ujemna = skręt w lewo, dodatnia = skręt w prawo)
+                self.twist_cmd.angular.z = -self.ang_vel_fast * normalized_error * self.twisting_multiplier
+                self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, 0.3), -0.3)
+
         else:
             self.iterations_count += 1
             self.twist_cmd.linear.x = self.lin_vel_zero
             self.twist_cmd.angular.z = self.ang_vel_zero
-            
-        # Opublikuj komendę twist
+
+        # Publikuj komendę twist
         self.publish_twist_cmd()
-        # Wydrukuj informacje o bieżącej iteracji
+
+        # Debug/info
         self.print_info()
+
         return None
     
     def publish_twist_cmd(self):
