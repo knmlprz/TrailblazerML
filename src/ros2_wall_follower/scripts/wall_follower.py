@@ -79,7 +79,8 @@ class WallFollower(Node):
         self.get_logger().info("Initialized /odom Subscriber")
 
         # declare and initialize control timer callback
-        self.control_timer = self.create_timer(timer_period_sec=0.100,
+        self.control_frequency = 30.0
+        self.control_timer = self.create_timer(timer_period_sec=1.0 / self.control_frequency,
                                                callback=self.control_callback,
                                                callback_group=self.callback_group)
         self.get_logger().info("Initialized Control Timer")
@@ -118,14 +119,13 @@ class WallFollower(Node):
     side_chosen = "none"
     lin_vel_zero = 0.000
     lin_vel_slow = 0.100
-    lin_vel_fast = 0.450
+    lin_vel_fast = 0.250
     ang_vel_zero = 0.000
     ang_vel_slow = 0.050
     ang_vel_fast = 0.500
     ang_vel_mult = 0.0
     # velocity publisher variables
     twist_cmd = Twist()
-    last_valid_twist = Twist()
     # scan subscriber variables
     scan_info_done = False
     scan_angle_min = 0.0
@@ -450,14 +450,11 @@ class WallFollower(Node):
                 # Skalowanie prędkości kątowej (ujemna = skręt w lewo, dodatnia = skręt w prawo)
                 self.twist_cmd.angular.z = -self.ang_vel_fast * normalized_error * self.twisting_multiplier
                 self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, 0.3), -0.3)
-                self.last_valid_twist = Twist()
-                self.last_valid_twist.linear.x = self.twist_cmd.linear.x
-                self.last_valid_twist.angular.z = self.twist_cmd.angular.z
 
         else:
             self.iterations_count += 1
-            self.twist_cmd.linear.x = self.last_valid_twist.linear.x
-            self.twist_cmd.angular.z = self.last_valid_twist.angular.z
+            self.twist_cmd.linear.x = self.lin_vel_zero
+            self.twist_cmd.angular.z = self.ang_vel_zero
 
         # Publikuj komendę twist
         self.publish_twist_cmd()
