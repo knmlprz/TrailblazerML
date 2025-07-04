@@ -125,6 +125,7 @@ class WallFollower(Node):
     ang_vel_mult = 0.0
     # velocity publisher variables
     twist_cmd = Twist()
+    last_valid_twist = Twist()
     # scan subscriber variables
     scan_info_done = False
     scan_angle_min = 0.0
@@ -449,11 +450,14 @@ class WallFollower(Node):
                 # Skalowanie prędkości kątowej (ujemna = skręt w lewo, dodatnia = skręt w prawo)
                 self.twist_cmd.angular.z = -self.ang_vel_fast * normalized_error * self.twisting_multiplier
                 self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, 0.3), -0.3)
+                self.last_valid_twist = Twist()
+                self.last_valid_twist.linear.x = self.twist_cmd.linear.x
+                self.last_valid_twist.angular.z = self.twist_cmd.angular.z
 
         else:
             self.iterations_count += 1
-            self.twist_cmd.linear.x = self.lin_vel_zero
-            self.twist_cmd.angular.z = self.ang_vel_zero
+            self.twist_cmd.linear.x = self.last_valid_twist.linear.x
+            self.twist_cmd.angular.z = self.last_valid_twist.angular.z
 
         # Publikuj komendę twist
         self.publish_twist_cmd()
