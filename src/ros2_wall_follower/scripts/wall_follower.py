@@ -92,6 +92,7 @@ class WallFollower(Node):
         return None
 
     # define and initialize class variables
+    twisting_multiplier = 10
     robot_radius = 1.0                      # 10 cm
     side_threshold_min = robot_radius + 0.05 #  5 cm gap
     side_threshold_max = robot_radius + 0.10 # 10 cm gap
@@ -370,36 +371,6 @@ class WallFollower(Node):
             self.get_logger().info("~~~~~ End Odom Info ~~~~")
         return None
 
-    def control_callback(self):
-        if (self.iterations_count >= self.ignore_iterations):
-            # Ustawienie prędkości liniowej na stałą wartość
-            self.twist_cmd.linear.x = self.lin_vel_fast
-            
-            # Obliczenie prędkości kątowej na podstawie odległości do przeszkód
-            if (self.scan_left_range > self.side_threshold_max and
-                self.scan_right_range > self.side_threshold_max):
-                # Jeśli obie strony są daleko, nie skręcaj
-                self.twist_cmd.angular.z = self.ang_vel_zero
-            else:
-                # Obliczenie błędu
-                error = 1 / self.scan_left_range - 1 / self.scan_right_range
-                # Normalizacja błędu do zakresu od -1 do 1
-                max_error = 1 / self.scan_range_min - 1 / self.scan_range_max
-                normalized_error = error / max_error if max_error != 0 else 0
-                # Skalowanie do zakresu od 0 do 1
-                scaled_error = (normalized_error + 1) / 2
-                # Obliczenie prędkości kątowej z zachowaniem znaku
-                self.twist_cmd.angular.z = -self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
-        else:
-            self.iterations_count += 1
-            self.twist_cmd.linear.x = self.lin_vel_zero
-            self.twist_cmd.angular.z = self.ang_vel_zero
-        # Opublikuj komendę twist
-        self.publish_twist_cmd()
-        # Wydrukuj informacje o bieżącej iteracji
-        self.print_info()
-        return None
-
     # def control_callback(self):
     #     if (self.iterations_count >= self.ignore_iterations):
     #         # Ustawienie prędkości liniowej na stałą wartość
@@ -410,7 +381,7 @@ class WallFollower(Node):
     #             self.scan_right_range > self.side_threshold_max):
     #             # Jeśli obie strony są daleko, nie skręcaj
     #             self.twist_cmd.angular.z = self.ang_vel_zero
-    #         elif(self.scan_left_range > self.scan_right_range):
+    #         else:
     #             # Obliczenie błędu
     #             error = 1 / self.scan_left_range - 1 / self.scan_right_range
     #             # Normalizacja błędu do zakresu od -1 do 1
@@ -420,16 +391,6 @@ class WallFollower(Node):
     #             scaled_error = (normalized_error + 1) / 2
     #             # Obliczenie prędkości kątowej z zachowaniem znaku
     #             self.twist_cmd.angular.z = -self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
-    #         else:
-    #             # Obliczenie błędu
-    #             error = 1 / self.scan_right_range - 1 / self.scan_left_range
-    #             # Normalizacja błędu do zakresu od -1 do 1
-    #             max_error = 1 / self.scan_range_min - 1 / self.scan_range_max
-    #             normalized_error = error / max_error if max_error != 0 else 0
-    #             # Skalowanie do zakresu od 0 do 1
-    #             scaled_error = (normalized_error + 1) / 2
-    #             # Obliczenie prędkości kątowej z zachowaniem znaku
-    #             self.twist_cmd.angular.z = self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
     #     else:
     #         self.iterations_count += 1
     #         self.twist_cmd.linear.x = self.lin_vel_zero
@@ -439,6 +400,36 @@ class WallFollower(Node):
     #     # Wydrukuj informacje o bieżącej iteracji
     #     self.print_info()
     #     return None
+
+    def control_callback(self):
+        if self.iterations_count >= self.ignore_iterations:
+            # Ustaw stałą prędkość jazdy do przodu
+            self.twist_cmd.linear.x = self.lin_vel_fast
+
+            # Oblicz różnicę średnich odległości
+            error = self.scan_right_range - self.scan_left_range
+
+            # Normalizacja względem maksymalnego możliwego zakresu
+            max_error = self.scan_range_max - self.scan_range_min
+            normalized_error = error / max_error if max_error != 0 else 0.0
+            
+            print("error",error,"max_error",max_error,"self.scan_range_max",self.scan_range_max,"self.scan_range_min",self.scan_range_min,"normalized_error",normalized_error)
+
+            # Skalowanie prędkości kątowej (ujemna = skręt w lewo, dodatnia = skręt w prawo)
+            self.twist_cmd.angular.z = self.ang_vel_fast * normalized_error * twisting_multiplier
+
+        else:
+            self.iterations_count += 1
+            self.twist_cmd.linear.x = self.lin_vel_zero
+            self.twist_cmd.angular.z = self.ang_vel_zero
+
+        # Publikuj komendę twist
+        self.publish_twist_cmd()
+
+        # Debug/info
+        self.print_info()
+
+        return None
     
     def publish_twist_cmd(self):
         # linear speed control
