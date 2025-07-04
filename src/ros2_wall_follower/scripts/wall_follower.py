@@ -79,7 +79,7 @@ class WallFollower(Node):
         self.get_logger().info("Initialized /odom Subscriber")
 
         # declare and initialize control timer callback
-        self.control_timer = self.create_timer(timer_period_sec=0.500,
+        self.control_timer = self.create_timer(timer_period_sec=0.100,
                                                callback=self.control_callback,
                                                callback_group=self.callback_group)
         self.get_logger().info("Initialized Control Timer")
