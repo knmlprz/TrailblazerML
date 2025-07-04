@@ -12,7 +12,7 @@ import os
 def launch_setup(context, *args, **kwargs):
 
     start_autonomy_service = ExecuteProcess(
-        cmd=['ros2', 'service', 'call', '/start_autonomy', 'std_srvs/srv/Trigger', '{}'],
+        cmd=['ros2', 'service', 'call', '/stop_autonomy', 'std_srvs/srv/Trigger', '{}'],
         output='screen'
     )
 

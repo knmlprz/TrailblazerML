@@ -90,6 +90,10 @@ class WallFollower(Node):
         self.srv = self.create_service(Trigger, 'start_autonomy', self.start_autonomy_callback)
         self.get_logger().info("Initialized start_autonomy Service")
 
+        # Inicjalizacja usługi do wylaczania autonomii
+        self.srv = self.create_service(Trigger, 'stop_autonomy', self.stop_autonomy_callback)
+        self.get_logger().info("Initialized stop_autonomy Service")
+
         # Flaga kontrolująca autonomię
         self.autonomy_enabled = False
 
@@ -165,6 +169,13 @@ class WallFollower(Node):
         self.get_logger().info('Autonomy enabled by operator')
         response.success = True
         response.message = 'Autonomy started'
+        return response
+    
+    def stop_autonomy_callback(self, request, response):
+        self.autonomy_enabled = False
+        self.get_logger().info('Autonomy disabled by operator')
+        response.success = True
+        response.message = 'Autonomy stoped'
         return response
     
     # private class methods and callbacks
