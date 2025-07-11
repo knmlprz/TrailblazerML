@@ -36,6 +36,13 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+# test python executables
+install(PROGRAMS
+  scripts/service_example.py
+  scripts/service_planner_example.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # install package directories
 install(DIRECTORY 
   launch
