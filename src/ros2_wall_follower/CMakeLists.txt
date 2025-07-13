@@ -40,7 +40,9 @@ install(PROGRAMS
 install(PROGRAMS
   scripts/service_example.py
   scripts/service_planner_example.py
+
   scripts/aruco_searching.py
+  scripts/driving_to_aruco.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

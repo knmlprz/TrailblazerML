@@ -105,15 +105,15 @@ class CmdVelNavPublisher(Node):
             self.get_logger().info(f'Published Twist: linear=0.0 angular={msg.angular.z}')
 
     def aruco_callback(self, msg: ArucoDetection):
-        if not msg.markers:
+        if not msg.markers and self.searching_active:
             self.get_logger().info("No markers detected.")
+            for i, marker in enumerate(msg.markers):
+                x = marker.pose.position.x
+                y = marker.pose.position.y
+                z = marker.pose.position.z
+                self.get_logger().info(f'position x={x:.2f}, y={y:.2f}, z={z:.2f} ')
             return
-
-        for i, marker in enumerate(msg.markers):
-            x = marker.pose.position.x
-            y = marker.pose.position.y
-            z = marker.pose.position.z
-            self.get_logger().info(f'Marker {i}: position x={x:.2f}, y={y:.2f}, z={z:.2f}')
+    
 
         if (
             len(msg.markers) >= 2 and 
@@ -126,7 +126,7 @@ class CmdVelNavPublisher(Node):
             avg_x = (x1 + x2) / 2.0
 
             self.get_logger().info(f'Average X between two markers: {avg_x:.3f}')
-
+            
             # Jeśli średnia bliska 0 (kamera skierowana między markerami)
             if abs(avg_x) < 0.05 or avg_x >= 0.0:
                 self.get_logger().info("Camera is centered between two markers — calling stop service.")
