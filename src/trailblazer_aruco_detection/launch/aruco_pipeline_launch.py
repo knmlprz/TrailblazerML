@@ -6,6 +6,7 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
+    # Ścieżka do launch kamery
     camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(
@@ -16,6 +17,7 @@ def generate_launch_description():
         ])
     )
 
+    # Węzeł detekcji ArUco
     aruco_tracker = Node(
         package='aruco_opencv',
         executable='aruco_tracker_autostart',
@@ -27,19 +29,7 @@ def generate_launch_description():
         }]
     )
 
-    aruco1_publisher = Node(
-        package='trailblazer_aruco_detection',
-        executable='aruco1_publisher'
-    )
-
-    aruco2_publisher = Node(
-        package='trailblazer_aruco_detection',
-        executable='aruco2_publisher'
-    )
-
     return LaunchDescription([
         camera_launch,
-        aruco_tracker,
-        aruco1_publisher,
-        aruco2_publisher
+        aruco_tracker
     ])
