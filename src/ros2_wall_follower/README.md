@@ -11,4 +11,36 @@ source install/setup.bash
 ros2 run aruco_opencv aruco_tracker_autostart --ros-args -p cam_base_topic:=oak/rgb/image_raw -p marker_size:=0.15 -p marker_dict:=ARUCO_ORIGINAL
 ros2 launch depthai_ros_driver camera.launch.py 
 ros2 service call /aruco_searching_start std_srvs/srv/Trigger
+ros2 service call /aruco_searching_stop std_srvs/srv/Trigger
+ros2 service call /driving_to_aruco_start std_srvs/srv/Trigger
+ros2 service call /driving_to_aruco_stop std_srvs/srv/Trigger
+
+```
+
+```bash
+ros2 launch depthai_ros_driver camera.launch.py
+```
+
+```bash
+cd ~/ros2_ws_aruco/
+source install/setup.bash
+ros2 run aruco_opencv aruco_tracker_autostart --ros-args -p cam_base_topic:=oak/rgb/image_raw -p marker_size:=0.15 -p marker_dict:=ARUCO_ORIGINAL
+```
+
+```bash
+cd ~/TrailblazerML/
+source install/setup.bash
+ros2 run ros2_wall_follower aruco_searching.py 
+```
+
+```bash
+cd ~/TrailblazerML/
+source install/setup.bash
+ros2 run ros2_wall_follower driving_to_aruco.py
+```
+
+```bash
+cd ~/microros_ws/
+source install/setup.bash
+ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -b 115200
 ```
