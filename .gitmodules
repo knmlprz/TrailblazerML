@@ -1,0 +1,7 @@
+[submodule "src/vendor/vision_opencv"]
+	path = src/vendor/vision_opencv
+	url = https://github.com/ros-perception/vision_opencv.git
+	branch = humble
+[submodule "src/vendor/ros_aruco_opencv"]
+	path = src/vendor/ros_aruco_opencv
+	url = https://github.com/fictionlab/ros_aruco_opencv.git
