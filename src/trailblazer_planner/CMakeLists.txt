@@ -25,18 +25,24 @@ ament_python_install_package(${PROJECT_NAME})
 
 # test python executables
 install(PROGRAMS
+  scripts/example_node_1_2.py
   scripts/service_example.py
+  scripts/node_service_1_2.py
   scripts/service_planner_example.py
+  scripts/service_planner_task3.py
+  scripts/service_planner_task5.py
+  scripts/service_planner_task7.py
+  scripts/service_planner_task9.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 # install package directories
-#install(DIRECTORY
-#  launch
+install(DIRECTORY
+  launch
 #  rviz
 #  params
-#  DESTINATION share/${PROJECT_NAME}
-#)
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

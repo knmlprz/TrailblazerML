@@ -15,7 +15,7 @@ class ManualServiceNode(Node):
 
         # Flaga, żeby nie wywołać /task2 wielokrotnie
         self.task4_called = False
-
+        self.task3_called = True 
         # Subskrypcja
         self.subscriber = self.create_subscription(
             Float32,
@@ -27,12 +27,11 @@ class ManualServiceNode(Node):
         # Timer do odczekania aż serwis task1 będzie dostępny
         self.timer = self.create_timer(1.0, self.call_task3_once)
 
-        self.task3_called = False
 
     def call_task3_once(self):
         if not self.task3_called and self.task3_client.service_is_ready():
             self.task3_called = True
-            self.get_logger().info("Calling /task4 service...")
+            self.get_logger().info("Calling /task3 service...")
             req = Trigger.Request()
             future = self.task3_client.call_async(req)
 
@@ -48,9 +47,9 @@ class ManualServiceNode(Node):
 
     def aruco_callback(self, msg):
         self.get_logger().info(f"Received /aruco_average: {msg.data}")
-        if msg.data > 15.0 and not self.task4_called and self.task4_client.service_is_ready():
+        if msg.data > 25.0 and not self.task4_called and self.task4_client.service_is_ready():
             self.task4_called = True
-            self.get_logger().info("Calling /task4 service because /aruco_average > 15.0")
+            self.get_logger().info("Calling /task4 service because /aruco_average > 25.0")
             req = Trigger.Request()
             future = self.task4_client.call_async(req)
 
@@ -63,17 +62,7 @@ class ManualServiceNode(Node):
             future.add_done_callback(task4_done)
 
     # Serwisowe callbacki
-    def task3_callback(self, request, response):
-        self.get_logger().info("Service /task3 was called")
-        response.success = True
-        response.message = "Hello from task3!"
-        return response
 
-    def task4_callback(self, request, response):
-        self.get_logger().info("Service /task4 was called")
-        response.success = True
-        response.message = "Hello from task4!"
-        return response
 
 
 def main(args=None):
