@@ -13,7 +13,7 @@ max_save_missed_detections = 40
 
 class CmdVelNavPublisher(Node):
     def __init__(self):
-        super().__init__('cmd_vel_nav_publisher')
+        super().__init__('driving_to_aruco_node')
 
         self.publisher = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 

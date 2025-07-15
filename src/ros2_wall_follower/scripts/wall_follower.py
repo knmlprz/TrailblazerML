@@ -38,7 +38,7 @@ max_save_missed_detections = 40
 class WallFollower(Node):
     # class constructor
     def __init__(self):
-        super().__init__("wall_follower")
+        super().__init__("wall_follower_node")
         self.get_logger().info("Initializing Wall Follower ...")
 
         # wall detection algorithm choice

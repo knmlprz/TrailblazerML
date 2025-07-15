@@ -17,7 +17,13 @@ def launch_setup(context, *args, **kwargs):
             )
         )
     )
-
+    camera_to_link_transform = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'oak-d-base-frame']
+    )
     aruco_detection = Node(
             package='aruco_opencv',
             executable='aruco_tracker_autostart',
@@ -32,7 +38,8 @@ def launch_setup(context, *args, **kwargs):
     
     return [
         camera_launch,
-        aruco_detection
+        camera_to_link_transform,
+        aruco_detection,
     ]
 
 

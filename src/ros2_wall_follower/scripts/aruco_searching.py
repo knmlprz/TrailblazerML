@@ -10,7 +10,7 @@ angular_speed = 0.6
 
 class CmdVelNavPublisher(Node):
     def __init__(self):
-        super().__init__('cmd_vel_nav_publisher')
+        super().__init__('aruco_searching_node')
 
         self.publisher = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 

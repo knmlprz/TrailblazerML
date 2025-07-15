@@ -90,13 +90,23 @@ def launch_setup(context, *args, **kwargs):
     wall_follower = Node(
         package="ros2_wall_follower",
         executable="wall_follower.py", # py version
-        name="wall_follower",
+        name="wall_follower_node",
         output="screen",
         emulate_tty=True,
         remappings=[
             ('/scan', '/ldlidar_node/scan'),
             ('/cmd_vel', '/cmd_vel_nav')
         ]
+    )
+
+    camera_aruco_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('trailblazer_aruco_detection'),
+                'launch',
+                'aruco_pipeline.launch.py'
+            )
+        )
     )
 
     return [
@@ -108,6 +118,7 @@ def launch_setup(context, *args, **kwargs):
         #rviz_launch_wall_follower,
         #slam_launch,
         wall_follower,
+        camera_aruco_launch,
     ]
 
 def generate_launch_description():
