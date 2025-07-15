@@ -22,21 +22,21 @@ def generate_launch_description():
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
 
     # Get URDF via xacro
-    # robot_description_content = Command(
-    #     [
-    #         PathJoinSubstitution([FindExecutable(name="xacro")]),
-    #         " ",
-    #         PathJoinSubstitution(
-    #             [FindPackageShare("trailblazer_description"), "urdf", "rover.urdf.xacro"]
-    #         ),
-    #         " ",
-    #         "use_mock_hardware:=",
-    #         use_mock_hardware,
-    #         " ",
-    #         "use_ros2_control:=true"
-    #     ]
-    # )
-    # robot_description = {"robot_description": robot_description_content}
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [FindPackageShare("trailblazer_description"), "urdf", "rover.urdf.xacro"]
+            ),
+            " ",
+            "use_mock_hardware:=",
+            use_mock_hardware,
+            " ",
+            "use_ros2_control:=true"
+        ]
+    )
+    robot_description = {"robot_description": robot_description_content}
     
 
     robot_controllers = PathJoinSubstitution(
@@ -57,8 +57,8 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        # parameters=[robot_description, robot_controllers],
-        parameters=[robot_controllers],
+        parameters=[robot_description, robot_controllers],
+        #parameters=[robot_controllers],
         output="both",
         remappings=[
             ('/diff_drive_controller/cmd_vel', 'cmd_vel_nav'),
