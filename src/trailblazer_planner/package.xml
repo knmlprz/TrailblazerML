@@ -4,7 +4,7 @@
   <name>trailblazer_planner</name>
   <version>0.0.0</version>
   <description>Task planner</description>
-  <maintainer email="damste09@gmail.com">damianek</maintainer>
+  <maintainer email="gkumar@theconstruct.ai">Girish Kumar Kannan</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

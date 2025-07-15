@@ -36,6 +36,13 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+#install(PROGRAMS
+  #scripts/aruco_searching.py 
+  #scripts/driving_to_aruco.py 
+  #scripts/wall_follower.py
+  #DESTINATION lib/${PROJECT_NAME}
+#)
+
 # install package directories
 install(DIRECTORY
   launch
