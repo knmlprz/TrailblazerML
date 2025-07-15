@@ -1,3 +1,5 @@
-ros2 launch ros2_wall_follower wall_follower_py_remap.launch.py 
-ros2 launch ldlidar_node ldlidar_rviz2.launch.py
-rviz2 -d src/ros2_wall_follower/rviz/wall_follower.rviz 
+The issue with the task:
+ - it doesn't as intended (discovered lately during doing task)
+ - service_example.py starting service server for all tasks, but it should start services for starting robot
+ - each node is the client instead of service server
+ - service executor should be client node for all services

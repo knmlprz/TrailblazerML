@@ -27,12 +27,12 @@ ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
   scripts/example_node_1_2.py
   scripts/service_example.py
-  scripts/node_service_1_2.py
   scripts/service_planner_example.py
-  scripts/service_planner_task3.py
-  scripts/service_planner_task5.py
-  scripts/service_planner_task7.py
-  scripts/service_planner_task9.py
+  scripts/example_node_3_4.py
+  scripts/example_node_5_6.py
+  scripts/example_node_7_8.py
+  scripts/example_node_9_10.py
+  scripts/srv_executor.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
