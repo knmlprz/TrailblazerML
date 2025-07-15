@@ -8,13 +8,17 @@ from launch_ros.substitutions import FindPackageShare
 import os
 
 def launch_setup(context, *args, **kwargs):
-    return [
-        Node(
-            package='depthai_ros_driver',
-            executable='camera.launch.py',
-            output='screen'
-        ),
-        Node(
+    camera_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('depthai_ros_driver'),
+                'launch',
+                'camera.launch.py'
+            )
+        )
+    )
+
+    aruco_detection = Node(
             package='aruco_opencv',
             executable='aruco_tracker_autostart',
             name='aruco_tracker',
@@ -25,6 +29,10 @@ def launch_setup(context, *args, **kwargs):
                 {"marker_dict": "ARUCO_ORIGINAL"}
             ]
         )
+    
+    return [
+        camera_launch,
+        aruco_detection
     ]
 
 
