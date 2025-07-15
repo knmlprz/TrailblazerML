@@ -11,7 +11,7 @@ def launch_setup(context, *args, **kwargs):
     camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('depthai_ros_driver'),
+                get_package_share_directory('trailblazer_aruco_detection'),
                 'launch',
                 'camera.launch.py'
             )
