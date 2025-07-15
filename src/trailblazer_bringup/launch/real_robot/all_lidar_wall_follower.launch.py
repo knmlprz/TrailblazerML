@@ -87,6 +87,22 @@ def launch_setup(context, *args, **kwargs):
         )
     )
 
+    aruco_searching = Node(
+        package="ros2_wall_follower",
+        executable="aruco_searching.py", # py version
+        name="aruco_searching_node",
+        output="screen",
+        emulate_tty=True,
+    )
+
+    driving_to_aruco = Node(
+        package="ros2_wall_follower",
+        executable="driving_to_aruco.py", # py version
+        name="driving_to_aruco_node",
+        output="screen",
+        emulate_tty=True,
+    )
+
     wall_follower = Node(
         package="ros2_wall_follower",
         executable="wall_follower.py", # py version
@@ -117,6 +133,8 @@ def launch_setup(context, *args, **kwargs):
         ldlidar_launch,
         #rviz_launch_wall_follower,
         #slam_launch,
+        aruco_searching,
+        driving_to_aruco,
         wall_follower,
         camera_aruco_launch,
     ]
