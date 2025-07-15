@@ -29,7 +29,6 @@ class ManualServiceNode(Node):
         self.timer = self.create_timer(1.0, self.call_task1_once)
 
         self.task1_called = False
-        self.task3_called = False 
 
     def call_task1_once(self):
         if not self.task1_called and self.task1_client.service_is_ready():
@@ -59,49 +58,11 @@ class ManualServiceNode(Node):
             def task2_done(fut):
                 if fut.result().success:
                     self.get_logger().info("Successfully called /task2.")
-                    self.get_logger().info("Waiting 3 seconds before calling /task3...")
-                    time.sleep(3.0)
-                    self.call_task3()
                 else:
                     self.get_logger().warn("Failed to call /task2.")
 
             future.add_done_callback(task2_done)
 
-
-
-    def call_task3(self):
-        task3_client = self.create_client(Trigger, 'task3')
-        while not task3_client.service_is_ready():
-            self.get_logger().info('Waiting for /task3 service...')
-            time.sleep(1.0)
-        self.get_logger().info("Calling /task3...")
-        req = Trigger.Request()
-        future = task3_client.call_async(req)
-
-        def task3_done(fut):
-            if fut.result().success:
-                self.get_logger().info("Successfully called /task3.")
-            else:
-                self.get_logger().warn("Failed to call /task3.")
-
-        future.add_done_callback(task3_done)
-
-    def call_task3_once(self):
-        if not self.task3_called and self.task3_client.service_is_ready():
-            self.task3_called = True
-            self.get_logger().info("Calling /task3 service...")
-            req = Trigger.Request()
-            future = self.task3_client.call_async(req)
-
-            def task3_done(fut):
-                if fut.result().success:
-                    self.get_logger().info("Successfully called /task3.")
-                else:
-                    self.get_logger().warn("Failed to call /task3.")
-
-            future.add_done_callback(task3_done)
-
-            self.destroy_timer(self.timer)
 
 
 def main(args=None):

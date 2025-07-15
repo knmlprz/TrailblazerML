@@ -15,7 +15,7 @@ class ManualServiceNode(Node):
 
         # Flaga, żeby nie wywołać /task2 wielokrotnie
         self.task4_called = False
-        self.task3_called = True 
+        #self.task3_called = False 
         # Subskrypcja
         self.subscriber = self.create_subscription(
             Float32,
@@ -25,29 +25,29 @@ class ManualServiceNode(Node):
         )
 
         # Timer do odczekania aż serwis task1 będzie dostępny
-        self.timer = self.create_timer(1.0, self.call_task3_once)
+        #self.timer = self.create_timer(1.0, self.call_task3_once)
 
 
-    def call_task3_once(self):
-        if not self.task3_called and self.task3_client.service_is_ready():
-            self.task3_called = True
-            self.get_logger().info("Calling /task3 service...")
-            req = Trigger.Request()
-            future = self.task3_client.call_async(req)
+    #def call_task3_once(self):
+        #if not self.task3_called and self.task3_client.service_is_ready():
+            #self.task3_called = True
+            #self.get_logger().info("Calling /task3 service...")
+            #req = Trigger.Request()
+            #future = self.task3_client.call_async(req)
 
-            def task3_done(fut):
-                if fut.result().success:
-                    self.get_logger().info("Successfully called /task3.")
-                else:
-                    self.get_logger().warn("Failed to call /task3.")
+            #def task3_done(fut):
+                #if fut.result().success:
+                    #self.get_logger().info("Successfully called /task3.")
+                #else:
+                    #self.get_logger().warn("Failed to call /task3.")
 
-            future.add_done_callback(task3_done)
+            #future.add_done_callback(task3_done)
 
-            self.destroy_timer(self.timer)
+            #self.destroy_timer(self.timer)
 
     def aruco_callback(self, msg):
         self.get_logger().info(f"Received /aruco_average: {msg.data}")
-        if msg.data > 25.0 and not self.task4_called and self.task4_client.service_is_ready():
+        if msg.data > 25.0 and not self.task4_called  and self.task4_client.service_is_ready():
             self.task4_called = True
             self.get_logger().info("Calling /task4 service because /aruco_average > 25.0")
             req = Trigger.Request()
