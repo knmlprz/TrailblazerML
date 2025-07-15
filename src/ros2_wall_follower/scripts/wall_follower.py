@@ -14,6 +14,7 @@ from geometry_msgs.msg import Twist   # twist message
 from nav_msgs.msg import Odometry     # odometry message
 from sensor_msgs.msg import LaserScan # laser scan message
 from std_srvs.srv import Trigger  # Dodajemy import dla usługi Trigger
+from aruco_opencv_msgs.msg import ArucoDetection
 # standard imports
 import math
 
@@ -29,6 +30,9 @@ side_choice = "none"
 # min - uses minimum scan ranges to detect the wall on its side
 # avg - uses average scan ranges to detect the wall on its side
 algo_choice = "min"
+
+max_missed_detections = 10  # liczba wiadomości z rzędu bez 2 markerów, po której zatrzyma się
+max_save_missed_detections = 40
 
 # define wall follower class as a subclass of node class
 class WallFollower(Node):
@@ -88,12 +92,24 @@ class WallFollower(Node):
         self.get_logger().info("Wall Follower Initialized !")
 
         # Inicjalizacja usługi do uruchamiania autonomii
-        self.srv = self.create_service(Trigger, 'start_autonomy', self.start_autonomy_callback)
+        self.srv = self.create_service(Trigger, 'autonomy_start', self.start_autonomy_callback)
         self.get_logger().info("Initialized start_autonomy Service")
 
         # Inicjalizacja usługi do wylaczania autonomii
-        self.srv = self.create_service(Trigger, 'stop_autonomy', self.stop_autonomy_callback)
+        self.srv = self.create_service(Trigger, 'autonomy_stop', self.stop_autonomy_callback)
         self.get_logger().info("Initialized stop_autonomy Service")
+
+        self.stop_autonomy_client = self.create_client(Trigger, 'autonomy_stop')
+        self.get_logger().warn('Czekam na usługę autonomy_stop...')
+
+        self.subscription = self.create_subscription(
+            ArucoDetection,
+            '/aruco_detections',
+            self.aruco_callback,
+            10
+        )
+
+        self.missed_counter = 0 
 
         # Flaga kontrolująca autonomię
         self.autonomy_enabled = False
@@ -103,6 +119,15 @@ class WallFollower(Node):
     # class destructor
     def __del__(self):
         return None
+
+    max_linear_speed = 0.450
+    max_angular_speed = 0.450
+    lin_vel_fast = 0.250
+    stop_by_threshold_max = False
+    stop_by_aruco_detection = True
+
+    # variables at runtime
+    driving_to_aruco = True
 
     # define and initialize class variables
     twisting_multiplier = 10
@@ -119,7 +144,7 @@ class WallFollower(Node):
     side_chosen = "none"
     lin_vel_zero = 0.000
     lin_vel_slow = 0.100
-    lin_vel_fast = 0.250
+    # lin_vel_fast = 0.250
     ang_vel_zero = 0.000
     ang_vel_slow = 0.050
     ang_vel_fast = 0.500
@@ -398,45 +423,34 @@ class WallFollower(Node):
             self.get_logger().info("~~~~~ End Odom Info ~~~~")
         return None
 
-    # def control_callback(self):
-    #     if (self.iterations_count >= self.ignore_iterations):
-    #         # Ustawienie prędkości liniowej na stałą wartość
-    #         self.twist_cmd.linear.x = self.lin_vel_fast
-            
-    #         # Obliczenie prędkości kątowej na podstawie odległości do przeszkód
-    #         if (self.scan_left_range > self.side_threshold_max and
-    #             self.scan_right_range > self.side_threshold_max):
-    #             # Jeśli obie strony są daleko, nie skręcaj
-    #             self.twist_cmd.angular.z = self.ang_vel_zero
-    #         else:
-    #             # Obliczenie błędu
-    #             error = 1 / self.scan_left_range - 1 / self.scan_right_range
-    #             # Normalizacja błędu do zakresu od -1 do 1
-    #             max_error = 1 / self.scan_range_min - 1 / self.scan_range_max
-    #             normalized_error = error / max_error if max_error != 0 else 0
-    #             # Skalowanie do zakresu od 0 do 1
-    #             scaled_error = (normalized_error + 1) / 2
-    #             # Obliczenie prędkości kątowej z zachowaniem znaku
-    #             self.twist_cmd.angular.z = -self.ang_vel_fast * scaled_error * (1 if error > 0 else -1)
-    #     else:
-    #         self.iterations_count += 1
-    #         self.twist_cmd.linear.x = self.lin_vel_zero
-    #         self.twist_cmd.angular.z = self.ang_vel_zero
-    #     # Opublikuj komendę twist
-    #     self.publish_twist_cmd()
-    #     # Wydrukuj informacje o bieżącej iteracji
-    #     self.print_info()
-    #     return None
-
     def control_callback(self):
+        if not self.autonomy_enabled:
+            return
+    
         if self.autonomy_enabled == True and self.iterations_count >= self.ignore_iterations:
             # Ustaw stałą prędkość jazdy do przodu
             self.twist_cmd.linear.x = self.lin_vel_fast
 
-            if (self.scan_left_range > self.side_threshold_max and
+            if (self.stop_by_threshold_max == True and self.scan_left_range > self.side_threshold_max and
                 self.scan_right_range > self.side_threshold_max):
-                # Jeśli obie strony są daleko, nie skręcaj
+                
+                # Zatrzymaj robota
+                self.twist_cmd.linear.x = self.lin_vel_zero
                 self.twist_cmd.angular.z = self.ang_vel_zero
+
+                # Wywołaj usługę stop_autonomy
+                self.call_stop_autonomy()
+
+                return
+            elif (self.stop_by_aruco_detection == True and self.missed_counter >= max_missed_detections):
+                
+                self.get_logger().warn('Too many missed detections. Save mode activating.')
+                self.stop_robot()
+                if self.missed_counter >= max_save_missed_detections:
+                    self.get_logger().warn('Too many missed detections. Stopping robot.')
+                    self.call_stop_autonomy()
+
+                return
             else:
                 # Oblicz różnicę średnich odległości
                 error = self.scan_right_range - self.scan_left_range
@@ -449,37 +463,55 @@ class WallFollower(Node):
 
                 # Skalowanie prędkości kątowej (ujemna = skręt w lewo, dodatnia = skręt w prawo)
                 self.twist_cmd.angular.z = -self.ang_vel_fast * normalized_error * self.twisting_multiplier
-                self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, 0.3), -0.3)
+                self.twist_cmd.angular.z = max(min(self.twist_cmd.angular.z, self.max_angular_speed), -self.max_angular_speed)
 
         else:
             self.iterations_count += 1
-            self.twist_cmd.linear.x = self.lin_vel_zero
-            self.twist_cmd.angular.z = self.ang_vel_zero
 
         # Publikuj komendę twist
-        self.publish_twist_cmd()
+        self.cmd_vel_pub.publish(self.twist_cmd)
 
         # Debug/info
         self.print_info()
 
         return None
-    
-    def publish_twist_cmd(self):
-        # linear speed control
-        if (self.twist_cmd.linear.x >= 0.450):
-          self.twist_cmd.linear.x = 0.450
-        else:
-          # do nothing
-          pass
-        # angular speed control
-        if (self.twist_cmd.angular.z >= 0.450):
-          self.twist_cmd.angular.z = 0.450
-        else:
-          # do nothing
-          pass
-        # publish command
-        self.cmd_vel_pub.publish(self.twist_cmd)
-        return None
+
+    def aruco_callback(self, msg: ArucoDetection):
+        if not self.autonomy_enabled:
+            return
+
+        if self.stop_by_aruco_detection == True and len(msg.markers) >= 2:
+            self.driving_to_aruco = True
+
+        if self.stop_by_aruco_detection == True and self.driving_to_aruco == True and len(msg.markers) < 2:
+            self.missed_counter += 1
+            return
+
+        # Wykryto co najmniej 2 markery — zeruj licznik błędów
+        self.missed_counter = 0
+
+    def stop_robot(self):
+        msg = Twist()
+        msg.linear.x = 0.0
+        msg.angular.z = 0.0
+        self.cmd_vel_pub.publish(msg)
+        
+    def call_stop_autonomy(self):
+        request = Trigger.Request()
+        future = self.stop_autonomy_client.call_async(request)
+
+        def callback(fut):
+            try:
+                response = fut.result()
+                if response.success:
+                    self.get_logger().info("Usługa autonomy_stop wywołana: " + response.message)
+                else:
+                    self.get_logger().warn("Wywołanie autonomy_stop nie powiodło się: " + response.message)
+            except Exception as e:
+                self.get_logger().error(f"Błąd przy wywołaniu autonomy_stop: {str(e)}")
+
+        future.add_done_callback(callback)
+
 
     def print_info(self):
         self.get_logger().info("Scan: L: %0.3f F: %0.3f R: %0.3f" %
