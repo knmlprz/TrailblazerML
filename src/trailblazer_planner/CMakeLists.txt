@@ -28,6 +28,7 @@ install(PROGRAMS
   scripts/aruco_searching.py
   scripts/driving_to_aruco.py
   scripts/wall_follower.py
+  scripts/anatolian_service_sequencer.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
