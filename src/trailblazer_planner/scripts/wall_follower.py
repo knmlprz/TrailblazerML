@@ -165,8 +165,8 @@ class WallFollower(Node):
     scan_right_index = 0
     scan_front_index = 0
     scan_left_index = 0
-    scan_sides_angle_range = 15 # degs
-    scan_front_angle_range = 15 # degs
+    scan_sides_angle_range = 45 # degs
+    scan_front_angle_range = 45 # degs
     scan_right_range_from_index = 0
     scan_right_range_to_index = 0
     scan_front_range_from_index = 0
@@ -443,6 +443,11 @@ class WallFollower(Node):
                 self.call_stop_autonomy()
 
                 return
+            elif (self.stop_by_threshold_max == False and self.scan_left_range > self.side_threshold_max and
+                self.scan_right_range > self.side_threshold_max):
+                
+                # jedz do przodu
+                self.twist_cmd.angular.z = self.ang_vel_zero
             elif (self.stop_by_aruco_detection == True and self.missed_counter >= max_missed_detections and self.driving_to_aruco == True):
                 self.get_logger().warn(f'Less than 2 markers detected. Missed count: {self.missed_counter}/{max_missed_detections}')
                 self.get_logger().warn('Too many missed detections. Save mode activating.')
