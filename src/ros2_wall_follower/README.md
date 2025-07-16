@@ -14,6 +14,8 @@ ros2 service call /aruco_searching_start std_srvs/srv/Trigger
 ros2 service call /aruco_searching_stop std_srvs/srv/Trigger
 ros2 service call /driving_to_aruco_start std_srvs/srv/Trigger
 ros2 service call /driving_to_aruco_stop std_srvs/srv/Trigger
+ros2 service call /autonomy_start std_srvs/srv/Trigger
+ros2 service call /autonomy_stop std_srvs/srv/Trigger
 
 ```
 
