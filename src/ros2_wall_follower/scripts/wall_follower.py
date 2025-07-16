@@ -102,12 +102,12 @@ class WallFollower(Node):
         self.stop_autonomy_client = self.create_client(Trigger, 'autonomy_stop')
         self.get_logger().warn('Czekam na usługę autonomy_stop...')
 
-        # self.subscription = self.create_subscription(
-        #     ArucoDetection,
-        #     '/aruco_detections',
-        #     self.aruco_callback,
-        #     10
-        # )
+        self.subscription = self.create_subscription(
+            ArucoDetection,
+            '/aruco_detections',
+            self.aruco_callback,
+            10
+        )
 
         self.missed_counter = 0 
 
@@ -120,14 +120,14 @@ class WallFollower(Node):
     def __del__(self):
         return None
 
-    max_linear_speed = 0.450
-    max_angular_speed = 0.450
+    max_linear_speed = 0.250
+    max_angular_speed = 0.250
     lin_vel_fast = 0.250
-    stop_by_threshold_max = True
-    stop_by_aruco_detection = False
+    stop_by_threshold_max = False
+    stop_by_aruco_detection = True
 
     # variables at runtime
-    driving_to_aruco = True
+    driving_to_aruco = False
 
     # define and initialize class variables
     twisting_multiplier = 10
@@ -192,6 +192,8 @@ class WallFollower(Node):
 
     def start_autonomy_callback(self, request, response):
         self.autonomy_enabled = True
+        self.missed_counter = 0
+        self.driving_to_aruco = False
         self.get_logger().info('Autonomy enabled by operator')
         response.success = True
         response.message = 'Autonomy started'
@@ -442,15 +444,15 @@ class WallFollower(Node):
                 self.call_stop_autonomy()
 
                 return
-            # elif (self.stop_by_aruco_detection == True and self.missed_counter >= max_missed_detections):
-                
-            #     self.get_logger().warn('Too many missed detections. Save mode activating.')
-            #     self.stop_robot()
-            #     if self.missed_counter >= max_save_missed_detections:
-            #         self.get_logger().warn('Too many missed detections. Stopping robot.')
-            #         self.call_stop_autonomy()
+            elif (self.stop_by_aruco_detection == True and self.missed_counter >= max_missed_detections and self.driving_to_aruco == True):
+                self.get_logger().warn(f'Less than 2 markers detected. Missed count: {self.missed_counter}/{max_missed_detections}')
+                self.get_logger().warn('Too many missed detections. Save mode activating.')
+                self.stop_robot()
+                if self.missed_counter >= max_save_missed_detections:
+                    self.get_logger().warn('Too many missed detections. Stopping robot.')
+                    self.call_stop_autonomy()
 
-            #     return
+                return
             else:
                 # Oblicz różnicę średnich odległości
                 error = self.scan_right_range - self.scan_left_range
@@ -476,25 +478,25 @@ class WallFollower(Node):
 
         return None
 
-    # def aruco_callback(self, msg: ArucoDetection):
-    #     if not self.autonomy_enabled:
-    #         return
+    def aruco_callback(self, msg: ArucoDetection):
+        if not self.autonomy_enabled:
+            return
 
-    #     if self.stop_by_aruco_detection == True and len(msg.markers) >= 2:
-    #         self.driving_to_aruco = True
+        if self.stop_by_aruco_detection == True and len(msg.markers) >= 2:
+            self.driving_to_aruco = True
 
-    #     if self.stop_by_aruco_detection == True and self.driving_to_aruco == True and len(msg.markers) < 2:
-    #         self.missed_counter += 1
-    #         return
+        if self.stop_by_aruco_detection == True and self.driving_to_aruco == True and len(msg.markers) < 2:
+            self.missed_counter += 1
+            return
 
-    #     # Wykryto co najmniej 2 markery — zeruj licznik błędów
-    #     self.missed_counter = 0
+        # Wykryto co najmniej 2 markery — zeruj licznik błędów
+        self.missed_counter = 0
 
-    # def stop_robot(self):
-    #     msg = Twist()
-    #     msg.linear.x = 0.0
-    #     msg.angular.z = 0.0
-    #     self.cmd_vel_pub.publish(msg)
+    def stop_robot(self):
+        msg = Twist()
+        msg.linear.x = 0.0
+        msg.angular.z = 0.0
+        self.cmd_vel_pub.publish(msg)
         
     def call_stop_autonomy(self):
         request = Trigger.Request()
