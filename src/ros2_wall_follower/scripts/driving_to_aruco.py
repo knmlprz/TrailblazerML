@@ -7,7 +7,7 @@ from aruco_opencv_msgs.msg import ArucoDetection
 from std_srvs.srv import Trigger
 
 angular_gain = 1.0
-linear_speed = 0.2
+max_linear_speed = 0.2
 max_angular_speed = 0.2
 max_missed_detections = 10  # liczba wiadomości z rzędu bez 2 markerów, po której zatrzyma się
 max_save_missed_detections = 40
@@ -94,7 +94,7 @@ class CmdVelNavPublisher(Node):
 
         # Poruszaj się do przodu i skręcaj zależnie od avg_x
         twist = Twist()
-        twist.linear.x = linear_speed
+        twist.linear.x = max_linear_speed
         twist.angular.z = -avg_x * angular_gain
         twist.angular.z = max(min(twist.angular.z, max_angular_speed), -max_angular_speed)
         self.publisher.publish(twist)

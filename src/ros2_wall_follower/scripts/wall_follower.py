@@ -120,9 +120,8 @@ class WallFollower(Node):
     def __del__(self):
         return None
 
-    max_linear_speed = 0.250
-    max_angular_speed = 0.250
-    lin_vel_fast = 0.250
+    max_linear_speed = 0.2
+    max_angular_speed = 0.2
     stop_by_threshold_max = False
     stop_by_aruco_detection = True
 
@@ -431,7 +430,7 @@ class WallFollower(Node):
     
         if self.autonomy_enabled == True and self.iterations_count >= self.ignore_iterations:
             # Ustaw stałą prędkość jazdy do przodu
-            self.twist_cmd.linear.x = self.lin_vel_fast
+            self.twist_cmd.linear.x = self.max_linear_speed
 
             if (self.stop_by_threshold_max == True and self.scan_left_range > self.side_threshold_max and
                 self.scan_right_range > self.side_threshold_max):

@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist
 from aruco_opencv_msgs.msg import ArucoDetection
 from std_srvs.srv import Trigger
 
-angular_speed = 0.2
+max_angular_speed = 0.2
 
 class CmdVelNavPublisher(Node):
     def __init__(self):
@@ -96,7 +96,7 @@ class CmdVelNavPublisher(Node):
 
         msg = Twist()
         msg.linear.x = 0.0
-        msg.angular.z = angular_speed if self.toggle else 0.0
+        msg.angular.z = max_angular_speed if self.toggle else 0.0
 
         self.publisher.publish(msg)
         self.counter += 1
