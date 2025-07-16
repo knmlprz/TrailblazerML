@@ -87,40 +87,22 @@ def launch_setup(context, *args, **kwargs):
         )
     )
 
-    aruco_searching = Node(
-        package="ros2_wall_follower",
-        executable="aruco_searching.py", # py version
-        name="aruco_searching_node",
-        output="screen",
-        emulate_tty=True,
-    )
-
-    driving_to_aruco = Node(
-        package="ros2_wall_follower",
-        executable="driving_to_aruco.py", # py version
-        name="driving_to_aruco_node",
-        output="screen",
-        emulate_tty=True,
-    )
-
-    wall_follower = Node(
-        package="ros2_wall_follower",
-        executable="wall_follower.py", # py version
-        name="wall_follower_node",
-        output="screen",
-        emulate_tty=True,
-        remappings=[
-            ('/scan', '/ldlidar_node/scan'),
-            ('/cmd_vel', '/cmd_vel_nav')
-        ]
-    )
-
     camera_aruco_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
                 get_package_share_directory('trailblazer_aruco_detection'),
                 'launch',
                 'aruco_pipeline.launch.py'
+            )
+        )
+    )
+
+    anatolian_task_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('trailblazer_planner'),
+                'launch',
+                'anatolian_tasks.launch.py'
             )
         )
     )
@@ -133,10 +115,8 @@ def launch_setup(context, *args, **kwargs):
         ldlidar_launch,
         #rviz_launch_wall_follower,
         #slam_launch,
-        aruco_searching,
-        driving_to_aruco,
-        wall_follower,
         camera_aruco_launch,
+        anatolian_task_launch,
     ]
 
 def generate_launch_description():
