@@ -5,6 +5,7 @@ competition one of the tasks is autonomy
 
 ---
 
+
 # What hardware we are using
 
 - Nvidia Jetson xavier nx
@@ -38,25 +39,15 @@ Add xhost +local:docker
 
 ## How to build the ARM docker image
 
-### On ARM base architecture
+On ARM base architecture
 ```bash
     sudo docker build -t trb_1 .
 ```
 
-### If you want to test it on x86_64 architecture
-
-*always when starting the system*
+If you want to test it on x86_64 architecture
 ```bash
-    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-```
-
-*only once*
-``` bash
-    sudo docker buildx create --use
-```
-
-*building*
-```bash
+    sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes && 
+    sudo docker buildx create --use && 
     sudo docker buildx build --platform linux/arm64 -t trb_1 --load .
 ```
 
@@ -64,12 +55,12 @@ Add xhost +local:docker
 
 In ARM base architecture
 ```bash
-    sudo docker run -it --name trb_1_arm --privileged --network=host --ipc=host -e DISPLAY=$DISPLAY -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v /run/user/$(id -u)/wayland-0:/run/user/$(id -u)/wayland-0 -v /dev:/dev trb_1
+    sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -v /dev:/dev trb_1_arm
 ```
 
 In x86 for tests
 ```bash
-    sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -e DISPLAY=$DISPLAY -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v /run/user/$(id -u)/wayland-0:/run/user/$(id -u)/wayland-0 -v /dev:/dev trb_1
+    sudo docker run -it --platform linux/arm64 --name trb_1_arm --privileged --network=host --ipc=host -e DISPLAY=$DISPLAY -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v /run/user/$(id -u)/wayland-0:/run/user/$(id -u)/wayland-0 -v /dev:/dev trb_1_arm
 ```
 
 Exit after finishing the work
@@ -196,4 +187,3 @@ modifications without needing to rebuild the container from scratch.
 ## Pull Requests
 
 - Pull requests should be descriptive and have annotation to issue
-

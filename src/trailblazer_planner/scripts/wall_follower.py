@@ -124,6 +124,7 @@ class WallFollower(Node):
     max_angular_speed = 0.2
     stop_by_threshold_max = False
     stop_by_aruco_detection = True
+    stala_korekcyjna = 1.352395672
 
     # variables at runtime
     driving_to_aruco = False
@@ -165,8 +166,8 @@ class WallFollower(Node):
     scan_right_index = 0
     scan_front_index = 0
     scan_left_index = 0
-    scan_sides_angle_range = 45 # degs
-    scan_front_angle_range = 45 # degs
+    scan_sides_angle_range = 90 # degs
+    scan_front_angle_range = 90 # degs
     scan_right_range_from_index = 0
     scan_right_range_to_index = 0
     scan_front_range_from_index = 0
@@ -192,6 +193,7 @@ class WallFollower(Node):
     def start_autonomy_callback(self, request, response):
         self.autonomy_enabled = True
         self.missed_counter = 0
+        self.odom_distance = 0.0
         self.driving_to_aruco = False
         self.get_logger().info('Autonomy enabled by operator')
         response.success = True
@@ -201,6 +203,7 @@ class WallFollower(Node):
     def stop_autonomy_callback(self, request, response):
         self.autonomy_enabled = False
         self.get_logger().info('Autonomy disabled by operator')
+        self.get_logger().info("Przebyty dystans: {:.2f} metrow".format(self.odom_distance * self.stala_korekcyjna))
         response.success = True
         response.message = 'Autonomy stoped'
         return response

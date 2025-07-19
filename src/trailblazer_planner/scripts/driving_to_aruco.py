@@ -6,9 +6,9 @@ from geometry_msgs.msg import Twist
 from aruco_opencv_msgs.msg import ArucoDetection
 from std_srvs.srv import Trigger
 
-angular_gain = 1.0
+angular_gain = 0.5
 max_linear_speed = 0.2
-max_angular_speed = 0.2
+max_angular_speed = 0.1
 max_missed_detections = 10  # liczba wiadomości z rzędu bez 2 markerów, po której zatrzyma się
 max_save_missed_detections = 40
 
