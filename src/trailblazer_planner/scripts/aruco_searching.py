@@ -128,7 +128,7 @@ class CmdVelNavPublisher(Node):
             self.get_logger().info(f'Average X between two markers: {avg_x:.3f}')
             
             # Jeśli średnia bliska 0 (kamera skierowana między markerami)
-            if abs(avg_x) < 0.05 or avg_x >= 0.0:
+            if abs(avg_x) < 0.1 or avg_x >= 0.0:
                 self.get_logger().info("Camera is centered between two markers — calling stop service.")
                 self.call_stop_service()
                 self.stop_called = True
