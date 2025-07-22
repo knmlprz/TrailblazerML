@@ -124,6 +124,7 @@ class WallFollower(Node):
     max_angular_speed = 0.2
     stop_by_threshold_max = False
     stop_by_aruco_detection = True
+    stop_if_aruco_detection = True
     stala_korekcyjna = 1.352395672
 
     # variables at runtime
@@ -490,6 +491,10 @@ class WallFollower(Node):
             return
 
         if self.stop_by_aruco_detection == True and len(msg.markers) >= 2:
+            if self.stop_if_aruco_detection == True:
+                self.stop_robot()
+                self.call_stop_autonomy()
+                return
             self.driving_to_aruco = True
 
         if self.stop_by_aruco_detection == True and self.driving_to_aruco == True and len(msg.markers) < 2:

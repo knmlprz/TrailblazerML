@@ -24,6 +24,9 @@ class ServiceSequencer(Node):
     def __init__(self):
         super().__init__('service_sequencer')
 
+        self.stop_if_aruco_detection = True
+        self.stop_if_aruco_detection_toggle_state = False
+
         # Create clients
         self.cli_search_start = self.create_client(Trigger, '/aruco_searching_start')
         self.cli_drive_start  = self.create_client(Trigger, '/driving_to_aruco_start')
@@ -58,7 +61,11 @@ class ServiceSequencer(Node):
 
     def handle_drive_stop(self, request, response):
         self.get_logger().info('Received /driving_to_aruco_stop, launching autonomy_start in 3s')
-        threading.Thread(target=self.delayed_call, args=(self.cli_auto_start, 'autonomy_start')).start()
+        if self.stop_if_aruco_detection == False or (self.stop_if_aruco_detection == True and self.stop_if_aruco_detection_toggle_state == False):
+            threading.Thread(target=self.delayed_call, args=(self.cli_auto_start, 'autonomy_start')).start()
+        if self.stop_if_aruco_detection == True and self.stop_if_aruco_detection_toggle_state == True:
+            threading.Thread(target=self.shutdown_delayed).start()
+            self.stop_if_aruco_detection_toggle_state = False
         response.success = True
         response.message = 'Scheduled autonomy_start'
         return response
@@ -68,8 +75,15 @@ class ServiceSequencer(Node):
         response.success = True
         response.message = 'Shutting down'
         # shutdown after sending response
-        threading.Thread(target=self.shutdown_delayed).start()
-        return response
+        if self.stop_if_aruco_detection == False:
+            threading.Thread(target=self.shutdown_delayed).start()
+            return response
+        if self.stop_if_aruco_detection == True and self.stop_if_aruco_detection_toggle_state == False:
+            threading.Thread(target=self.delayed_call, args=(self.cli_drive_start, 'driving_to_aruco_start')).start()
+            self.stop_if_aruco_detection_toggle_state = True
+            return response
+        else:
+            return response
 
     def delayed_call(self, client, name):
         # wait for client availability
