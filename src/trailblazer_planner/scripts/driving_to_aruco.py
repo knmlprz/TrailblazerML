@@ -67,11 +67,18 @@ class CmdVelNavPublisher(Node):
         msg.angular.z = 0.0
         self.publisher.publish(msg)
 
+    def forward_robot(self):
+        msg = Twist()
+        msg.linear.x = max_linear_speed
+        msg.angular.z = 0.0
+        self.publisher.publish(msg)
+
     def aruco_callback(self, msg: ArucoDetection):
         if not self.searching_active:
             return
 
         if len(msg.markers) < 2:
+            self.forward_robot()
             self.missed_counter += 1
             self.get_logger().warn(f'Less than 2 markers detected. Missed count: {self.missed_counter}/{max_missed_detections}')
             if self.missed_counter >= max_missed_detections:

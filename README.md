@@ -187,3 +187,44 @@ modifications without needing to rebuild the container from scratch.
 ## Pull Requests
 
 - Pull requests should be descriptive and have annotation to issue
+
+
+# by działała komunikacja jetson docker 
+
+- trzeba wymusić komunikacje UDP zamiast SharedMemory, bo middleware fastdds błędnie uznaje komunikacje hosta z dockerem jako wspólne urzędzenie i ustawia komunikacje jako SharedMemory
+
+## wejdź do dockera
+
+```bash
+sudo docker start -ai <nazwa_contenera> 
+```
+
+## stwórz plik w dockerze 
+
+```bash
+touch /root/fastdds.xml
+```
+
+## z poniższą zawartością
+
+```bash
+
+echo '<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>CustomUdpTransport</transport_id>
+            <type>UDPv4</type>
+        </transport_descriptor>
+    </transport_descriptors>
+    <participant profile_name="participant_profile" is_default_profile="true">
+        <rtps>
+            <userTransports>
+                <transport_id>CustomUdpTransport</transport_id>
+            </userTransports>
+            <useBuiltinTransports>false</useBuiltinTransports>
+        </rtps>
+    </participant>
+</profiles>' > /root/fastdds.xml
+
+```
