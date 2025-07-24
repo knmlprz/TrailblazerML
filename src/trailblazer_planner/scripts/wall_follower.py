@@ -439,22 +439,26 @@ class WallFollower(Node):
             # Ustaw stałą prędkość jazdy do przodu
             self.twist_cmd.linear.x = self.max_linear_speed
 
-            if (self.stop_by_threshold_max == True and (self.scan_left_range > self.side_threshold_max or
+            if (self.stop_by_threshold_max == True and (self.scan_left_range > self.side_threshold_max and
                 self.scan_right_range > self.side_threshold_max)):
                 if self.drive_by_threshold_max == True:
                     self.twist_cmd.angular.z = self.ang_vel_zero
                     self.cmd_vel_pub.publish(self.twist_cmd)
                     return
                 
-                # Zatrzymaj robota
-                self.twist_cmd.linear.x = self.lin_vel_zero
-                self.twist_cmd.angular.z = self.ang_vel_zero
+                self.missed_counter += 1
+            
+                if self.missed_counter >= max_missed_detections * 2:
+                    # Wywołaj usługę stop_autonomy
+                    self.stop_robot()
+                    self.call_stop_autonomy()
+                    # if self.missed_counter >= max_save_missed_detections:
+                    #     self.get_logger().warn('Too many missed detections. Stopping robot.')
+                    #     self.call_stop_autonomy()
 
-                # Wywołaj usługę stop_autonomy
-                self.stop_robot()
-                self.call_stop_autonomy()
+                    return
+                
 
-                return
             elif (self.stop_by_threshold_max == False and self.scan_left_range > self.side_threshold_max and
                 self.scan_right_range > self.side_threshold_max):
                 
@@ -471,6 +475,7 @@ class WallFollower(Node):
                 return
             else:
                 # Oblicz różnicę średnich odległości
+                self.missed_counter = 0
                 self.drive_by_threshold_max = False
                 error = min(self.scan_right_range, self.robot_max_range) - min(self.scan_left_range, self.robot_max_range)
 
@@ -511,7 +516,8 @@ class WallFollower(Node):
             return
 
         # Wykryto co najmniej 2 markery — zeruj licznik błędów
-        self.missed_counter = 0
+        if self.stop_by_aruco_detection == True:
+            self.missed_counter = 0
 
     def stop_robot(self):
         msg = Twist()
