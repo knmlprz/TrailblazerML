@@ -24,7 +24,7 @@ class ServiceSequencer(Node):
     def __init__(self):
         super().__init__('service_sequencer')
 
-        self.stop_if_aruco_detection = True
+        self.stop_if_aruco_detection = False
         self.stop_if_aruco_detection_toggle_state = False
 
         # Create clients

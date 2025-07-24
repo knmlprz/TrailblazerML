@@ -122,13 +122,14 @@ class WallFollower(Node):
 
     max_linear_speed = 0.2
     max_angular_speed = 0.2
-    stop_by_threshold_max = False
-    stop_by_aruco_detection = True
-    stop_if_aruco_detection = True
+    stop_by_threshold_max = True
+    stop_by_aruco_detection = False
+    stop_if_aruco_detection = False
     stala_korekcyjna = 1.352395672
 
     # variables at runtime
     driving_to_aruco = False
+    drive_by_threshold_max = True
 
     # define and initialize class variables
     twisting_multiplier = 10
@@ -196,6 +197,7 @@ class WallFollower(Node):
         self.missed_counter = 0
         self.odom_distance = 0.0
         self.driving_to_aruco = False
+        self.drive_by_threshold_max = True
         self.get_logger().info('Autonomy enabled by operator')
         response.success = True
         response.message = 'Autonomy started'
@@ -436,8 +438,12 @@ class WallFollower(Node):
             # Ustaw stałą prędkość jazdy do przodu
             self.twist_cmd.linear.x = self.max_linear_speed
 
-            if (self.stop_by_threshold_max == True and self.scan_left_range > self.side_threshold_max and
-                self.scan_right_range > self.side_threshold_max):
+            if (self.stop_by_threshold_max == True and (self.scan_left_range > self.side_threshold_max or
+                self.scan_right_range > self.side_threshold_max)):
+                if self.drive_by_threshold_max == True:
+                    self.twist_cmd.angular.z = self.ang_vel_zero
+                    self.cmd_vel_pub.publish(self.twist_cmd)
+                    return
                 
                 # Zatrzymaj robota
                 self.twist_cmd.linear.x = self.lin_vel_zero
@@ -463,6 +469,7 @@ class WallFollower(Node):
                 return
             else:
                 # Oblicz różnicę średnich odległości
+                self.drive_by_threshold_max = False
                 error = self.scan_right_range - self.scan_left_range
 
                 # Normalizacja względem maksymalnego możliwego zakresu
