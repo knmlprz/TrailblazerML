@@ -450,6 +450,7 @@ class WallFollower(Node):
                 self.twist_cmd.angular.z = self.ang_vel_zero
 
                 # Wywołaj usługę stop_autonomy
+                self.stop_robot()
                 self.call_stop_autonomy()
 
                 return
