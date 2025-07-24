@@ -168,8 +168,8 @@ class WallFollower(Node):
     scan_right_index = 0
     scan_front_index = 0
     scan_left_index = 0
-    scan_sides_angle_range = 90 # degs
-    scan_front_angle_range = 90 # degs
+    scan_sides_angle_range = 70 # degs
+    scan_front_angle_range = 70 # degs
     scan_right_range_from_index = 0
     scan_right_range_to_index = 0
     scan_front_range_from_index = 0
