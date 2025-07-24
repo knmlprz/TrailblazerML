@@ -126,6 +126,7 @@ class WallFollower(Node):
     stop_by_aruco_detection = False
     stop_if_aruco_detection = False
     stala_korekcyjna = 1.352395672
+    robot_max_range = 1.0
 
     # variables at runtime
     driving_to_aruco = False
@@ -133,7 +134,7 @@ class WallFollower(Node):
 
     # define and initialize class variables
     twisting_multiplier = 10
-    robot_radius = 1.0                      # 10 cm
+    robot_radius = 2.0                      # 10 cm
     side_threshold_min = robot_radius + 0.05 #  5 cm gap
     side_threshold_max = robot_radius + 0.10 # 10 cm gap
     front_threshold = robot_radius + 0.40    # 40 cm gap
@@ -168,8 +169,8 @@ class WallFollower(Node):
     scan_right_index = 0
     scan_front_index = 0
     scan_left_index = 0
-    scan_sides_angle_range = 70 # degs
-    scan_front_angle_range = 70 # degs
+    scan_sides_angle_range = 15 # degs
+    scan_front_angle_range = 15 # degs
     scan_right_range_from_index = 0
     scan_right_range_to_index = 0
     scan_front_range_from_index = 0
@@ -471,7 +472,7 @@ class WallFollower(Node):
             else:
                 # Oblicz różnicę średnich odległości
                 self.drive_by_threshold_max = False
-                error = self.scan_right_range - self.scan_left_range
+                error = min(self.scan_right_range, self.robot_max_range) - min(self.scan_left_range, self.robot_max_range)
 
                 # Normalizacja względem maksymalnego możliwego zakresu
                 max_error = self.scan_range_max - self.scan_range_min

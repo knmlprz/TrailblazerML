@@ -8,9 +8,9 @@ from std_srvs.srv import Trigger
 
 angular_gain = 0.5
 max_linear_speed = 0.2
-max_angular_speed = 0.08
+max_angular_speed = 0.2
 max_missed_detections = 15  # liczba wiadomości z rzędu bez 2 markerów, po której zatrzyma się
-max_save_missed_detections = 60
+max_save_missed_detections = 40
 
 class CmdVelNavPublisher(Node):
     def __init__(self):
