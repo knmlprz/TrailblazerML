@@ -448,7 +448,7 @@ class WallFollower(Node):
                 
                 self.missed_counter += 1
             
-                if self.missed_counter >= max_missed_detections * 2:
+                if self.missed_counter >= max_missed_detections * 15:
                     # Wywołaj usługę stop_autonomy
                     self.stop_robot()
                     self.call_stop_autonomy()
