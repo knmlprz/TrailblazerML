@@ -37,6 +37,7 @@ def generate_launch_description():
         ]
     )
     robot_description = {"robot_description": robot_description_content}
+    
 
     robot_controllers = PathJoinSubstitution(
         [
@@ -57,6 +58,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
+        #parameters=[robot_controllers],
         output="both",
         remappings=[
             ('/diff_drive_controller/cmd_vel', 'cmd_vel_nav'),

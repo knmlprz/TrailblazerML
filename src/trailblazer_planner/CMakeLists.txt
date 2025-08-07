@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(ros2_wall_follower)
+project(trailblazer_planner)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -17,40 +17,27 @@ find_package(nav_msgs REQUIRED)
 # include cpp "include" directory
 include_directories(include)
 
-# create cpp executables
-add_executable(wall_follower src/wall_follower.cpp)
-ament_target_dependencies(wall_follower rclcpp std_msgs geometry_msgs sensor_msgs nav_msgs)
 
-# install cpp executables
-install(TARGETS
-  wall_follower
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 # install python modules
 ament_python_install_package(${PROJECT_NAME})
 
-# install python executables
-install(PROGRAMS
-  scripts/wall_follower.py
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 # test python executables
 install(PROGRAMS
-  scripts/service_example.py
-  scripts/service_planner_example.py
-
   scripts/aruco_searching.py
   scripts/driving_to_aruco.py
+  scripts/wall_follower.py
+  scripts/anatolian_service_sequencer.py
+  scripts/anatolian_sequencer_aruco_search.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 # install package directories
-install(DIRECTORY 
+install(DIRECTORY
   launch
-  rviz
-  params
+#  rviz
+#  params
   DESTINATION share/${PROJECT_NAME}
 )
 

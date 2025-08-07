@@ -27,10 +27,12 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     ca-certificates \
     gpg \
+    apt-transport-https \
     python3.10 \
     python3.10-dev \
     python3.10-venv \
     python3-pip \
+    terminator \
     && locale-gen en_US.UTF-8 \
     && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -63,13 +65,10 @@ RUN apt-get update && apt-get install -y \
     ros-humble-xacro \
     ros-humble-twist-mux \
     ros-humble-rviz2 \
+    ros-humble-ament-cmake \
     joystick \
     jstest-gtk \
     evtest \
-    apt-transport-https \
-    terminator \
-    && rosdep init \
-    && rosdep update \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY . /TrailblazerML/
@@ -79,6 +78,11 @@ RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc \
     && bash -c "source ~/.bashrc"
 
 RUN apt-get update
+
+RUN rosdep init && rosdep update
+
+WORKDIR /TrailblazerML
+#RUN bash -c "rosdep install --from-paths src --ignore-src -r -y"
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

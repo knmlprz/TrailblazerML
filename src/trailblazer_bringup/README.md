@@ -71,3 +71,13 @@ ros2 launch trailblazer_bringup urdf_robot.launch.py
 ```bash
 ros2 launch trailblazer_bringup urdf_robot_no_viz.launch.py
 ```
+
+### anatolian setup
+```bash
+sudo docker start -ai trb_4_arm2
+source install/setup.bash
+ros2 launch trailblazer_bringup all_lidar_wall_follower.launch.py
+
+ros2 launch trailblazer_bringup anatolian_tasks_sequencer.launch.py
+```
+
